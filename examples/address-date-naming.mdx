@@ -1,0 +1,109 @@
+---
+sidebarTitle: "Address + Date"
+title: "Rename Photos With Address and Date Using photo-cli"
+description: "Use photo-cli copy to rename every photo using its reverse-geocoded address and taken date and time, while preserving the original folder hierarchy."
+---
+
+This example renames every photo using its reverse-geocoded address combined with the taken date and time, preserving the original folder hierarchy. After running this command, every file name tells you exactly when and where the photo was taken without having to open it.
+
+## Command
+
+<CodeGroup>
+```bash Long form
+photo-cli copy \
+  --process-type SubFoldersPreserveFolderHierarchy \
+  --naming-style AddressDateTimeWithSeconds \
+  --reverse-geocode OpenStreetMapFoundation \
+  --openstreetmap-properties country city town suburb \
+  --number-style AllNamesAreSameLength \
+  --no-taken-date InSubFolder \
+  --no-coordinate InSubFolder \
+  --input photos \
+  --output organized-albums
+```
+
+```bash Short form
+photo-cli copy -f 2 -s 11 -e 2 -r country city town suburb -n 1 -t 3 -c 3 -i photos -o organized-albums
+```
+</CodeGroup>
+
+## Key arguments
+
+| Argument | Value | What it does |
+|---|---|---|
+| `--process-type` | `SubFoldersPreserveFolderHierarchy` | Keeps the original subfolder structure in the output. |
+| `--naming-style` | `AddressDateTimeWithSeconds` | Names each file as `{address}-{yyyy.MM.dd_HH.mm.ss}.ext`, with the address placed before the timestamp. |
+| `--reverse-geocode` | `OpenStreetMapFoundation` | Uses the OpenStreetMap Nominatim API to resolve GPS coordinates into a human-readable address. |
+| `--openstreetmap-properties` | `country city town suburb` | Selects which OpenStreetMap fields to include in the address string. |
+| `--number-style` | `AllNamesAreSameLength` | Appends equal-length numeric suffixes to files that would otherwise share an identical name. |
+| `--no-taken-date` | `InSubFolder` | Photos with no EXIF taken date are copied into a `no-photo-taken-date` subfolder rather than being skipped or mixed in. |
+| `--no-coordinate` | `InSubFolder` | Photos with a taken date but no GPS coordinate are copied into a `no-address` subfolder. |
+
+## Before and after
+
+**Before** (`photos/`):
+
+```text
+├── DSC_5727.jpg
+├── GOPR6742.jpg
+├── Italy album
+│   ├── DJI_01732.jpg
+│   ├── DJI_01733.jpg
+│   ├── DSC00001.JPG
+│   ├── DSC03467.jpg
+│   ├── DSC_1769.JPG
+│   ├── DSC_1770.JPG
+│   ├── DSC_1770_(same).jpg
+│   ├── DSC_1771.JPG
+│   ├── GOPR7496.jpg
+│   ├── GOPR7497.jpg
+│   ├── IMG_0747.JPG
+│   └── IMG_2371.jpg
+└── Spain Journey
+    ├── DSC_1807.jpg
+    ├── DSC_1808.jpg
+    └── IMG_5397.jpg
+
+2 directories, 17 files
+```
+
+**After** (`organized-albums/`):
+
+```text
+├── Italy album
+│   ├── Italia-Arezzo-2008.10.22_16.28.39.jpg
+│   ├── Italia-Arezzo-2008.10.22_16.29.49.jpg
+│   ├── Italia-Arezzo-2008.10.22_16.38.20.jpg
+│   ├── Italia-Arezzo-2008.10.22_16.43.21.jpg
+│   ├── Italia-Arezzo-2008.10.22_16.44.01.jpg
+│   ├── Italia-Arezzo-2008.10.22_16.46.53.jpg
+│   ├── Italia-Arezzo-2008.10.22_16.52.15.jpg
+│   ├── Italia-Arezzo-2008.10.22_16.55.37.jpg
+│   ├── Italia-Arezzo-2008.10.22_17.00.07-1.jpg
+│   ├── Italia-Arezzo-2008.10.22_17.00.07-2.jpg
+│   ├── Italia-Firenze-Quartiere 1-2005.12.14_14.39.47.jpg
+│   └── no-address
+│       └── IMG_2371.jpg
+├── Kenya-2005.08.13_09.47.23.jpg
+├── photo-cli-report.csv
+├── Spain Journey
+│   ├── España-Madrid-2015.04.10_20.12.23-1.jpg
+│   ├── España-Madrid-2015.04.10_20.12.23-2.jpg
+│   └── no-address-and-no-photo-taken-date
+│       └── IMG_5397.jpg
+└── United Kingdom-Ascot-Sunninghill and Ascot-2012.06.22_19.52.31.jpg
+
+4 directories, 18 files
+```
+
+## What you see in the output
+
+Every photo with a GPS coordinate and a taken date is renamed to combine the address and the timestamp. For example, `DSC_5727.jpg` (taken in Kenya) becomes `Kenya-2005.08.13_09.47.23.jpg`. The ten photos taken in Arezzo on the same day share the same address prefix; the two taken at exactly `17.00.07` get a `-1` and `-2` suffix.
+
+Photos that have a taken date but no GPS coordinate are moved into a `no-address` subfolder inside their original parent folder. `Italy album/IMG_2371.jpg` ends up at `Italy album/no-address/IMG_2371.jpg`. Photos with neither a date nor a coordinate go into `no-address-and-no-photo-taken-date/`.
+
+The original folder names (`Italy album`, `Spain Journey`) are kept unchanged. Only the file names change.
+
+<Tip>
+This naming style gives you a self-describing archive: you can identify when and where any photo was taken just from its file name, without opening it. It works well when you share individual files via email or messaging apps, where folder context is lost.
+</Tip>

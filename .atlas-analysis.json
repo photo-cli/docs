@@ -1,0 +1,109 @@
+{
+  "projectType": "cli-tool",
+  "projectName": "photo-cli",
+  "projectDescription": "A cross-platform CLI tool that organizes photos into structured folders and file names using EXIF date and GPS-based reverse geocode address data.",
+  "theme": "almond",
+  "primaryColor": "#f65656",
+  "lightColor": "#7c241c",
+  "darkColor": "#fa999a",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Commands",
+            "pages": [
+              "commands/copy",
+              "commands/archive",
+              "commands/info",
+              "commands/address",
+              "commands/settings"
+            ]
+          },
+          {
+            "group": "Reverse Geocoding",
+            "pages": [
+              "reverse-geocoding/overview",
+              "reverse-geocoding/providers",
+              "reverse-geocoding/api-keys",
+              "reverse-geocoding/building-address"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/settings",
+              "configuration/supported-formats",
+              "configuration/companion-files"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/arguments",
+              "reference/exit-codes",
+              "reference/changelog"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Examples",
+        "groups": [
+          {
+            "group": "Usage Examples",
+            "pages": [
+              "examples/overview",
+              "examples/sequential-numbering",
+              "examples/group-by-date",
+              "examples/folder-date-range",
+              "examples/address-date-naming",
+              "examples/group-by-location"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Organize photos by EXIF taken date into structured folder hierarchies",
+    "Reverse geocode GPS coordinates to build address-based file and folder names",
+    "Copy command with flexible naming and folder strategies",
+    "Archive command with SHA1 deduplication and local SQLite indexing",
+    "Info command to export photo metadata to CSV for use in Google Maps/Earth",
+    "Support for multiple reverse geocode providers (OpenStreetMap, Google Maps, BigDataCloud, LocationIq)",
+    "Dry-run mode to preview operations without writing files",
+    "File integrity verification via SHA1 hash comparison",
+    "Companion file support (e.g. iPhone Live Photo MOV files)",
+    "Cross-platform: macOS, Windows, Linux (x64, Arm64, x86)"
+  ],
+  "publicApiSurface": [
+    "photo-cli copy",
+    "photo-cli archive",
+    "photo-cli info",
+    "photo-cli address",
+    "photo-cli settings",
+    "--naming-style (-s)",
+    "--process-type (-f)",
+    "--folder-append (-a)",
+    "--folder-append-location (-p)",
+    "--group-by (-g)",
+    "--number-style (-n)",
+    "--reverse-geocode (-e)",
+    "--no-taken-date (-t)",
+    "--no-coordinate (-c)",
+    "--dry-run (-d)",
+    "--verify (-v)",
+    "--input (-i)",
+    "--output (-o)"
+  ]
+}

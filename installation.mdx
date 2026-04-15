@@ -1,0 +1,159 @@
+---
+title: "How to Install photo-cli on macOS, Windows, and Linux"
+description: "Step-by-step instructions to install photo-cli via Homebrew on macOS or as a .NET global tool on Windows and Linux, including PATH troubleshooting."
+sidebarTitle: "Installation"
+---
+
+photo-cli runs on macOS, Windows, and Linux across arm64, x64, and x86 architectures. You can install it through Homebrew on macOS or as a .NET global tool on any platform. Choose the method that fits your operating system below.
+
+## Prerequisites
+
+photo-cli requires the **.NET SDK 8 or later**. The `dotnet` command must be available on your PATH before you install photo-cli as a .NET tool.
+
+You can install the .NET SDK in two ways:
+
+- Download directly from [https://dotnet.microsoft.com/en-us/download](https://dotnet.microsoft.com/en-us/download)
+- Install via Homebrew on macOS or Linux:
+
+```bash
+brew install dotnet-sdk --cask
+```
+
+<Note>
+  If you install photo-cli via Homebrew on macOS, the .NET SDK is bundled automatically and you do not need to install it separately.
+</Note>
+
+## Installation
+
+<Tabs>
+  <Tab title="macOS">
+    Homebrew is the recommended installation method on macOS. It handles all dependencies, including the .NET runtime.
+
+    <Steps>
+      <Step title="Add the photo-cli Homebrew tap">
+        Register the photo-cli tap so Homebrew can find the package:
+
+        ```bash
+        brew tap photo-cli/homebrew-photo-cli
+        ```
+
+        The tap is hosted at [https://github.com/photo-cli/homebrew-photo-cli](https://github.com/photo-cli/homebrew-photo-cli).
+      </Step>
+      <Step title="Install photo-cli">
+        Install the package from the tap:
+
+        ```bash
+        brew install photo-cli
+        ```
+
+        You can also run both commands in a single line:
+
+        ```bash
+        brew tap photo-cli/homebrew-photo-cli && brew install photo-cli
+        ```
+      </Step>
+      <Step title="Verify the installation">
+        Confirm that photo-cli is available in your terminal:
+
+        ```bash
+        photo-cli --version
+        ```
+      </Step>
+    </Steps>
+
+    Alternatively, you can install photo-cli as a .NET global tool on macOS. See the **.NET Tool** tab for instructions.
+  </Tab>
+  <Tab title="Windows & Linux">
+    On Windows and Linux, install photo-cli as a .NET global tool (recommended) or download a standalone executable.
+
+    <Steps>
+      <Step title="Install the .NET SDK">
+        Download and install the .NET SDK 8 or later from [https://dotnet.microsoft.com/en-us/download](https://dotnet.microsoft.com/en-us/download). Confirm the installation by running:
+
+        ```bash
+        dotnet --version
+        ```
+      </Step>
+      <Step title="Install photo-cli as a .NET global tool">
+        Run the following command to install photo-cli globally:
+
+        ```bash
+        dotnet tool install photo-cli -g
+        ```
+      </Step>
+      <Step title="Verify the installation">
+        Confirm that photo-cli is available in your terminal:
+
+        ```bash
+        photo-cli --version
+        ```
+      </Step>
+    </Steps>
+
+    If you prefer a standalone executable, download it from the assets section on [https://www.nuget.org/packages/photo-cli/](https://www.nuget.org/packages/photo-cli/).
+  </Tab>
+  <Tab title=".NET Tool (all platforms)">
+    You can install photo-cli as a .NET global tool on any platform where the .NET SDK is available.
+
+    <Steps>
+      <Step title="Install the .NET SDK">
+        Download and install the .NET SDK 8 or later from [https://dotnet.microsoft.com/en-us/download](https://dotnet.microsoft.com/en-us/download). Confirm the installation:
+
+        ```bash
+        dotnet --version
+        ```
+      </Step>
+      <Step title="Install photo-cli globally">
+        Install the tool from NuGet:
+
+        ```bash
+        dotnet tool install photo-cli -g
+        ```
+
+        The package is available at [https://www.nuget.org/packages/photo-cli/](https://www.nuget.org/packages/photo-cli/).
+      </Step>
+      <Step title="Verify the installation">
+        ```bash
+        photo-cli --version
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Accessing the application
+
+After installing photo-cli globally, the `photo-cli` command is available in any terminal session:
+
+```bash
+photo-cli [command]
+photo-cli help [command]
+```
+
+## Troubleshooting
+
+### Command not found
+
+If your terminal reports `photo-cli: command not found` after installation, the `.dotnet/tools` directory is not on your PATH. Add it manually using the steps below for your shell.
+
+**macOS (zsh)**
+
+Add the following line to your `~/.zshenv` file:
+
+```bash
+export PATH="$PATH:/Users/[your-account-name]/.dotnet/tools"
+```
+
+**Linux (bash)**
+
+Add the following line to your `~/.profile` file:
+
+```bash
+export PATH="$PATH:/home/[your-account-name]/.dotnet/tools"
+```
+
+Replace `[your-account-name]` with your actual system username, then open a new terminal session for the change to take effect.
+
+<Tip>
+  The exact path to `.dotnet/tools` may differ depending on how you installed the .NET SDK. Check your installation directory if the paths above do not work.
+</Tip>

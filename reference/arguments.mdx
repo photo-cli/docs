@@ -1,0 +1,271 @@
+---
+title: "Complete photo-cli Command-Line Arguments Reference"
+sidebarTitle: "Arguments"
+description: "Complete reference for every command-line argument accepted by photo-cli, including short flags, long flags, applicable commands, and accepted values."
+---
+
+This page is a complete reference for all command-line arguments accepted by photo-cli. Each entry lists the short flag, the long flag, which commands accept it, and the full set of accepted values. Arguments marked **REQUIRED** must be supplied for the command to run; all others are optional.
+
+<AccordionGroup>
+
+  <Accordion title="Input & output">
+
+    **`-i` / `--input`**
+
+    Applies to: `copy`, `archive`, `info` (optional); `address` (required)
+
+    File system path to read photos from. If you omit this argument for `copy`, `archive`, and `info`, photo-cli uses the current working directory. The source path is never modified.
+
+    ---
+
+    **`-o` / `--output`**
+
+    Applies to: `copy`, `archive`, `info` (required for all three)
+
+    File system path to write output. For `copy` and `archive`, photo-cli creates a new organized folder hierarchy at this location with renamed files. For `info`, this is the path where the CSV report is written. The folder is created automatically if it does not exist.
+
+  </Accordion>
+
+  <Accordion title="Folder organization (copy only)">
+
+    **`-f` / `--process-type`** — REQUIRED for `copy`
+
+    Controls whether photo-cli uses the original folder hierarchy or flattens photos into a single grouped folder.
+
+    | Value | Name |
+    |-------|------|
+    | `1` | `Single` |
+    | `2` | `SubFoldersPreserveFolderHierarchy` |
+    | `3` | `FlattenAllSubFolders` |
+
+    ---
+
+    **`-g` / `--group-by`**
+
+    Applies to: `copy` (cannot be combined with `SubFoldersPreserveFolderHierarchy`)
+
+    Groups photos into subfolders by their EXIF data.
+
+    | Value | Name |
+    |-------|------|
+    | `1` | `YearMonthDay` |
+    | `2` | `YearMonth` |
+    | `3` | `Year` |
+    | `4` | `Address` |
+    | `5` | `AddressFlat` |
+    | `6` | `AddressHierarchy` |
+
+    ---
+
+    **`-a` / `--folder-append`**
+
+    Applies to: `copy` with `SubFoldersPreserveFolderHierarchy`. Must be combined with `--folder-append-location`.
+
+    Appends a date or address token to the original folder name.
+
+    | Value | Name |
+    |-------|------|
+    | `1` | `FirstYearMonthDay` |
+    | `2` | `FirstYearMonth` |
+    | `3` | `FirstYear` |
+    | `4` | `DayRange` |
+    | `5` | `MatchingMinimumAddress` |
+
+    ---
+
+    **`-p` / `--folder-append-location`**
+
+    Applies to: `copy`. Required when `--folder-append` is used.
+
+    Controls whether the appended token appears before or after the original folder name.
+
+    | Value | Name |
+    |-------|------|
+    | `1` | `Prefix` |
+    | `2` | `Suffix` |
+
+  </Accordion>
+
+  <Accordion title="File naming (copy only)">
+
+    **`-s` / `--naming-style`** — REQUIRED for `copy`
+
+    The naming strategy applied to each copied photo file.
+
+    | Value | Name |
+    |-------|------|
+    | `1` | `Numeric` |
+    | `2` | `Day` |
+    | `3` | `DateTimeWithMinutes` |
+    | `4` | `DateTimeWithSeconds` |
+    | `5` | `Address` |
+    | `6` | `DayAddress` |
+    | `7` | `DateTimeWithMinutesAddress` |
+    | `8` | `DateTimeWithSecondsAddress` |
+    | `9` | `AddressDay` |
+    | `10` | `AddressDateTimeWithMinutes` |
+    | `11` | `AddressDateTimeWithSeconds` |
+
+    ---
+
+    **`-n` / `--number-style`** — REQUIRED for `copy`
+
+    The numbering strategy used for the `Numeric` naming style and for disambiguating photos that would otherwise share the same output name.
+
+    | Value | Name |
+    |-------|------|
+    | `1` | `AllNamesAreSameLength` |
+    | `2` | `PaddingZeroCharacter` |
+    | `3` | `OnlySequentialNumbers` |
+
+  </Accordion>
+
+  <Accordion title="Missing data handling">
+
+    **`-t` / `--no-taken-date`**
+
+    Action to take when a photo has no EXIF taken date. Default is `Continue` (`0`).
+
+    For `copy`:
+
+    | Value | Name |
+    |-------|------|
+    | `0` | `Continue` (default) |
+    | `1` | `PreventProcess` |
+    | `2` | `DontCopyToOutput` |
+    | `3` | `InSubFolder` |
+    | `4` | `AppendToEndOrderByFileName` |
+    | `5` | `InsertToBeginningOrderByFileName` |
+
+    For `archive` and `info`:
+
+    | Value | Name |
+    |-------|------|
+    | `0` | `Continue` (default) |
+    | `1` | `PreventProcess` |
+
+    ---
+
+    **`-c` / `--no-coordinate`**
+
+    Action to take when a photo has no GPS coordinates. Default is `Continue` (`0`).
+
+    For `copy`:
+
+    | Value | Name |
+    |-------|------|
+    | `0` | `Continue` |
+    | `1` | `PreventProcess` |
+    | `2` | `DontCopyToOutput` |
+    | `3` | `InSubFolder` |
+
+    For `archive` and `info`:
+
+    | Value | Name |
+    |-------|------|
+    | `0` | `Continue` |
+    | `1` | `PreventProcess` |
+
+  </Accordion>
+
+  <Accordion title="Reverse geocoding">
+
+    **`-e` / `--reverse-geocode`**
+
+    Applies to: `copy`, `archive`, `info` (optional); `address` (required)
+
+    The third-party provider to use for resolving GPS coordinates into human-readable addresses.
+
+    | Value | Name |
+    |-------|------|
+    | `0` | `Disabled` |
+    | `1` | `BigDataCloud` |
+    | `2` | `OpenStreetMapFoundation` |
+    | `3` | `GoogleMaps` |
+    | `5` | `LocationIq` |
+
+    ---
+
+    **`-b` / `--bigdatacloud-key`**
+
+    API key for BigDataCloud. Alternatively, set the environment variable `PHOTO_CLI_BIG_DATA_CLOUD_API_KEY`.
+
+    ---
+
+    **`-u` / `--bigdatacloud-levels`**
+
+    Required when `BigDataCloud` is the selected provider. Space-separated integer admin level values that determine which address components to include. Run `photo-cli address` against a photo to see the full response and identify the levels you need.
+
+    ---
+
+    **`-k` / `--googlemaps-key`**
+
+    API key for Google Maps. Alternatively, set the environment variable `PHOTO_CLI_GOOGLE_MAPS_API_KEY`.
+
+    ---
+
+    **`-m` / `--googlemaps-types`**
+
+    Required when `GoogleMaps` is the selected provider. Space-separated Google Maps address type names. Run `photo-cli address` against a photo to see the full response.
+
+    ---
+
+    **`-r` / `--openstreetmap-properties`**
+
+    Required when `OpenStreetMapFoundation` or `LocationIq` is the selected provider. Space-separated OpenStreetMap property names. Run `photo-cli address` against a photo to see the full response.
+
+    ---
+
+    **`-q` / `--locationiq-key`**
+
+    API key for LocationIq. Alternatively, set the environment variable `PHOTO_CLI_LOCATIONIQ_API_KEY`.
+
+    ---
+
+    **`-h` / `--has-paid-license`**
+
+    Pass this flag to bypass the free-tier rate limit when you have a paid LocationIq license. No additional value is needed.
+
+  </Accordion>
+
+  <Accordion title="Utilities">
+
+    **`-d` / `--dry-run`**
+
+    Applies to: `copy`, `archive`
+
+    Simulates the full process without writing any files to the output folder. The CSV report is still generated so you can review what would happen. No additional value is needed.
+
+    ---
+
+    **`-v` / `--verify`**
+
+    Applies to: `copy`
+
+    After copying, verifies that each photo was transferred without corruption by comparing file hashes between source and destination. No additional value is needed.
+
+    ---
+
+    **`-a` / `--all-folders`**
+
+    Applies to: `info`
+
+    Scans all subfolders recursively instead of only the top-level input folder.
+
+  </Accordion>
+
+  <Accordion title="address command">
+
+    **`-t` / `--type`** — REQUIRED for `address`
+
+    Controls how much of the reverse geocode response is returned.
+
+    | Value | Name |
+    |-------|------|
+    | `0` | `AllAvailableProperties` |
+    | `1` | `SelectedProperties` |
+    | `2` | `FullResponse` |
+
+  </Accordion>
+
+</AccordionGroup>

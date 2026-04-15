@@ -1,0 +1,85 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "almond",
+  "name": "photo-cli",
+  "favicon": "https://media.brand.dev/1014999b-5c86-4f55-af82-53bc506a7edd.svg",
+  "colors": {
+    "primary": "#f65656",
+    "light": "#fa999a",
+    "dark": "#7c241c"
+  },
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/photo-cli/photo-cli"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Commands",
+            "pages": [
+              "commands/copy",
+              "commands/archive",
+              "commands/info",
+              "commands/address",
+              "commands/settings"
+            ]
+          },
+          {
+            "group": "Reverse Geocoding",
+            "pages": [
+              "reverse-geocoding/overview",
+              "reverse-geocoding/providers",
+              "reverse-geocoding/api-keys",
+              "reverse-geocoding/building-address"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/settings",
+              "configuration/supported-formats",
+              "configuration/companion-files"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/arguments",
+              "reference/exit-codes",
+              "reference/changelog"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Examples",
+        "groups": [
+          {
+            "group": "Usage Examples",
+            "pages": [
+              "examples/overview",
+              "examples/sequential-numbering",
+              "examples/group-by-date",
+              "examples/folder-date-range",
+              "examples/address-date-naming",
+              "examples/group-by-location"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,73 @@
+---
+title: "photo-cli: Organize Your Photos by Date and Location"
+description: "Learn how photo-cli uses EXIF metadata and GPS reverse geocoding to automatically rename and sort your photos into a clean, meaningful folder structure."
+sidebarTitle: "Introduction"
+---
+
+photo-cli is a cross-platform command-line tool that organizes your photos using the information already embedded in each file. This page explains what photo-cli does, how it extracts and uses EXIF data, and what features are available across macOS, Windows, and Linux.
+
+## What photo-cli does
+
+Every photo taken by a modern camera or smartphone stores metadata directly in the image file using the [Exchangeable image file format (EXIF)](https://en.wikipedia.org/wiki/Exif). photo-cli reads that metadata and uses it to copy your photos into a new, organized folder hierarchy — leaving your original files untouched.
+
+photo-cli extracts two key pieces of information from each photo:
+
+- **When** — the exact date and time the photo was taken, recorded automatically by your camera or phone
+- **Where** — the GPS coordinates embedded in the file, which photo-cli resolves to a human-readable address (country, city, town, neighbourhood, street) using a reverse geocode provider
+
+The result is a folder of photos with structured, meaningful names like `2024.03.15_14.22.01-France-Paris.jpg` instead of `IMG_4823.jpg`.
+
+## How it works
+
+photo-cli follows a straightforward pipeline for every command you run:
+
+1. **Scan** — gather all photo paths in the source folder, including subfolders
+2. **Extract** — read EXIF data from each file to get the taken date and GPS coordinates
+3. **Reverse geocode** — send each coordinate to your chosen provider to retrieve a human-readable address
+4. **Copy** — write photos to the output folder using the naming and folder strategy you selected
+5. **Report** — generate a CSV file with all extracted metadata so you can verify results or import into Google Maps and Google Earth
+
+Your source folder is never modified. photo-cli always writes to a separate output folder.
+
+## Key features
+
+<CardGroup cols={2}>
+  <Card title="Organize by date" icon="calendar">
+    Use the photo's taken date to build folder names and file names, down to the second.
+  </Card>
+  <Card title="Organize by location" icon="location-dot">
+    Resolve GPS coordinates to real place names — country, city, town, suburb — using a reverse geocode provider.
+  </Card>
+  <Card title="Multiple naming strategies" icon="list">
+    Choose from a range of file and folder naming styles to match how you want your library structured.
+  </Card>
+  <Card title="Archive with deduplication" icon="box-archive">
+    Archive photos incrementally into a date-based hierarchy, automatically skipping exact duplicates using SHA1 file hashes.
+  </Card>
+  <Card title="CSV export for Google Maps and Earth" icon="file-csv">
+    Export all extracted metadata to a CSV file you can import directly into Google Maps or Google Earth to visualize photo locations.
+  </Card>
+  <Card title="Cross-platform" icon="display">
+    Runs on macOS, Windows, and Linux across arm64, x64, and x86 architectures with no platform-specific setup.
+  </Card>
+  <Card title="No vendor lock-in" icon="lock-open">
+    Run photo-cli once. After processing, your photos are plain files in your file system — viewable by any application, now and in the future.
+  </Card>
+  <Card title="Dry-run mode" icon="eye">
+    Preview what photo-cli would do before committing to any file operations, so you can verify your configuration first.
+  </Card>
+</CardGroup>
+
+## Supported platforms
+
+photo-cli runs on all major operating systems and processor architectures:
+
+| Platform | Architectures |
+| -------- | ------------- |
+| macOS    | arm64, x64    |
+| Windows  | arm64, x64, x86 |
+| Linux    | arm64, x64, x86 |
+
+<Note>
+  photo-cli is a command-line tool with no graphical interface. Basic familiarity with running commands in a terminal is required.
+</Note>

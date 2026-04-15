@@ -1,0 +1,51 @@
+---
+title: "photo-cli Process Exit Codes and Error Explanations"
+sidebarTitle: "Exit Codes"
+description: "Every numeric exit code photo-cli can return, what each one means, and how to check them in shell scripts and CI pipelines to handle errors."
+---
+
+photo-cli returns a specific numeric exit code when it finishes. A code of `0` means the command completed successfully. Any other value indicates that something went wrong. You can check these codes in shell scripts, CI pipelines, or any automation that calls photo-cli, so you can detect and handle errors programmatically.
+
+## Exit codes
+
+| Code | Name | When it occurs |
+|------|------|----------------|
+| `0` | `Success` | Command completed successfully |
+| `1` | `ParseArgsFailed` | Invalid or missing command-line arguments |
+| `2` | `AppSettingsInvalidFile` | The settings file is corrupt or cannot be read |
+| `10` | `ApiKeyStoreValidationFailed` | API key validation failed |
+| `11` | `AddressOptionsValidationFailed` | Invalid options passed to the `address` command |
+| `12` | `InfoOptionsValidationFailed` | Invalid options passed to the `info` command |
+| `13` | `CopyOptionsValidationFailed` | Invalid options passed to the `copy` command |
+| `14` | `SettingsOptionsValidationFailed` | Invalid options passed to the `settings` command |
+| `15` | `ArchiveOptionsValidationFailed` | Invalid options passed to the `archive` command |
+| `20` | `InputFolderNotExists` | The path given with `--input` does not exist |
+| `21` | `NoPhotoFoundOnDirectory` | No supported photo files were found in the input folder |
+| `22` | `OutputFolderIsNotEmpty` | The `--output` folder already exists and is not empty |
+| `23` | `OutputPathIsExists` | The output path already exists as a file |
+| `24` | `OutputPathDontHaveWriteFilePermission` | photo-cli does not have write permission at the output path |
+| `25` | `OutputPathDontHaveCreateDirectoryPermission` | photo-cli cannot create directories at the output path |
+| `26` | `InputFileNotExists` | The file given with `--input` does not exist (used by the `address` command) |
+| `30` | `PhotosWithNoDatePreventedProcess` | `--no-taken-date` was set to `PreventProcess` and at least one photo has no EXIF date |
+| `31` | `PhotosWithNoCoordinatePreventedProcess` | `--no-coordinate` was set to `PreventProcess` and at least one photo has no GPS coordinates |
+| `32` | `PhotosWithNoCoordinateAndNoDatePreventedProcess` | Both date and coordinate are missing and `PreventProcess` is in effect |
+| `40` | `PropertyNotFound` | The settings key passed with `--key` does not exist |
+| `41` | `InvalidSettingsValue` | The value passed to the `settings` command is not valid for the given key |
+
+## Using exit codes in shell scripts
+
+Check `$?` immediately after a photo-cli command to detect failure and take appropriate action:
+
+```bash
+photo-cli copy \
+  --output out \
+  --process-type Single \
+  --naming-style DateTimeWithSeconds \
+  --number-style PaddingZeroCharacter \
+  --no-taken-date Continue \
+  --no-coordinate Continue
+
+if [ $? -ne 0 ]; then
+  echo "photo-cli failed"
+fi
+```

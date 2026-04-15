@@ -1,0 +1,64 @@
+---
+title: "photo-cli: Organize Photos by Date and GPS Location"
+description: "photo-cli reads EXIF date and GPS data from your photos and copies them into structured folders with meaningful names. Runs on macOS, Windows, and Linux."
+---
+
+photo-cli reads the EXIF metadata embedded in your photos — the taken date and GPS coordinates — and copies them into a clean, organized folder hierarchy with meaningful file names. You run it once from your terminal, and your photos are sorted. No accounts, no subscriptions, no vendor lock-in.
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/installation">
+    Install photo-cli on macOS, Windows, or Linux in under a minute.
+  </Card>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Run your first photo-cli command and see results immediately.
+  </Card>
+  <Card title="Commands" icon="terminal" href="/commands/copy">
+    Explore all commands: copy, archive, info, address, and settings.
+  </Card>
+  <Card title="Examples" icon="images" href="/examples/overview">
+    See real before-and-after examples for common organization strategies.
+  </Card>
+</CardGroup>
+
+## What photo-cli does
+
+photo-cli extracts two pieces of information from each photo:
+
+- **When** — the taken date stored in EXIF metadata by your camera or phone
+- **Where** — the GPS coordinates, resolved to a human-readable address using a reverse geocode provider of your choice
+
+It uses these to copy your photos into a new folder with structured names like `2024.03.15_14.22.01-France-Paris.jpg`, leaving your originals untouched.
+
+## Core commands
+
+<CardGroup cols={2}>
+  <Card title="photo-cli copy" icon="copy" href="/commands/copy">
+    Copy photos into a new organized folder with custom naming and folder strategies.
+  </Card>
+  <Card title="photo-cli archive" icon="box-archive" href="/commands/archive">
+    Archive photos with SHA1-based deduplication and index into a local SQLite database.
+  </Card>
+  <Card title="photo-cli info" icon="circle-info" href="/commands/info">
+    Export photo metadata (date, coordinates, address) to a CSV file.
+  </Card>
+  <Card title="photo-cli address" icon="location-dot" href="/commands/address">
+    Preview the reverse geocode response for a single photo.
+  </Card>
+</CardGroup>
+
+## Get started
+
+<Steps>
+  <Step title="Install photo-cli">
+    Install via Homebrew on macOS or as a .NET global tool on any platform. See [Installation](/installation).
+  </Step>
+  <Step title="Run your first command">
+    Point photo-cli at a folder of photos and choose a naming strategy. See [Quick Start](/quickstart).
+  </Step>
+  <Step title="Add location names (optional)">
+    Configure a reverse geocode provider to include place names in your file and folder names. See [Reverse Geocoding](/reverse-geocoding/overview).
+  </Step>
+  <Step title="Explore examples">
+    Browse real before-and-after examples for popular organization strategies. See [Examples](/examples/overview).
+  </Step>
+</Steps>

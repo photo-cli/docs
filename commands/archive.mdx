@@ -1,0 +1,204 @@
+---
+sidebarTitle: "archive"
+title: "photo-cli archive — Deduplicate and Archive Photos"
+description: "Archive photos into a year/month/day folder structure with SHA1 deduplication and index all metadata into a local SQLite database."
+---
+
+`photo-cli archive` copies photos into a fixed `/year/month/day/` folder hierarchy, embeds a SHA1 hash in every file name to detect duplicates, and records all metadata — date taken, GPS coordinates, and reverse geocode address — into a `photo-cli.sqlite3` database in the output folder root. Running the command again on new photos adds only the files that are not already present; duplicates are skipped automatically.
+
+## Synopsis
+
+```bash
+photo-cli archive [options]
+```
+
+## How archive differs from copy
+
+Unlike `photo-cli copy`, the archive command uses a fixed output structure and naming scheme that you cannot override:
+
+- **Folder structure:** always `/year/month/day/` — for example, `2008/10/22/`.
+- **File names:** always `yyyy.MM.dd_HH.mm.ss-{sha1hash}.ext` — for example, `2008.10.22_16.28.39-5d66eec547469a1817bda4abe35c801359b2bb55.jpg`.
+- **Deduplication:** two files with the same SHA1 hash are treated as the same photo. The second one is skipped and a warning is printed to the console.
+- **SQLite index:** every archived photo is recorded in `photo-cli.sqlite3`, including all EXIF and geocode fields, so you can query your archive with standard SQL tools.
+
+<Note>
+Because duplicates are detected by file hash rather than file name, you can safely run `photo-cli archive` repeatedly as you import new photos. Only genuinely new files will be added to the output folder and the SQLite database.
+</Note>
+
+## Arguments
+
+### Required
+
+<ParamField query="--output, -o" type="string" required>
+  File system path to the archive folder. Created automatically if it does not exist. All year/month/day subfolders and the `photo-cli.sqlite3` database will be placed here.
+</ParamField>
+
+### Optional
+
+<ParamField query="--input, -i" type="string">
+  File system path to read photos from. Defaults to the current working directory. No files in this path are ever modified.
+</ParamField>
+
+<ParamField query="--dry-run, -d" type="boolean">
+  Simulate the archive process without writing any files to disk. No extra value required — pass the flag alone.
+</ParamField>
+
+<ParamField query="--no-taken-date, -t" type="enum">
+  Action to take when a photo has no EXIF date taken. Photos without a date are placed in a `no-photo-taken-date` folder named with only the SHA1 hash when `Continue` is selected.
+
+  | Name | Value |
+  | --- | --- |
+  | Continue (default) | 0 |
+  | PreventProcess | 1 |
+</ParamField>
+
+<ParamField query="--no-coordinate, -c" type="enum">
+  Action to take when a photo has no GPS coordinate.
+
+  | Name | Value |
+  | --- | --- |
+  | Continue (default) | 0 |
+  | PreventProcess | 1 |
+</ParamField>
+
+<ParamField query="--invalid-format, -x" type="enum">
+  Action to take when a file cannot be parsed as a valid photo format.
+
+  | Name | Value |
+  | --- | --- |
+  | Continue (default) | 0 |
+  | PreventProcess | 1 |
+</ParamField>
+
+<ParamField query="--reverse-geocode, -e" type="enum">
+  Third-party provider used to resolve GPS coordinates into a human-readable address. See [reverse geocoding overview](/reverse-geocoding/overview) for provider setup and API key details.
+
+  | Name | Value |
+  | --- | --- |
+  | Disabled (default) | 0 |
+  | BigDataCloud | 1 |
+  | OpenStreetMapFoundation | 2 |
+  | GoogleMaps | 3 |
+  | LocationIq | 5 |
+</ParamField>
+
+<ParamField query="--openstreetmap-properties, -r" type="string">
+  Space-separated OpenStreetMap address property names used to build the address string. Required when `--reverse-geocode` is `OpenStreetMapFoundation` or `LocationIq`.
+</ParamField>
+
+<ParamField query="--bigdatacloud-levels, -u" type="string">
+  Space-separated BigDataCloud admin level numbers. Required when `--reverse-geocode` is `BigDataCloud`.
+</ParamField>
+
+<ParamField query="--bigdatacloud-key, -b" type="string">
+  API key for BigDataCloud. Also configurable via the `PHOTO_CLI_BIG_DATA_CLOUD_API_KEY` environment variable or the `BigDataCloudApiKey` setting.
+</ParamField>
+
+<ParamField query="--googlemaps-types, -m" type="string">
+  Space-separated Google Maps address component types. Required when `--reverse-geocode` is `GoogleMaps`.
+</ParamField>
+
+<ParamField query="--googlemaps-key, -k" type="string">
+  API key for Google Maps. Also configurable via the `PHOTO_CLI_GOOGLE_MAPS_API_KEY` environment variable or the `GoogleMapsApiKey` setting.
+</ParamField>
+
+<ParamField query="--locationiq-key, -q" type="string">
+  API key for LocationIq. Also configurable via the `PHOTO_CLI_LOCATIONIQ_API_KEY` environment variable or the `LocationIqApiKey` setting.
+</ParamField>
+
+<ParamField query="--has-paid-license, -h" type="boolean">
+  Bypass the free-tier rate limit when using LocationIq with a paid license.
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash Long form
+photo-cli archive \
+  --output archive-folder \
+  --reverse-geocode OpenStreetMapFoundation \
+  --openstreetmap-properties country city town suburb
+```
+
+```bash Short form
+photo-cli archive -o archive-folder -e 2 -r country city town suburb
+```
+
+</CodeGroup>
+
+### Console output
+
+```text
+Searching photos: finished. 17 photo(s) found.
+warn: No coordinate found on `Gps` directory for .../Spain Journey/IMG_5397.jpg
+warn: No coordinate found on `Gps` directory for .../Italy album/IMG_2371.jpg
+Parsing photo exif information: finished.
+This OpenStreetMapFoundation provider is using rate limit of 1 second(s) between each request
+Reverse Geocoding: finished.
+Directory grouping: finished.
+warn: Photo is skipped due to same photo has already been archived.
+      Same photo paths: .../Italy album/DSC_1770.JPG, .../Italy album/DSC_1770_(same).jpg
+Processing target folder: finished.
+Verified all photo files copied successfully by comparing file hashes from original photo files.
+- 16 photo(s) existed on the output.
+- 1 photo(s) are skipped, they have the same photo.
+- 15 photo(s) has taken date and coordinate.
+- 1 photo(s) has taken date but no coordinate.
+- 1 photo(s) has no taken date and coordinate.
+```
+
+### Output folder structure
+
+```text
+archive-folder/
+├── 2005/
+│   ├── 08/
+│   │   └── 13/
+│   │       └── 2005.08.13_09.47.23-5842c73cfdc5f347551bb6016e00c71bb1393169.jpg
+│   └── 12/
+│       └── 14/
+│           └── 2005.12.14_14.39.47-03cb14d5c68beed97cbe73164de9771d537fcd96.jpg
+├── 2008/
+│   ├── 07/
+│   │   └── 16/
+│   │       └── 2008.07.16_11.33.20-90d835861e1aa3c829e3ab28a7f01ec3a090f664.jpg
+│   └── 10/
+│       └── 22/
+│           ├── 2008.10.22_16.28.39-5d66eec547469a1817bda4abe35c801359b2bb55.jpg
+│           └── 2008.10.22_17.00.07-a0ab699f5f99fce8ff49163e87c7590c2c9a66eb.jpg
+├── 2012/
+│   └── 06/
+│       └── 22/
+│           └── 2012.06.22_19.52.31-bb649a18b3e7bb3df3701587a13f833749091817.jpg
+├── 2015/
+│   └── 04/
+│       └── 10/
+│           ├── 2015.04.10_20.12.23-3907fc960f2873f40c8f35643dd444e0468be131.jpg
+│           └── 2015.04.10_20.12.23-9f4e6d352ec172e1059571250655e376769080fe.jpg
+├── no-photo-taken-date/
+│   └── cf756397cc3ca81b2650c8801fd64e172504015a.jpg
+└── photo-cli.sqlite3
+```
+
+## SQLite database
+
+`photo-cli.sqlite3` is created in the output folder root and updated on every run. Each row represents one archived photo. You can query it with any SQLite client.
+
+| Column | Description |
+| --- | --- |
+| `Id` | Auto-incremented integer primary key |
+| `Path` | Relative path to the archived file within the output folder |
+| `CreatedAt` | UTC timestamp when this record was inserted |
+| `DateTaken` | EXIF date and time the photo was taken |
+| `ReverseGeocodeFormatted` | Human-readable address string |
+| `Latitude` | GPS latitude |
+| `Longitude` | GPS longitude |
+| `Year` | Year component of the taken date |
+| `Month` | Month component of the taken date |
+| `Day` | Day component of the taken date |
+| `Hour` | Hour component of the taken date |
+| `Minute` | Minute component of the taken date |
+| `Seconds` | Seconds component of the taken date |
+| `Address1`–`Address8` | Individual address components from the reverse geocode provider |
+| `Sha1Hash` | SHA1 hash of the file, used for deduplication |

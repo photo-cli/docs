@@ -1,0 +1,120 @@
+---
+sidebarTitle: "Group by Location"
+title: "Group Photos Into Country, City, and Town Subfolders"
+description: "Use photo-cli copy to organize photos into a country/city/town folder hierarchy from GPS coordinates and name each file with the taken date and address."
+---
+
+This example groups photos into a country/city/town folder hierarchy based on their GPS coordinates, and names each file with the taken date and address. The original folder structure is discarded entirely; the new structure comes from the locations embedded in the photo EXIF data.
+
+## Command
+
+<CodeGroup>
+```bash Long form
+photo-cli copy \
+  --process-type FlattenAllSubFolders \
+  --group-by AddressHierarchy \
+  --naming-style DayAddress \
+  --reverse-geocode OpenStreetMapFoundation \
+  --openstreetmap-properties country city town suburb \
+  --number-style OnlySequentialNumbers \
+  --no-taken-date AppendToEndOrderByFileName \
+  --no-coordinate InSubFolder \
+  --input photos \
+  --output organized-albums
+```
+
+```bash Short form
+photo-cli copy -f 3 -g 4 -s 6 -e 2 -r country city town suburb -n 3 -t 4 -c 3 -i photos -o organized-albums
+```
+</CodeGroup>
+
+## Key arguments
+
+| Argument | Value | What it does |
+|---|---|---|
+| `--process-type` | `FlattenAllSubFolders` | Ignores the original folder hierarchy and pools all photos together before grouping. |
+| `--group-by` | `AddressHierarchy` | Creates nested output folders from the address components: `[country]/[city]/[town]`. |
+| `--naming-style` | `DayAddress` | Names each file as `{yyyy.MM.dd}-{address}.ext`, with the date followed by the address. |
+| `--reverse-geocode` | `OpenStreetMapFoundation` | Uses the OpenStreetMap Nominatim API to resolve GPS coordinates into address fields. |
+| `--openstreetmap-properties` | `country city town suburb` | Selects which address fields to use when building folder names and file names. |
+| `--number-style` | `OnlySequentialNumbers` | Appends `-1`, `-2`, etc. to disambiguate files that would otherwise share the same name. |
+| `--no-taken-date` | `AppendToEndOrderByFileName` | Photos with no taken date are appended at the end of their folder, ordered by original file name. |
+| `--no-coordinate` | `InSubFolder` | Photos with no GPS coordinate are placed in a `no-address` subfolder at the root of the output. |
+
+## Before and after
+
+**Before** (`photos/`):
+
+```text
+├── DSC_5727.jpg
+├── GOPR6742.jpg
+├── Italy album
+│   ├── DJI_01732.jpg
+│   ├── DJI_01733.jpg
+│   ├── DSC00001.JPG
+│   ├── DSC03467.jpg
+│   ├── DSC_1769.JPG
+│   ├── DSC_1770.JPG
+│   ├── DSC_1770_(same).jpg
+│   ├── DSC_1771.JPG
+│   ├── GOPR7496.jpg
+│   ├── GOPR7497.jpg
+│   ├── IMG_0747.JPG
+│   └── IMG_2371.jpg
+└── Spain Journey
+    ├── DSC_1807.jpg
+    ├── DSC_1808.jpg
+    └── IMG_5397.jpg
+
+2 directories, 17 files
+```
+
+**After** (`organized-albums/`):
+
+```text
+├── España
+│   └── Madrid
+│       ├── 2015.04.10-España-Madrid-1.jpg
+│       └── 2015.04.10-España-Madrid-2.jpg
+├── Italia
+│   ├── Arezzo
+│   │   ├── 2008.10.22-Italia-Arezzo-1.jpg
+│   │   ├── 2008.10.22-Italia-Arezzo-2.jpg
+│   │   ├── 2008.10.22-Italia-Arezzo-3.jpg
+│   │   ├── 2008.10.22-Italia-Arezzo-4.jpg
+│   │   ├── 2008.10.22-Italia-Arezzo-5.jpg
+│   │   ├── 2008.10.22-Italia-Arezzo-6.jpg
+│   │   ├── 2008.10.22-Italia-Arezzo-7.jpg
+│   │   ├── 2008.10.22-Italia-Arezzo-8.jpg
+│   │   ├── 2008.10.22-Italia-Arezzo-9.jpg
+│   │   └── 2008.10.22-Italia-Arezzo-10.jpg
+│   └── Firenze
+│       └── Quartiere 1
+│           └── 2005.12.14-Italia-Firenze-Quartiere 1.jpg
+├── Kenya
+│   └── 2005.08.13-Kenya.jpg
+├── no-address
+│   ├── IMG_2371.jpg
+│   └── IMG_5397.jpg
+├── photo-cli-report.csv
+└── United Kingdom
+    └── Ascot
+        └── Sunninghill and Ascot
+            └── 2012.06.22-United Kingdom-Ascot-Sunninghill and Ascot.jpg
+
+11 directories, 18 files
+```
+
+## What you see in the output
+
+Photos are organized by location, not by their original album names. All ten Arezzo photos from the Italy album land in `Italia/Arezzo/`, named `2008.10.22-Italia-Arezzo-1.jpg` through `2008.10.22-Italia-Arezzo-10.jpg`. The one Florence photo goes into `Italia/Firenze/Quartiere 1/`. The two Madrid photos from Spain Journey land in `España/Madrid/`.
+
+The folder depth matches the number of distinct address levels returned by OpenStreetMap for each location. A single photo taken in Kenya resolves to only a country, so its folder is `Kenya/` with no city or town sub-level.
+
+<Note>
+Two photos land in `no-address/`: `Italy album/IMG_2371.jpg` has a taken date but no GPS coordinate, and `Spain Journey/IMG_5397.jpg` has neither a date nor a coordinate. Both are placed in `no-address/` at the root of the output because `--no-coordinate InSubFolder` routes GPS-less photos there. Their original file names are preserved.
+</Note>
+
+<Tip>
+Combine this strategy with `--folder-append DayRange` and `--folder-append-location Suffix` to also show date ranges on each location folder. For example, `Arezzo` would become `Arezzo-2008.10.22-2008.10.22`. This gives you both geographic and temporal context in the folder listing.
+</Tip>

@@ -1,0 +1,186 @@
+---
+title: "Customize Location Address Format in Photo File Names"
+sidebarTitle: "Building Addresses"
+description: "Select address components from your reverse geocode provider and configure the separator to control how location names appear in your file names."
+---
+
+After choosing a provider, you decide which parts of its response appear in your file and folder names, and in what order. Each provider returns a different set of address components — administrative levels, named properties, or typed fields — and you pick a subset that forms the location portion of the name. photo-cli joins your selections with the address separator (default: `-`) to produce strings like `United Kingdom-Ascot-Sunninghill and Ascot`.
+
+## Understanding address components
+
+Every reverse geocode provider returns a response with multiple geographic fields. The fields available depend on the provider and on the location of the photo. Before building your configuration, inspect the raw response for a representative photo to understand what each provider returns for your specific locations.
+
+Run the following command to see all available properties for a photo with your chosen provider:
+
+```bash
+photo-cli address --input your-photo.jpg --reverse-geocode [provider] --type AllAvailableProperties
+```
+
+Once you know the field names or level numbers, pass them as your selection arguments.
+
+## OpenStreetMap Foundation and LocationIq
+
+Both OpenStreetMap Foundation and LocationIq return OpenStreetMap-style named properties. Pass the property names you want — separated by spaces — to `--openstreetmap-properties (-r)`. The order you list them is the order they appear in the address.
+
+Common property names:
+
+| Property | Typical content |
+|---|---|
+| `Country` | Country name |
+| `State` | State or region |
+| `Province` | Province |
+| `County` | County |
+| `City` | City |
+| `Town` | Town |
+| `Village` | Village |
+| `Suburb` | Suburb or neighborhood |
+| `Road` | Street name |
+| `Postcode` | Postal code |
+| `CountryCode` | Two-letter country code |
+
+Example — inspect the full response for a photo:
+
+```bash
+photo-cli address --input DSC_7082.jpg --reverse-geocode OpenStreetMapFoundation
+```
+
+Sample output for a photo taken in Ankara, Turkey:
+
+```
+CountryCode: tr
+Country: Türkiye
+Region: İç Anadolu Bölgesi
+Province: Ankara
+City: Ankara
+Town: Çankaya
+Postcode: 06430
+Suburb: Yücetepe Mahallesi
+Road: İlk Sokak
+Military: Anıtkabir
+```
+
+Select specific properties and verify the result:
+
+```bash
+photo-cli address \
+  --input DSC_7082.jpg \
+  --reverse-geocode OpenStreetMapFoundation \
+  --type SelectedProperties \
+  --openstreetmap-properties CountryCode Postcode Suburb
+```
+
+Output:
+
+```
+tr-06430-Yücetepe Mahallesi
+```
+
+## BigDataCloud
+
+BigDataCloud represents its address hierarchy as numbered administrative levels. Pass the level integers you want to `--bigdatacloud-levels (-u)`, separated by spaces.
+
+Example — inspect the full response:
+
+```bash
+photo-cli address --input DSC_7082.jpg --reverse-geocode BigDataCloud
+```
+
+Sample output:
+
+```
+AdminLevel2: Turkey
+AdminLevel3: Central Anatolia Region
+AdminLevel4: Ankara Province
+AdminLevel6: Çankaya
+AdminLevel8: Mebusevleri Mahallesi
+```
+
+Select levels 2, 4, and 6 and verify:
+
+```bash
+photo-cli address \
+  --input DSC_7082.jpg \
+  --reverse-geocode BigDataCloud \
+  --type SelectedProperties \
+  --bigdatacloud-levels 2 4 6
+```
+
+Output:
+
+```
+Turkey-Ankara Province-Çankaya
+```
+
+<Note>
+  Admin level numbers vary by country and region. Always run `photo-cli address` on photos from the locations you photograph before finalising your level selection.
+</Note>
+
+## Google Maps
+
+Google Maps returns named address types. Pass the type strings you want to `--googlemaps-types (-m)`, separated by spaces.
+
+Example — inspect the full response:
+
+```bash
+photo-cli address --input DSC_7082.jpg --reverse-geocode GoogleMaps
+```
+
+Sample output:
+
+```
+plus_code: WRGM+2W
+administrative_area_level_2: Çankaya
+administrative_area_level_1: Ankara
+country: Turkey
+route: Anıtkabir
+administrative_area_level_4: Mebusevleri
+postal_code: 06570
+street_number: 108
+```
+
+Select specific types and verify:
+
+```bash
+photo-cli address \
+  --input DSC_7082.jpg \
+  --reverse-geocode GoogleMaps \
+  --type SelectedProperties \
+  --googlemaps-types country administrative_area_level_1 administrative_area_level_2
+```
+
+Output:
+
+```
+Turkey-Ankara-Çankaya
+```
+
+## Full address building example
+
+The following example shows the complete flow from raw coordinates to a final address string using OpenStreetMap Foundation:
+
+- **Coordinate:** 51.4248, -0.6736
+- **Provider response:** `Country: United Kingdom`, `City: Ascot`, `Suburb: Sunninghill and Ascot`
+- **Selection:** `--openstreetmap-properties Country City Suburb`
+- **Result:** `United Kingdom-Ascot-Sunninghill and Ascot`
+
+This string becomes the location portion of the file name, combined with date information according to your chosen naming style — for example: `2024.06.15_10.30.00-United Kingdom-Ascot-Sunninghill and Ascot.jpg`.
+
+## Caching
+
+photo-cli caches reverse geocode responses per coordinate to avoid making duplicate API calls. Coordinates are rounded to four decimal places before the request is sent, so photos taken within a few metres of each other share a single cached response.
+
+If you need more precise per-photo results, increase the precision with:
+
+```bash
+photo-cli settings --key CoordinatePrecision --value 6
+```
+
+## Changing the address separator
+
+By default, photo-cli joins your selected address components with `-`. To use a different separator — for example `_` — save it in settings:
+
+```bash
+photo-cli settings --key AddressSeparator --value _
+```
+
+After this change, `United Kingdom-Ascot-Sunninghill and Ascot` becomes `United Kingdom_Ascot_Sunninghill and Ascot`.

@@ -1,0 +1,150 @@
+---
+title: "Set Up API Keys for photo-cli Reverse Geocode Providers"
+sidebarTitle: "API Keys"
+description: "Supply API keys for BigDataCloud, Google Maps, or LocationIq as a command-line argument, environment variable, or a saved photo-cli setting."
+---
+
+BigDataCloud, Google Maps, and LocationIq each require an API key before photo-cli can send reverse geocode requests. You can provide the key in three ways: as a command-line argument each time you run a command, as an environment variable for your current session or CI environment, or saved persistently in photo-cli settings so you never have to pass it again.
+
+<Note>
+  OpenStreetMap Foundation (Nominatim) does not require an API key. If you selected OpenStreetMap as your provider, you can skip this page.
+</Note>
+
+## Three ways to provide a key
+
+### 1. Command-line argument
+
+Pass the key directly each time you run a command. Use this approach for one-off runs or when you want to be explicit.
+
+<CodeGroup>
+
+```bash BigDataCloud
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode BigDataCloud \
+  --bigdatacloud-key YOUR_BIGDATACLOUD_KEY \
+  --bigdatacloud-levels 2 4 6 \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+```bash Google Maps
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode GoogleMaps \
+  --googlemaps-key YOUR_GOOGLE_MAPS_KEY \
+  --googlemaps-types country administrative_area_level_1 \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+```bash LocationIq
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode LocationIq \
+  --locationiq-key YOUR_LOCATIONIQ_KEY \
+  --openstreetmap-properties country city suburb \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+</CodeGroup>
+
+### 2. Environment variable
+
+Set the environment variable in your shell session or CI pipeline. photo-cli reads it automatically — no argument needed in the command.
+
+<CodeGroup>
+
+```bash BigDataCloud
+export PHOTO_CLI_BIG_DATA_CLOUD_API_KEY=YOUR_BIGDATACLOUD_KEY
+
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode BigDataCloud \
+  --bigdatacloud-levels 2 4 6 \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+```bash Google Maps
+export PHOTO_CLI_GOOGLE_MAPS_API_KEY=YOUR_GOOGLE_MAPS_KEY
+
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode GoogleMaps \
+  --googlemaps-types country administrative_area_level_1 \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+```bash LocationIq
+export PHOTO_CLI_LOCATIONIQ_API_KEY=YOUR_LOCATIONIQ_KEY
+
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode LocationIq \
+  --openstreetmap-properties country city suburb \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+</CodeGroup>
+
+### 3. Saved in settings
+
+Save the key to photo-cli's persistent settings. Once saved, you never need to pass the key on the command line or export an environment variable again.
+
+<CodeGroup>
+
+```bash BigDataCloud
+photo-cli settings --key BigDataCloudApiKey --value YOUR_BIGDATACLOUD_KEY
+```
+
+```bash Google Maps
+photo-cli settings --key GoogleMapsApiKey --value YOUR_GOOGLE_MAPS_KEY
+```
+
+```bash LocationIq
+photo-cli settings --key LocationIqApiKey --value YOUR_LOCATIONIQ_KEY
+```
+
+</CodeGroup>
+
+After saving, run your command without any key argument:
+
+```bash
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode BigDataCloud \
+  --bigdatacloud-levels 2 4 6 \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+<Tip>
+  Saving your key in settings is the most convenient approach for regular use. You set it once and all future commands pick it up automatically.
+</Tip>
+
+## Reference: arguments and environment variables
+
+| Provider | Argument | Environment variable | Settings key |
+|---|---|---|---|
+| BigDataCloud | `-b` / `--bigdatacloud-key` | `PHOTO_CLI_BIG_DATA_CLOUD_API_KEY` | `BigDataCloudApiKey` |
+| Google Maps | `-k` / `--googlemaps-key` | `PHOTO_CLI_GOOGLE_MAPS_API_KEY` | `GoogleMapsApiKey` |
+| LocationIq | `-q` / `--locationiq-key` | `PHOTO_CLI_LOCATIONIQ_API_KEY` | `LocationIqApiKey` |
+| OpenStreetMap Foundation | — | — | — |

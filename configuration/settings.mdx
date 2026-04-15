@@ -1,0 +1,72 @@
+---
+title: "Configure photo-cli Application Defaults and Preferences"
+sidebarTitle: "Settings"
+description: "Manage application-level defaults that persist across all photo-cli commands — date formats, separators, report file names, API keys, and more."
+---
+
+The `settings` command lets you view and change application-level defaults that persist across all future commands. You can control things like date formats, separator characters, report file names, reverse geocode API keys, and fallback folder names — all stored locally per user, with changes taking effect immediately for every subsequent command.
+
+## How settings work
+
+photo-cli stores your settings in a per-user configuration file on disk. You do not need to pass these values on the command line each time; once set, they apply automatically to every `copy`, `archive`, `info`, and `address` run.
+
+## Settings commands
+
+**List all settings and their current values:**
+
+```bash
+photo-cli settings
+```
+
+**Get the value of a single setting:**
+
+```bash
+photo-cli settings --key <KeyName>
+```
+
+**Set a new value for a single setting:**
+
+```bash
+photo-cli settings --key <KeyName> --value <value>
+```
+
+**Reset all settings to their factory defaults:**
+
+```bash
+photo-cli settings --reset
+```
+
+## Settings reference
+
+| Key | Default value | Description |
+|-----|---------------|-------------|
+| `AddressSeparator` | `-` | Separator character between address components in file and folder names |
+| `ArchivePhotoTakenDateHashSeparator` | `-` | Separator between the date-time portion and the SHA1 hash in archive file names |
+| `BigDataCloudApiKey` | _(empty)_ | API key for the BigDataCloud reverse geocode provider |
+| `ConnectionLimit` | `4` | Maximum number of concurrent connections to reverse geocode providers |
+| `CoordinatePrecision` | `4` | Number of decimal places used when formatting GPS coordinates |
+| `CsvReportFileName` | `photo-cli-report.csv` | Name of the CSV report file created by the `copy` and `info` commands |
+| `DateFormatWithDay` | `yyyy.MM.dd` | Date format used when the naming style includes a day component |
+| `DateFormatWithMonth` | `yyyy.MM` | Date format used when the naming style includes a month component |
+| `DateTimeFormatWithMinutes` | `yyyy.MM.dd_HH.mm` | Date-time format with minute-level precision |
+| `DateTimeFormatWithSeconds` | `yyyy.MM.dd_HH.mm.ss` | Date-time format with second-level precision |
+| `DayFormat` | `dd` | Format string for the day component alone |
+| `DayRangeSeparator` | `-` | Separator between the start and end dates in `DayRange` folder names |
+| `DryRunCsvReportFileName` | `photo-cli-dry-run.csv` | CSV report file name used during a dry-run |
+| `FolderAppendSeparator` | `-` | Separator inserted between an appended date or address and the original folder name |
+| `GoogleMapsApiKey` | _(empty)_ | API key for the Google Maps reverse geocode provider |
+| `LocationIqApiKey` | _(empty)_ | API key for the LocationIq reverse geocode provider |
+| `LogLevel` | `Warning` | Logging verbosity level; accepted values are `Warning`, `Information`, and `Debug` |
+| `MonthFormat` | `MM` | Format string for the month component alone |
+| `NoAddressAndPhotoTakenDateFolderName` | `no-address-and-no-photo-taken-date` | Folder name used for photos that have neither a taken date nor GPS coordinates |
+| `NoAddressFolderName` | `no-address` | Folder name used for photos that have no GPS coordinates or address |
+| `NoPhotoTakenDateFolderName` | `no-photo-taken-date` | Folder name used for photos that have no EXIF taken date |
+| `PhotoFormatInvalidFolderName` | `invalid-photo-format` | Folder name used for files that cannot be read as a valid photo |
+| `SameNameNumberSeparator` | `-` | Separator inserted before the sequential number when two output files would share a name |
+| `SupportedExtensions` | `jpg,jpeg,heic,png` | Comma-separated list of file extensions to process |
+| `CompanionExtensions` | `mov` | Comma-separated list of companion file extensions to copy alongside photos |
+| `YearFormat` | `yyyy` | Format string for the year component alone |
+
+<Note>
+  Date and time format strings follow .NET conventions. You can find the full list of supported tokens in the [Microsoft .NET date and time format strings reference](https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings).
+</Note>

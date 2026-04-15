@@ -1,0 +1,112 @@
+---
+title: "Choose a Reverse Geocode Provider for Your photo-cli"
+sidebarTitle: "Providers"
+description: "Compare the four reverse geocode providers in photo-cli — BigDataCloud, OpenStreetMap, Google Maps, and LocationIq — and choose the right one."
+---
+
+photo-cli supports four reverse geocode providers, each with different coverage, pricing, and response formats. You select a provider by passing its name or numeric value to `--reverse-geocode (-e)`. The provider you choose determines which address properties are available to include in your file and folder names.
+
+## Provider comparison
+
+| Provider | `--reverse-geocode` value | Requires API key | Notes |
+|---|---|---|---|
+| BigDataCloud | `1` or `BigDataCloud` | Yes (free tier available, 50,000 req/month) | Returns admin levels as integers |
+| OpenStreetMapFoundation | `2` or `OpenStreetMapFoundation` | No | Free; rate-limited to 1 req/sec; uses OpenStreetMap property names |
+| GoogleMaps | `3` or `GoogleMaps` | Yes (paid) | Uses Google Maps address type names |
+| LocationIq | `5` or `LocationIq` | Yes (free + paid tiers, 5,000 req/day free) | Uses OpenStreetMap property names; pass `--has-paid-license` to bypass free rate limit |
+
+## OpenStreetMap Foundation
+
+OpenStreetMap Foundation (Nominatim) is the easiest provider to get started with — it requires no API key and is completely free. photo-cli automatically enforces the one-request-per-second rate limit on your behalf, so you do not need to throttle your commands manually.
+
+You select which parts of the response to include in your address using `--openstreetmap-properties (-r)`. Pass property names separated by spaces.
+
+```bash
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode OpenStreetMapFoundation \
+  --openstreetmap-properties country city suburb \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+See the [Nominatim API documentation](https://nominatim.openstreetmap.org) for coverage details.
+
+## BigDataCloud
+
+BigDataCloud requires an API key. The free tier allows 50,000 requests per month. BigDataCloud represents its address hierarchy as numbered administrative levels (for example, `AdminLevel2` for country, `AdminLevel4` for province). You pass the integer level numbers you want to include using `--bigdatacloud-levels (-u)`.
+
+Use `photo-cli address --type AllAvailableProperties` on a sample photo to see which level numbers correspond to which place names for your region before committing to a configuration.
+
+```bash
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode BigDataCloud \
+  --bigdatacloud-key YOUR_API_KEY \
+  --bigdatacloud-levels 2 4 6 \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+See the [BigDataCloud reverse geocoding API](https://www.bigdatacloud.com/geocoding-apis/reverse-geocode-to-city-api/) for API key registration and documentation.
+
+## Google Maps
+
+Google Maps requires a paid API key — there is no free tier for the Geocoding API. Google Maps returns named address types such as `country`, `administrative_area_level_1`, and `route`. You pass the type names you want to include using `--googlemaps-types (-m)`.
+
+Use `photo-cli address --type AllAvailableProperties` on a sample photo to inspect which types are returned for your photos before building your configuration.
+
+```bash
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode GoogleMaps \
+  --googlemaps-key YOUR_API_KEY \
+  --googlemaps-types country administrative_area_level_1 administrative_area_level_2 \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+See the [Google Maps Geocoding API overview](https://developers.google.com/maps/documentation/geocoding/overview/) for key setup and billing information.
+
+## LocationIq
+
+LocationIq requires an API key with a free tier of 5,000 requests per day. It uses the same OpenStreetMap property names as OpenStreetMap Foundation, so `--openstreetmap-properties (-r)` controls which properties are included. If you have a paid license, pass `--has-paid-license (-h)` to bypass the free tier's one-request-per-second rate limit.
+
+```bash
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode LocationIq \
+  --locationiq-key YOUR_API_KEY \
+  --openstreetmap-properties country city suburb \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+Add `--has-paid-license` if your plan removes the rate limit:
+
+```bash
+photo-cli copy \
+  --input ~/Photos \
+  --output ~/Organized \
+  --reverse-geocode LocationIq \
+  --locationiq-key YOUR_API_KEY \
+  --openstreetmap-properties country city suburb \
+  --has-paid-license \
+  --naming-style DateTimeWithSecondsAddress \
+  --process-type FlattenAllSubFolders \
+  --number-style AllNamesAreSameLength
+```
+
+See [LocationIq](https://locationiq.com/) for API key registration and plan details.
+
+<Tip>
+  Run `photo-cli address --input your-photo.jpg --reverse-geocode [provider] --type FullResponse` to see exactly what your chosen provider returns for a specific photo. Do this before running `copy` or `archive` so you know which properties or levels to select.
+</Tip>

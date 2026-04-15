@@ -1,0 +1,121 @@
+---
+sidebarTitle: "settings"
+title: "Manage photo-cli Application Settings and Defaults"
+description: "View, change, and reset photo-cli defaults: date formats, separator characters, folder names for missing data, API keys, and supported file extensions."
+---
+
+`photo-cli settings` lets you view and change persistent application-level defaults that apply across all commands. Rather than typing long arguments on every invocation, you can store values like your API key, preferred date format, or the name used for folders holding photos with no address. Settings are saved locally and read on every run.
+
+## Synopsis
+
+```bash
+photo-cli settings [options]
+```
+
+## Arguments
+
+<ParamField query="--key, -k" type="string">
+  The name of the setting to read or write. When used alone, the current value is printed. When combined with `--value`, the setting is updated.
+</ParamField>
+
+<ParamField query="--value, -v" type="string">
+  The new value to assign to the setting specified by `--key`. Must be used together with `--key`.
+</ParamField>
+
+<ParamField query="--reset, -r" type="boolean">
+  Reset all settings to their factory defaults. No extra value required — pass the flag alone.
+</ParamField>
+
+## Operations
+
+### List all settings
+
+Run `photo-cli settings` with no arguments to print every setting and its current value:
+
+```bash
+photo-cli settings
+```
+
+```text
+AddressSeparator=-
+ArchivePhotoTakenDateHashSeparator=-
+BigDataCloudApiKey=
+ConnectionLimit=4
+CoordinatePrecision=4
+CsvReportFileName=photo-cli-report.csv
+DateFormatWithDay=yyyy.MM.dd
+DateFormatWithMonth=yyyy.MM
+DateTimeFormatWithMinutes=yyyy.MM.dd_HH.mm
+DateTimeFormatWithSeconds=yyyy.MM.dd_HH.mm.ss
+DayFormat=dd
+DayRangeSeparator=-
+DryRunCsvReportFileName=photo-cli-dry-run.csv
+FolderAppendSeparator=-
+GoogleMapsApiKey=
+LocationIqApiKey=
+LogLevel=Warning
+MonthFormat=MM
+NoAddressAndPhotoTakenDateFolderName=no-address-and-no-photo-taken-date
+NoAddressFolderName=no-address
+NoPhotoTakenDateFolderName=no-photo-taken-date
+PhotoFormatInvalidFolderName=invalid-photo-format
+SameNameNumberSeparator=-
+YearFormat=yyyy
+```
+
+### Get a single setting
+
+```bash
+photo-cli settings --key YearFormat
+```
+
+```text
+YearFormat=yyyy
+```
+
+### Set a single setting
+
+```bash
+photo-cli settings --key YearFormat --value y
+```
+
+No output is printed on success. Run `photo-cli settings --key YearFormat` to confirm the change.
+
+### Reset all settings to defaults
+
+```bash
+photo-cli settings --reset
+```
+
+## Settings reference
+
+| Setting | Default | Description |
+| --- | --- | --- |
+| `AddressSeparator` | `-` | Character inserted between address components in file and folder names |
+| `ArchivePhotoTakenDateHashSeparator` | `-` | Character between the date string and SHA1 hash in archive file names |
+| `BigDataCloudApiKey` | _(empty)_ | Default BigDataCloud API key. Also settable via `PHOTO_CLI_BIG_DATA_CLOUD_API_KEY` env var |
+| `ConnectionLimit` | `4` | Maximum number of concurrent reverse geocode HTTP requests |
+| `CoordinatePrecision` | `4` | Number of decimal places used when storing GPS coordinates in the CSV/database |
+| `CsvReportFileName` | `photo-cli-report.csv` | File name for the copy/info report written to the output folder |
+| `DateFormatWithDay` | `yyyy.MM.dd` | .NET date format string used when the naming style includes a day component. See [MSDN custom date format strings](https://learn.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) |
+| `DateFormatWithMonth` | `yyyy.MM` | .NET date format string used when the naming style includes a month but not a day component |
+| `DateTimeFormatWithMinutes` | `yyyy.MM.dd_HH.mm` | .NET datetime format string for `DateTimeWithMinutes` and related naming styles |
+| `DateTimeFormatWithSeconds` | `yyyy.MM.dd_HH.mm.ss` | .NET datetime format string for `DateTimeWithSeconds` and related naming styles |
+| `DayFormat` | `dd` | .NET format string for the day component alone |
+| `DayRangeSeparator` | `-` | Character between the start and end dates in `DayRange` folder append names |
+| `DryRunCsvReportFileName` | `photo-cli-dry-run.csv` | File name for the report written during a dry run |
+| `FolderAppendSeparator` | `-` | Character between the appended date/address string and the original folder name |
+| `GoogleMapsApiKey` | _(empty)_ | Default Google Maps API key. Also settable via `PHOTO_CLI_GOOGLE_MAPS_API_KEY` env var |
+| `LocationIqApiKey` | _(empty)_ | Default LocationIq API key. Also settable via `PHOTO_CLI_LOCATIONIQ_API_KEY` env var |
+| `LogLevel` | `Warning` | Minimum log level written to the console (`Trace`, `Debug`, `Information`, `Warning`, `Error`, `Critical`) |
+| `MonthFormat` | `MM` | .NET format string for the month component alone |
+| `NoAddressAndPhotoTakenDateFolderName` | `no-address-and-no-photo-taken-date` | Name of the subfolder used for photos missing both GPS and date when `InSubFolder` actions are selected |
+| `NoAddressFolderName` | `no-address` | Name of the subfolder used for photos missing GPS coordinates when `InSubFolder` is selected for `--no-coordinate` |
+| `NoPhotoTakenDateFolderName` | `no-photo-taken-date` | Name of the subfolder used for photos missing a date when `InSubFolder` is selected for `--no-taken-date` |
+| `PhotoFormatInvalidFolderName` | `invalid-photo-format` | Name of the subfolder used for files that cannot be parsed as a valid photo format |
+| `SameNameNumberSeparator` | `-` | Character between the base name and the disambiguating number when two photos share the same generated name |
+| `YearFormat` | `yyyy` | .NET format string for the year component alone |
+
+<Note>
+Date and time format strings follow the .NET custom date and time format specification. For example, `yyyy` produces a four-digit year, `MM` a zero-padded two-digit month, and `HH` a zero-padded 24-hour hour. See the [MSDN reference](https://learn.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings) for the full list of specifiers.
+</Note>

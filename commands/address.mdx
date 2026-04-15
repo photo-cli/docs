@@ -1,0 +1,97 @@
+---
+sidebarTitle: "address"
+title: "photo-cli address — Preview Reverse Geocode Output"
+description: "Resolve a single photo's GPS coordinates using your chosen reverse geocode provider, and preview the raw response to fine-tune address property selection."
+---
+
+`photo-cli address` takes a single photo file, reads its GPS coordinates from EXIF data, sends them to your chosen reverse geocode provider, and prints the resulting address to the console. Use this command to verify that your provider configuration is correct and to discover which property names or admin levels to pass to `--openstreetmap-properties`, `--bigdatacloud-levels`, or `--googlemaps-types` before running `photo-cli copy` or `photo-cli archive` across your entire collection.
+
+## Synopsis
+
+```bash
+photo-cli address [options]
+```
+
+## Arguments
+
+### Required
+
+<ParamField query="--input, -i" type="string" required>
+  Path to the photo file whose GPS coordinates you want to resolve. Only a single file is accepted.
+</ParamField>
+
+<ParamField query="--type, -t" type="enum" required>
+  Controls how much detail is returned from the provider.
+
+  | Name | Value | Description |
+  | --- | --- | --- |
+  | AllAvailableProperties | 0 | Returns every address property available for the photo's coordinates |
+  | SelectedProperties | 1 | Returns only the properties you specify via the provider-specific argument |
+  | FullResponse | 2 | Returns the complete raw JSON response from the provider |
+</ParamField>
+
+### Optional
+
+<ParamField query="--reverse-geocode, -e" type="enum">
+  Third-party provider used to resolve GPS coordinates. See [reverse geocoding overview](/reverse-geocoding/overview) for setup details.
+
+  | Name | Value |
+  | --- | --- |
+  | Disabled (default) | 0 |
+  | BigDataCloud | 1 |
+  | OpenStreetMapFoundation | 2 |
+  | GoogleMaps | 3 |
+  | LocationIq | 5 |
+</ParamField>
+
+<ParamField query="--openstreetmap-properties, -r" type="string">
+  Space-separated OpenStreetMap address property names to include in the output. Used when `--reverse-geocode` is `OpenStreetMapFoundation` or `LocationIq` and `--type` is `SelectedProperties`.
+</ParamField>
+
+<ParamField query="--bigdatacloud-levels, -u" type="string">
+  Space-separated BigDataCloud admin level numbers. Used when `--reverse-geocode` is `BigDataCloud` and `--type` is `SelectedProperties`.
+</ParamField>
+
+<ParamField query="--bigdatacloud-key, -b" type="string">
+  API key for BigDataCloud. Also configurable via the `PHOTO_CLI_BIG_DATA_CLOUD_API_KEY` environment variable.
+</ParamField>
+
+<ParamField query="--googlemaps-types, -m" type="string">
+  Space-separated Google Maps address component types. Used when `--reverse-geocode` is `GoogleMaps` and `--type` is `SelectedProperties`.
+</ParamField>
+
+<ParamField query="--googlemaps-key, -k" type="string">
+  API key for Google Maps. Also configurable via the `PHOTO_CLI_GOOGLE_MAPS_API_KEY` environment variable.
+</ParamField>
+
+<ParamField query="--locationiq-key, -q" type="string">
+  API key for LocationIq. Also configurable via the `PHOTO_CLI_LOCATIONIQ_API_KEY` environment variable.
+</ParamField>
+
+<ParamField query="--has-paid-license, -h" type="boolean">
+  Bypass the free-tier rate limit when using LocationIq with a paid license.
+</ParamField>
+
+## Example
+
+Check the full raw response that OpenStreetMap returns for a photo's GPS coordinates:
+
+```bash
+photo-cli address \
+  --input /path/to/photo.jpg \
+  --type FullResponse \
+  --reverse-geocode OpenStreetMapFoundation
+```
+
+To see all available named properties without the raw JSON:
+
+```bash
+photo-cli address \
+  --input /path/to/photo.jpg \
+  --type AllAvailableProperties \
+  --reverse-geocode OpenStreetMapFoundation
+```
+
+<Tip>
+Run `photo-cli address` with `--type FullResponse` on a representative photo from each location before running `photo-cli copy` or `photo-cli archive`. The full response shows every property name (for OpenStreetMap), admin level (for BigDataCloud), or address component type (for Google Maps) that is available for that coordinate. Use those names directly in `--openstreetmap-properties`, `--bigdatacloud-levels`, or `--googlemaps-types` to build exactly the address format you want.
+</Tip>

@@ -1,0 +1,261 @@
+---
+sidebarTitle: "copy"
+title: "photo-cli copy — Organize Photos Into New Folders"
+description: "Copy and rename photos into a new organized folder using EXIF date and GPS address data. Choose from 11 naming styles and multiple folder strategies."
+---
+
+`photo-cli copy` reads photos from an input folder, renames and reorganizes them into a new output folder using each photo's EXIF date taken and optional GPS reverse geocode address, then writes a CSV report summarizing every file processed. Your source folder is never touched.
+
+## Synopsis
+
+```bash
+photo-cli copy [options]
+```
+
+## Key behavior
+
+- Reads all photos from the input folder (or the current directory if `--input` is omitted).
+- Copies each photo to the output folder with a new name and folder structure derived from EXIF metadata.
+- Photos with missing dates or coordinates are handled according to the `--no-taken-date` and `--no-coordinate` flags rather than silently dropped.
+- Generates `photo-cli-report.csv` in the output folder root after every run.
+- Never modifies, moves, or deletes files in the input folder.
+
+<Note>
+Add `--dry-run` (`-d`) to simulate the entire process without writing any files to disk. A separate `photo-cli-dry-run.csv` report is produced so you can review what would happen before committing.
+</Note>
+
+## Required arguments
+
+<ParamField query="--output, -o" type="string" required>
+  File system path where the new organized folder will be created. The folder is created automatically if it does not already exist.
+</ParamField>
+
+<ParamField query="--naming-style, -s" type="enum" required>
+  File naming strategy applied to every copied photo. Choose one of the following values:
+
+  | Name | Value |
+  | --- | --- |
+  | Numeric | 1 |
+  | Day | 2 |
+  | DateTimeWithMinutes | 3 |
+  | DateTimeWithSeconds | 4 |
+  | Address | 5 |
+  | DayAddress | 6 |
+  | DateTimeWithMinutesAddress | 7 |
+  | DateTimeWithSecondsAddress | 8 |
+  | AddressDay | 9 |
+  | AddressDateTimeWithMinutes | 10 |
+  | AddressDateTimeWithSeconds | 11 |
+</ParamField>
+
+<ParamField query="--process-type, -f" type="enum" required>
+  Controls how photos are read from the input folder and how the output folder hierarchy is structured.
+
+  | Name | Value |
+  | --- | --- |
+  | Single | 1 |
+  | SubFoldersPreserveFolderHierarchy | 2 |
+  | FlattenAllSubFolders | 3 |
+</ParamField>
+
+<ParamField query="--number-style, -n" type="enum" required>
+  Number formatting used when `--naming-style` is `Numeric` or when disambiguating photos that share the same generated name.
+
+  | Name | Value |
+  | --- | --- |
+  | AllNamesAreSameLength | 1 |
+  | PaddingZeroCharacter | 2 |
+  | OnlySequentialNumbers | 3 |
+</ParamField>
+
+<ParamField query="--no-taken-date, -t" type="enum" required>
+  Action to take when a photo has no EXIF date taken.
+
+  | Name | Value |
+  | --- | --- |
+  | Continue | 0 |
+  | PreventProcess | 1 |
+  | DontCopyToOutput | 2 |
+  | InSubFolder | 3 |
+  | AppendToEndOrderByFileName | 4 |
+  | InsertToBeginningOrderByFileName | 5 |
+</ParamField>
+
+<ParamField query="--no-coordinate, -c" type="enum" required>
+  Action to take when a photo has no GPS coordinate.
+
+  | Name | Value |
+  | --- | --- |
+  | Continue | 0 |
+  | PreventProcess | 1 |
+  | DontCopyToOutput | 2 |
+  | InSubFolder | 3 |
+</ParamField>
+
+## Optional arguments
+
+<ParamField query="--input, -i" type="string">
+  File system path to read photos from. Defaults to the current working directory. No files in this path are ever modified.
+</ParamField>
+
+<ParamField query="--dry-run, -d" type="boolean">
+  Simulate the copy process without writing any files to the output folder. No extra value required — pass the flag alone.
+</ParamField>
+
+<ParamField query="--group-by, -g" type="enum">
+  Groups photos into date- or address-based subfolders. Cannot be used when `--process-type` is `SubFoldersPreserveFolderHierarchy`.
+
+  | Name | Value |
+  | --- | --- |
+  | YearMonthDay | 1 |
+  | YearMonth | 2 |
+  | Year | 3 |
+  | Address | 4 |
+  | AddressFlat | 5 |
+  | AddressHierarchy | 6 |
+</ParamField>
+
+<ParamField query="--folder-append, -a" type="enum">
+  Appends date range or address information to folder names cloned from the source hierarchy. Must be combined with `--folder-append-location`. Only applies when `--process-type` is `SubFoldersPreserveFolderHierarchy`.
+
+  | Name | Value |
+  | --- | --- |
+  | FirstYearMonthDay | 1 |
+  | FirstYearMonth | 2 |
+  | FirstYear | 3 |
+  | DayRange | 4 |
+  | MatchingMinimumAddress | 5 |
+</ParamField>
+
+<ParamField query="--folder-append-location, -p" type="enum">
+  Controls whether the appended string is placed before or after the original folder name. Must be combined with `--folder-append`.
+
+  | Name | Value |
+  | --- | --- |
+  | Prefix | 1 |
+  | Suffix | 2 |
+</ParamField>
+
+<ParamField query="--verify, -v" type="boolean">
+  Verifies every copied file by comparing its SHA1 hash against the original. All hashes are also written to `sha1.lst` in the output folder so you can re-verify later with `sha1sum --check sha1.lst`.
+</ParamField>
+
+<ParamField query="--reverse-geocode, -e" type="enum">
+  Third-party provider used to resolve GPS coordinates into a human-readable address. See [reverse geocoding overview](/reverse-geocoding/overview) for provider setup and API key details.
+
+  | Name | Value |
+  | --- | --- |
+  | Disabled | 0 |
+  | BigDataCloud | 1 |
+  | OpenStreetMapFoundation | 2 |
+  | GoogleMaps | 3 |
+  | LocationIq | 5 |
+</ParamField>
+
+<ParamField query="--openstreetmap-properties, -r" type="string">
+  Space-separated OpenStreetMap address property names used to build the address string. Required when `--reverse-geocode` is `OpenStreetMapFoundation` or `LocationIq`. Example: `country city town suburb`. Use `photo-cli address` to discover available property names for a given photo.
+</ParamField>
+
+<ParamField query="--bigdatacloud-levels, -u" type="string">
+  Space-separated BigDataCloud admin level numbers used to build the address string. Required when `--reverse-geocode` is `BigDataCloud`.
+</ParamField>
+
+<ParamField query="--bigdatacloud-key, -b" type="string">
+  API key for BigDataCloud. You can also set this via the `PHOTO_CLI_BIG_DATA_CLOUD_API_KEY` environment variable or the `BigDataCloudApiKey` setting.
+</ParamField>
+
+<ParamField query="--googlemaps-types, -m" type="string">
+  Space-separated Google Maps address component types. Required when `--reverse-geocode` is `GoogleMaps`.
+</ParamField>
+
+<ParamField query="--googlemaps-key, -k" type="string">
+  API key for Google Maps. You can also set this via the `PHOTO_CLI_GOOGLE_MAPS_API_KEY` environment variable or the `GoogleMapsApiKey` setting.
+</ParamField>
+
+<ParamField query="--locationiq-key, -q" type="string">
+  API key for LocationIq. You can also set this via the `PHOTO_CLI_LOCATIONIQ_API_KEY` environment variable or the `LocationIqApiKey` setting.
+</ParamField>
+
+<ParamField query="--has-paid-license, -h" type="boolean">
+  Bypass the free-tier rate limit when using LocationIq with a paid license.
+</ParamField>
+
+## Example
+
+The following command preserves your existing folder hierarchy, renames each file with its date and address, prefixes each folder with the date range of photos inside it, and routes photos with missing data into dedicated subfolders.
+
+<CodeGroup>
+
+```bash Long form
+photo-cli copy \
+  --process-type SubFoldersPreserveFolderHierarchy \
+  --naming-style DateTimeWithSecondsAddress \
+  --number-style PaddingZeroCharacter \
+  --folder-append DayRange \
+  --folder-append-location Prefix \
+  --reverse-geocode OpenStreetMapFoundation \
+  --openstreetmap-properties country city town suburb \
+  --output photo-cli-test \
+  --no-coordinate InSubFolder \
+  --no-taken-date InSubFolder \
+  --verify
+```
+
+```bash Short form
+photo-cli copy -f 2 -s 8 -n 2 -a 4 -p 1 -e 2 -r country city town suburb -o photo-cli-test -c 3 -t 3 -v
+```
+
+</CodeGroup>
+
+### Console output
+
+```text
+Searching photos: finished. 17 photos found.
+Parsing photo exif information: finished.
+This OpenStreetMapFoundation provider is using rate limit of 1 seconds between each request
+Reverse Geocoding: finished.
+Directory grouping: finished.
+Processing target folder: finished.
+Verified all photo files copied successfully by comparing file hashes from original photo files.
+All files SHA1 hashes written into file: sha1.lst. You may verify yourself with `sha1sum --check sha1.lst` tool in Linux/macOS.
+Writing csv report: finished.
+- 17 photos copied.
+- 4 directories created.
+- 15 photos has taken date and coordinate.
+- 1 photos has taken date but no coordinate.
+- 1 photos has no taken date and coordinate.
+```
+
+### Folder structure before and after
+
+| Original | After photo-cli |
+| --- | --- |
+| `├── DSC_5727.jpg` | `├── 2005.08.13_09.47.23-Kenya.jpg` |
+| `├── GOPR6742.jpg` | `├── 2012.06.22_19.52.31-United Kingdom-Ascot-Sunninghill and Ascot.jpg` |
+| `├── Italy album/` | `├── 2005.12.14-2008.10.22-Italy album/` |
+| `│   ├── DJI_01732.jpg` | `│   ├── 2008.10.22_16.29.49-Italia-Arezzo.jpg` |
+| `│   └── IMG_2371.jpg` | `├── Italy album/no-address/IMG_2371.jpg` |
+| `└── Spain Journey/` | `├── 2015.04.10-2015.04.10-Spain Journey/` |
+| `    └── IMG_5397.jpg` | `└── Spain Journey/no-address-and-no-photo-taken-date/IMG_5397.jpg` |
+
+## CSV report
+
+After every run, `photo-cli-report.csv` is created in the output folder root. It contains one row per photo with the following columns:
+
+| Column | Description |
+| --- | --- |
+| `PhotoPath` | Absolute path to the original source file |
+| `PhotoNewPath` | Relative path to the copied file in the output folder |
+| `PhotoDateTaken` | EXIF date and time the photo was taken |
+| `ReverseGeocodeFormatted` | Human-readable address built from the configured provider and properties |
+| `Latitude` | GPS latitude extracted from EXIF |
+| `Longitude` | GPS longitude extracted from EXIF |
+| `PhotoTakenYear` | Year component of the taken date |
+| `PhotoTakenMonth` | Month component of the taken date |
+| `PhotoTakenDay` | Day component of the taken date |
+| `PhotoTakenHour` | Hour component of the taken date |
+| `PhotoTakenMinute` | Minute component of the taken date |
+| `PhotoTakenSeconds` | Seconds component of the taken date |
+| `Address1`–`Address8` | Individual address components returned by the reverse geocode provider |
+
+You can open this file in any spreadsheet application (Excel, Google Sheets, LibreOffice Calc, Apple Numbers) or import it into Google My Maps or Google Earth for location exploration.

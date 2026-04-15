@@ -1,0 +1,63 @@
+---
+title: "How GPS Reverse Geocoding Works in photo-cli Commands"
+sidebarTitle: "Overview"
+description: "Learn how photo-cli converts GPS coordinates from your photos into human-readable location names for use in file and folder names."
+---
+
+Reverse geocoding converts the GPS coordinates embedded in your photos into human-readable location names — things like country, city, or neighborhood — that photo-cli can include in your file and folder names. When you run `copy` or `archive` with a reverse geocode provider configured, photo-cli reads the latitude and longitude from each photo's EXIF data, sends them to the provider, receives back a structured address response, and uses the components you select to build a location string like `France-Paris-Montmartre`.
+
+## How it works
+
+photo-cli follows this sequence for every photo that has GPS coordinates:
+
+<Steps>
+  <Step title="Read GPS coordinates">
+    photo-cli extracts the latitude and longitude stored in the photo's EXIF metadata.
+  </Step>
+  <Step title="Send to reverse geocode provider">
+    The coordinates are sent to your chosen third-party provider — BigDataCloud, OpenStreetMap, Google Maps, or LocationIq.
+  </Step>
+  <Step title="Receive address components">
+    The provider returns a response containing administrative levels or named properties such as country, city, and suburb.
+  </Step>
+  <Step title="Select and build the address string">
+    You specify which components to include. photo-cli joins them with the address separator (default: `-`) to produce the location portion of your file or folder name.
+  </Step>
+</Steps>
+
+The result appears in file names like `2024.03.15-France-Paris-Montmartre.jpg` or in folder names like `France-Paris/` depending on the naming and grouping strategy you choose.
+
+## When to use reverse geocoding
+
+Use reverse geocoding when you want file names or folder names to include meaningful location information. For example:
+
+- `2024.03.15-United Kingdom-Ascot-Sunninghill and Ascot.jpg`
+- `Turkey-Ankara-Çankaya/`
+- `2024.03.15_14.22.01-France-Paris.jpg`
+
+If you only care about date-based organization and do not need place names in your output, you can skip reverse geocoding entirely. Simply omit `--reverse-geocode (-e)` from your command and photo-cli will use date information alone.
+
+<Note>
+  Reverse geocode responses are cached per coordinate (rounded to four decimal places) to avoid redundant API calls. If multiple photos were taken at the same location, the provider is only called once.
+</Note>
+
+<Note>
+  Some providers enforce rate limits. photo-cli respects these automatically — for example, OpenStreetMap Foundation is limited to one request per second. LocationIq free-tier users are subject to the same limit unless they pass `--has-paid-license`.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Choose a provider" icon="map" href="/reverse-geocoding/providers">
+    Compare BigDataCloud, OpenStreetMap, Google Maps, and LocationIq to find the right fit.
+  </Card>
+  <Card title="Set up your API key" icon="key" href="/reverse-geocoding/api-keys">
+    Learn how to supply your API key as an argument, environment variable, or saved setting.
+  </Card>
+  <Card title="Build your address" icon="location-dot" href="/reverse-geocoding/building-address">
+    Select address components and configure the separator to control what appears in file names.
+  </Card>
+  <Card title="Preview with address command" icon="terminal" href="/commands/address">
+    Use `photo-cli address` to inspect a provider's response for a single photo before running copy or archive.
+  </Card>
+</CardGroup>

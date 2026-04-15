@@ -1,0 +1,157 @@
+---
+sidebarTitle: "Overview"
+title: "photo-cli Copy and Archive Examples — Before and After"
+description: "See how photo-cli transforms a folder of 17 photos using the copy and archive commands, with exact before/after folder structures for each strategy."
+---
+
+These examples show how photo-cli transforms a folder of photos using the `copy` command. Each example shows the original folder structure, the exact command to run, and the resulting output folder so you can compare what changed and why.
+
+## The test photo set
+
+Every example on this site uses the same starting folder: 17 photos spread across two subfolders. The **Italy album** folder holds 13 photos taken between December 2005 and October 2008, with GPS coordinates pointing to locations in Arezzo and Florence. The **Spain Journey** folder holds 3 photos — two taken in Madrid in April 2015 and one with no EXIF data at all. Two photos (`DSC_5727.jpg` and `GOPR6742.jpg`) live at the root level, taken in Kenya and the United Kingdom respectively. One photo (`Italy album/IMG_2371.jpg`) has a taken date but no GPS coordinate, and `Spain Journey/IMG_5397.jpg` has neither.
+
+```text
+├── DSC_5727.jpg
+├── GOPR6742.jpg
+├── Italy album
+│   ├── DJI_01732.jpg
+│   ├── DJI_01733.jpg
+│   ├── DSC00001.JPG
+│   ├── DSC03467.jpg
+│   ├── DSC_1769.JPG
+│   ├── DSC_1770.JPG
+│   ├── DSC_1770_(same).jpg
+│   ├── DSC_1771.JPG
+│   ├── GOPR7496.jpg
+│   ├── GOPR7497.jpg
+│   ├── IMG_0747.JPG
+│   └── IMG_2371.jpg
+└── Spain Journey
+    ├── DSC_1807.jpg
+    ├── DSC_1808.jpg
+    └── IMG_5397.jpg
+
+2 directories, 17 files
+```
+
+## Copy command examples
+
+Each of the five pages below demonstrates a different combination of `--process-type`, `--naming-style`, `--group-by`, and folder-append arguments. Pick the strategy that matches how you want to browse your photos.
+
+<CardGroup cols={2}>
+  <Card title="Sequential numbering" href="/examples/sequential-numbering">
+    Rename every photo to a padded sequential number while keeping the original subfolder hierarchy intact.
+  </Card>
+  <Card title="Group by date" href="/examples/group-by-date">
+    Flatten all photos into a year/month/day folder tree and rename each file with its full timestamp.
+  </Card>
+  <Card title="Folder date range prefix" href="/examples/folder-date-range">
+    Prefix each folder name with the earliest and latest photo dates inside it, and name files with address and date.
+  </Card>
+  <Card title="Address + date naming" href="/examples/address-date-naming">
+    Rename every photo using its reverse-geocoded address combined with the taken date, preserving the original folder hierarchy.
+  </Card>
+  <Card title="Group by location" href="/examples/group-by-location">
+    Group photos into a country/city/town folder hierarchy based on GPS coordinates and name each file with the taken date and address.
+  </Card>
+</CardGroup>
+
+## Archive command example
+
+The `archive` command is different from `copy`: it is designed for long-term, incremental storage. It always organizes photos into a fixed `[year]/[month]/[day]` hierarchy, embeds a SHA1 hash in every file name to prevent duplicates, and records everything in a local SQLite database.
+
+Run the archive command against the same 17-photo test set:
+
+<CodeGroup>
+```bash Long form
+photo-cli archive \
+  --output archive-folder \
+  --reverse-geocode OpenStreetMapFoundation \
+  --openstreetmap-properties country city town suburb
+```
+
+```bash Short form
+photo-cli archive -o archive-folder -e 2 -r country city town suburb
+```
+</CodeGroup>
+
+### Before and after
+
+**Before** (same 17-photo source folder as all other examples):
+
+```text
+├── DSC_5727.jpg
+├── GOPR6742.jpg
+├── Italy album
+│   ├── DJI_01732.jpg
+│   ├── DJI_01733.jpg
+│   ├── DSC00001.JPG
+│   ├── DSC03467.jpg
+│   ├── DSC_1769.JPG
+│   ├── DSC_1770.JPG
+│   ├── DSC_1770_(same).jpg
+│   ├── DSC_1771.JPG
+│   ├── GOPR7496.jpg
+│   ├── GOPR7497.jpg
+│   ├── IMG_0747.JPG
+│   └── IMG_2371.jpg
+└── Spain Journey
+    ├── DSC_1807.jpg
+    ├── DSC_1808.jpg
+    └── IMG_5397.jpg
+
+2 directories, 17 files
+```
+
+**After** (`archive-folder`):
+
+```text
+├── 2005
+│   ├── 08
+│   │   └── 13
+│   │       └── 2005.08.13_09.47.23-5842c73cfdc5f347551bb6016e00c71bb1393169.jpg
+│   └── 12
+│       └── 14
+│           └── 2005.12.14_14.39.47-03cb14d5c68beed97cbe73164de9771d537fcd96.jpg
+├── 2008
+│   ├── 07
+│   │   └── 16
+│   │       └── 2008.07.16_11.33.20-90d835861e1aa3c829e3ab28a7f01ec3a090f664.jpg
+│   └── 10
+│       └── 22
+│           ├── 2008.10.22_16.28.39-5d66eec547469a1817bda4abe35c801359b2bb55.jpg
+│           ├── 2008.10.22_16.29.49-629b0b141634d6c0906e49af448bec8d755ba32c.jpg
+│           ├── 2008.10.22_16.38.20-620d23336a12ab54f9f0190fe93960a4dba2df59.jpg
+│           ├── 2008.10.22_16.43.21-3b0a3215b4f66d7ff4804dd223f192c21aee71bc.jpg
+│           ├── 2008.10.22_16.44.01-d470205a1d331a9d3765b3762b7c954bb8efc6ea.jpg
+│           ├── 2008.10.22_16.46.53-f670f2bb6c54898894b06b083185b05086bd4e6e.jpg
+│           ├── 2008.10.22_16.52.15-6b89a245809031ecc47789cdeaa332545330fc39.jpg
+│           ├── 2008.10.22_16.55.37-dd42edcde2433a7df4a3d67bf61944a20884da89.jpg
+│           └── 2008.10.22_17.00.07-a0ab699f5f99fce8ff49163e87c7590c2c9a66eb.jpg
+├── 2012
+│   └── 06
+│       └── 22
+│           └── 2012.06.22_19.52.31-bb649a18b3e7bb3df3701587a13f833749091817.jpg
+├── 2015
+│   └── 04
+│       └── 10
+│           ├── 2015.04.10_20.12.23-3907fc960f2873f40c8f35643dd444e0468be131.jpg
+│           └── 2015.04.10_20.12.23-9f4e6d352ec172e1059571250655e376769080fe.jpg
+├── no-photo-taken-date
+│   └── cf756397cc3ca81b2650c8801fd64e172504015a.jpg
+└── photo-cli.sqlite3
+
+17 directories, 17 files
+```
+
+### What happened
+
+- **Year/month/day hierarchy.** Every photo lands in a `[year]/[month]/[day]` folder derived from its EXIF taken date, regardless of how it was originally organized.
+- **SHA1 hash in file names.** Each file is renamed to `yyyy.MM.dd_HH.mm.ss-{sha1}.ext`. The SHA1 hash is computed from the file content, so the name is unique to the exact pixel data.
+- **Automatic deduplication.** `DSC_1770.JPG` and `DSC_1770_(same).jpg` are byte-for-byte identical. The archive command copies only one of them and logs a warning. The output contains 16 unique photos from the 17 input files.
+- **No-date fallback.** `Spain Journey/IMG_5397.jpg` has no taken date. It is placed in `no-photo-taken-date/` and named with only its SHA1 hash.
+- **SQLite database.** After copying, photo-cli writes `photo-cli.sqlite3` into the root of the output folder. This database records the path, taken date, GPS coordinates, reverse-geocoded address, and SHA1 hash for every archived photo. You can query it with any SQLite client.
+
+<Note>
+The archive command verifies every copied file by re-computing and comparing SHA1 hashes after the copy completes. If a disk error corrupted a file during the operation, photo-cli will report it immediately.
+</Note>

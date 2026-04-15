@@ -1,0 +1,170 @@
+---
+sidebarTitle: "info"
+title: "photo-cli info — Export All Photo Metadata to CSV"
+description: "Scan a folder of photos, extract EXIF date and GPS coordinates, optionally reverse geocode each location, and export all data to a CSV file."
+---
+
+`photo-cli info` scans photos in a folder, extracts each photo's EXIF date taken and GPS coordinates, optionally resolves those coordinates to a human-readable address through a reverse geocode provider, and writes all the data to a CSV file. No files are copied or modified. The resulting CSV can be opened in any spreadsheet application or imported directly into Google My Maps or Google Earth for interactive location exploration.
+
+## Synopsis
+
+```bash
+photo-cli info [options]
+```
+
+## Use cases
+
+- Audit your photo collection to see which photos are missing dates or GPS data.
+- Build a spreadsheet of photo locations and dates for personal records.
+- Import photo coordinates into [Google My Maps](https://www.google.com/maps/d) to visualize where your photos were taken on an interactive map.
+- Import into Google Earth Desktop and export as KMZ/KML for use in Google Earth Web.
+
+## Arguments
+
+### Required
+
+<ParamField query="--output, -o" type="string" required>
+  File system path where the CSV report will be written. Include the file name and `.csv` extension — for example, `photo-info.csv`.
+</ParamField>
+
+### Optional
+
+<ParamField query="--input, -i" type="string">
+  File system path to read photos from. Defaults to the current working directory. No files in this path are modified.
+</ParamField>
+
+<ParamField query="--all-folders, -a" type="boolean">
+  Scan all subfolders recursively. Without this flag only the top-level input folder is scanned. No extra value required — pass the flag alone.
+</ParamField>
+
+<ParamField query="--no-taken-date, -t" type="enum">
+  Action to take when a photo has no EXIF date taken.
+
+  | Name | Value |
+  | --- | --- |
+  | Continue (default) | 0 |
+  | PreventProcess | 1 |
+</ParamField>
+
+<ParamField query="--no-coordinate, -c" type="enum">
+  Action to take when a photo has no GPS coordinate.
+
+  | Name | Value |
+  | --- | --- |
+  | Continue (default) | 0 |
+  | PreventProcess | 1 |
+</ParamField>
+
+<ParamField query="--reverse-geocode, -e" type="enum">
+  Third-party provider used to resolve GPS coordinates into a human-readable address. See [reverse geocoding overview](/reverse-geocoding/overview) for provider setup and API key details.
+
+  | Name | Value |
+  | --- | --- |
+  | Disabled (default) | 0 |
+  | BigDataCloud | 1 |
+  | OpenStreetMapFoundation | 2 |
+  | GoogleMaps | 3 |
+  | LocationIq | 5 |
+</ParamField>
+
+<ParamField query="--openstreetmap-properties, -r" type="string">
+  Space-separated OpenStreetMap address property names used to build the address string. Required when `--reverse-geocode` is `OpenStreetMapFoundation` or `LocationIq`. Example: `country city town suburb`.
+</ParamField>
+
+<ParamField query="--bigdatacloud-levels, -u" type="string">
+  Space-separated BigDataCloud admin level numbers. Required when `--reverse-geocode` is `BigDataCloud`.
+</ParamField>
+
+<ParamField query="--bigdatacloud-key, -b" type="string">
+  API key for BigDataCloud. Also configurable via the `PHOTO_CLI_BIG_DATA_CLOUD_API_KEY` environment variable.
+</ParamField>
+
+<ParamField query="--googlemaps-types, -m" type="string">
+  Space-separated Google Maps address component types. Required when `--reverse-geocode` is `GoogleMaps`.
+</ParamField>
+
+<ParamField query="--googlemaps-key, -k" type="string">
+  API key for Google Maps. Also configurable via the `PHOTO_CLI_GOOGLE_MAPS_API_KEY` environment variable.
+</ParamField>
+
+<ParamField query="--locationiq-key, -q" type="string">
+  API key for LocationIq. Also configurable via the `PHOTO_CLI_LOCATIONIQ_API_KEY` environment variable.
+</ParamField>
+
+<ParamField query="--has-paid-license, -h" type="boolean">
+  Bypass the free-tier rate limit when using LocationIq with a paid license.
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash Long form
+photo-cli info \
+  --all-folders \
+  --output photo-info.csv \
+  --reverse-geocode OpenStreetMapFoundation \
+  --openstreetmap-properties country city town suburb \
+  --no-taken-date Continue \
+  --no-coordinate Continue
+```
+
+```bash Short form
+photo-cli info -a -o photo-info.csv -e 2 -r country city town suburb -t Continue -c Continue
+```
+
+</CodeGroup>
+
+### Console output
+
+```text
+Searching photos: finished. 17 photos found.
+Parsing photo exif information: finished.
+Reverse Geocoding: finished.
+Writing csv report: finished.
+- 15 photos has taken date and coordinate.
+- 1 photos has taken date but no coordinate.
+- 1 photos has no taken date and coordinate.
+```
+
+## CSV output columns
+
+The output CSV contains one row per photo with the following columns:
+
+| Column | Description |
+| --- | --- |
+| `PhotoPath` | Absolute path to the source photo file |
+| `PhotoNewPath` | Empty for `info` — only populated by `copy` |
+| `PhotoDateTaken` | EXIF date and time the photo was taken |
+| `ReverseGeocodeFormatted` | Human-readable address built from the configured provider and properties |
+| `Latitude` | GPS latitude extracted from EXIF |
+| `Longitude` | GPS longitude extracted from EXIF |
+| `PhotoTakenYear` | Year component of the taken date |
+| `PhotoTakenMonth` | Month component of the taken date |
+| `PhotoTakenDay` | Day component of the taken date |
+| `PhotoTakenHour` | Hour component of the taken date |
+| `PhotoTakenMinute` | Minute component of the taken date |
+| `PhotoTakenSeconds` | Seconds component of the taken date |
+| `Address1`–`Address8` | Individual address components returned by the reverse geocode provider |
+
+## Google Maps and Google Earth integration
+
+The CSV output from `photo-cli info` (or `photo-cli copy`) can be imported directly into Google's mapping tools to visualize your photo locations on an interactive map.
+
+**Google My Maps**
+
+1. Open [Google My Maps](https://www.google.com/maps/d) and create a new map.
+2. On a layer, click **Import** and upload your CSV file.
+3. Select `Latitude` and `Longitude` as the location columns, and choose a column such as `ReverseGeocodeFormatted` as the marker title.
+
+You can add multiple layers — for example, one per year or per trip.
+
+**Google Earth Desktop**
+
+1. Install [Google Earth Desktop](https://www.google.com/earth/versions/#earth-pro).
+2. From the **File** menu, choose **Import** and select your CSV file.
+3. Map the latitude/longitude columns when prompted.
+
+**Google Earth Web**
+
+Google Earth Web does not support direct CSV import. Instead, import your CSV into Google Earth Desktop first, then save the result as a KMZ or KML file. You can then create a project in Google Earth Web and add the KML file to it.

@@ -1,0 +1,56 @@
+---
+title: "photo-cli Version Changelog and Full Release History"
+sidebarTitle: "Changelog"
+description: "Full release history for photo-cli listed in reverse chronological order, covering new features, bug fixes, and breaking changes for every version."
+---
+
+This page lists every published version of photo-cli in reverse chronological order. Each entry describes what was added, changed, or fixed in that release.
+
+<Update label="0.3.1 – 0.3.3">
+  - Homebrew and standalone executable builds are now produced automatically by release automation.
+</Update>
+
+<Update label="2024-07-27" description="0.3.0">
+  - Added companion file support — files sharing the same base name as a photo (for example, Live Photo `.mov` files) are now copied and renamed alongside the photo.
+  - Improved resilience in reverse geocoding requests; transient network errors are retried automatically.
+  - Upgraded the runtime to .NET 8.
+  - Supported photo extensions are now configurable via the `SupportedExtensions` setting.
+</Update>
+
+<Update label="2024-03-06" description="0.2.1">
+  - Fixed a bug that prevented setting non-string values (integers, booleans) through the `settings` command.
+</Update>
+
+<Update label="2024-02-21" description="0.2.0">
+  - Added the `archive` verb for archiving photos with a date-hash naming scheme.
+  - Reverse geocode results are now cached to avoid redundant API calls.
+  - Address responses from reverse geocode providers are now validated against a regex before use.
+  - Various small fixes and test improvements.
+</Update>
+
+<Update label="2023-06-13" description="0.1.0">
+  - Added HEIC and JPEG file support.
+  - Added file hash verification after copy (`--verify` flag).
+  - Invalid photo formats are now caught, reported, and moved to a dedicated folder rather than causing a hard failure.
+</Update>
+
+<Update label="2023-02-23" description="0.0.1">
+  - Added the ability to retrieve an address from a photo without specifying provider-specific properties.
+  - Removed the MapQuest reverse geocode provider (service has been deprecated by the vendor).
+</Update>
+
+<Update label="2022-08-01" description="0.0.0">
+  First public release. Included the following verbs and options:
+
+  **Verbs:** `copy`, `info`, `address`, `settings`
+
+  **FolderProcessType:** `Single`, `SubFoldersPreserveFolderHierarchy`, `FlattenAllSubFolders`
+
+  **NamingStyle:** `Numeric`, `Day`, `DateTimeWithMinutes`, `DateTimeWithSeconds`, `Address`, `DayAddress`, `DateTimeWithMinutesAddress`, `DateTimeWithSecondsAddress`, `AddressDay`, `AddressDateTimeWithMinutes`, `AddressDateTimeWithSeconds`
+
+  **FolderAppendType:** `FirstYearMonthDay`, `FirstYearMonth`, `FirstYear`, `DayRange`, `MatchingMinimumAddress`
+
+  **GroupByFolderType:** `YearMonthDay`, `YearMonth`, `Year`, `AddressFlat`, `AddressHierarchy`
+
+  **ReverseGeocodeProvider:** `BigDataCloud`, `OpenStreetMapFoundation`, `GoogleMaps`, `MapQuest`, `LocationIq`
+</Update>

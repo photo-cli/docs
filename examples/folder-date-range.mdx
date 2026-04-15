@@ -1,0 +1,107 @@
+---
+sidebarTitle: "Folder Date Range"
+title: "Prefix Photo Folder Names With Date Ranges in photo-cli"
+description: "Use photo-cli copy to prefix each folder name with the earliest and latest photo dates it contains, and name files with reverse-geocoded address and date."
+---
+
+This example prefixes each folder name with the date range of the photos inside it — showing the earliest and latest taken dates — while renaming every file with its reverse-geocoded address and day. The original folder hierarchy is preserved; only the names change.
+
+## Command
+
+<CodeGroup>
+```bash Long form
+photo-cli copy \
+  --process-type SubFoldersPreserveFolderHierarchy \
+  --folder-append DayRange \
+  --folder-append-location Prefix \
+  --naming-style AddressDay \
+  --reverse-geocode OpenStreetMapFoundation \
+  --openstreetmap-properties country city town suburb \
+  --number-style AllNamesAreSameLength \
+  --input photos \
+  --output organized-albums
+```
+
+```bash Short form
+photo-cli copy -f 2 -a 4 -p 1 -s 9 -e 2 -r country city town suburb -n 1 -i photos -o organized-albums
+```
+</CodeGroup>
+
+## Key arguments
+
+| Argument | Value | What it does |
+|---|---|---|
+| `--process-type` | `SubFoldersPreserveFolderHierarchy` | Keeps the original subfolder structure in the output. |
+| `--folder-append` | `DayRange` | Computes the earliest and latest photo taken date within each folder and prepares that range to be appended to the folder name. |
+| `--folder-append-location` | `Prefix` | Places the date range before the original folder name, e.g., `2005.12.14-2008.10.22-Italy album`. |
+| `--naming-style` | `AddressDay` | Names each file as `{address}-{yyyy.MM.dd}.ext`, using the reverse-geocoded location and the date the photo was taken. |
+| `--reverse-geocode` | `OpenStreetMapFoundation` | Uses the OpenStreetMap Nominatim API to look up an address for each photo's GPS coordinates. |
+| `--openstreetmap-properties` | `country city town suburb` | Selects which address fields to include when building the address string. |
+| `--number-style` | `AllNamesAreSameLength` | When multiple files in the same folder would get the same name, appends a suffix padded so all suffixed names stay equal length. |
+
+## Before and after
+
+**Before** (`photos/`):
+
+```text
+├── DSC_5727.jpg
+├── GOPR6742.jpg
+├── Italy album
+│   ├── DJI_01732.jpg
+│   ├── DJI_01733.jpg
+│   ├── DSC00001.JPG
+│   ├── DSC03467.jpg
+│   ├── DSC_1769.JPG
+│   ├── DSC_1770.JPG
+│   ├── DSC_1770_(same).jpg
+│   ├── DSC_1771.JPG
+│   ├── GOPR7496.jpg
+│   ├── GOPR7497.jpg
+│   ├── IMG_0747.JPG
+│   └── IMG_2371.jpg
+└── Spain Journey
+    ├── DSC_1807.jpg
+    ├── DSC_1808.jpg
+    └── IMG_5397.jpg
+
+2 directories, 17 files
+```
+
+**After** (`organized-albums/`):
+
+```text
+├── 2005.12.14-2008.10.22-Italy album
+│   ├── IMG_2371.jpg
+│   ├── Italia-Arezzo-2008.10.22-10.jpg
+│   ├── Italia-Arezzo-2008.10.22-11.jpg
+│   ├── Italia-Arezzo-2008.10.22-12.jpg
+│   ├── Italia-Arezzo-2008.10.22-13.jpg
+│   ├── Italia-Arezzo-2008.10.22-14.jpg
+│   ├── Italia-Arezzo-2008.10.22-15.jpg
+│   ├── Italia-Arezzo-2008.10.22-16.jpg
+│   ├── Italia-Arezzo-2008.10.22-17.jpg
+│   ├── Italia-Arezzo-2008.10.22-18.jpg
+│   ├── Italia-Arezzo-2008.10.22-19.jpg
+│   └── Italia-Firenze-Quartiere 1-2005.12.14.jpg
+├── 2015.04.10-2015.04.10-Spain Journey
+│   ├── España-Madrid-2015.04.10-1.jpg
+│   ├── España-Madrid-2015.04.10-2.jpg
+│   └── IMG_5397.jpg
+├── Kenya-2005.08.13.jpg
+├── photo-cli-report.csv
+└── United Kingdom-Ascot-Sunninghill and Ascot-2012.06.22.jpg
+
+2 directories, 18 files
+```
+
+## What you see in the output
+
+The `Italy album` folder is renamed `2005.12.14-2008.10.22-Italy album`, reflecting that the earliest photo inside it was taken on 14 December 2005 and the latest on 22 October 2008. The `Spain Journey` folder becomes `2015.04.10-2015.04.10-Spain Journey` — both dates are the same because all dated photos in that folder were taken on the same day.
+
+Files are renamed using their reverse-geocoded address and day. The ten Arezzo photos all share the same address and date (`Italia-Arezzo-2008.10.22`), so photo-cli appends a two-digit suffix (`-10` through `-19`) to keep their names equal length across the group.
+
+Photos without GPS coordinates (`IMG_2371.jpg`) or without any EXIF date (`IMG_5397.jpg`) are kept under their original names and placed inside the renamed folder alongside the other files.
+
+<Tip>
+Folder date range prefixes are ideal for travel albums where you want to see the shoot dates at a glance in the folder listing, without having to open the folder or check individual file names. The prefix format `yyyy.MM.dd-yyyy.MM.dd` sorts correctly in any file manager that sorts alphabetically.
+</Tip>

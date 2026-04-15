@@ -1,0 +1,37 @@
+---
+title: "Copy and Rename Companion Files Alongside Your Photos"
+sidebarTitle: "Companion Files"
+description: "Automatically copy sidecar and companion files — like iPhone Live Photo .mov videos — whenever photo-cli copies or archives a photo."
+---
+
+When photo-cli copies or archives a photo, it also copies any companion file that shares the same base name but carries a different extension. The most common example is the `.mov` video file that iPhones generate alongside every Live Photo: process `IMG_1234.jpg` and photo-cli will automatically bring `IMG_1234.mov` along with it, renaming it to match the photo's new name while keeping the `.mov` extension.
+
+## Default companion extension
+
+The default setting is `mov`, which covers iPhone Live Photos. No additional configuration is needed if that is the only companion format you use.
+
+## How companion file copying works
+
+For every photo that photo-cli processes, it checks whether a file with the same base name and any configured companion extension exists in the same folder. If it does, that file is copied to the output alongside the photo. The companion file receives the same new base name as the photo but retains its original extension.
+
+**Example:** if `IMG_1234.jpg` is renamed to `2024.07.15_14.32.jpg`, the companion `IMG_1234.mov` is copied as `2024.07.15_14.32.mov`.
+
+<Note>
+  Companion files are always renamed to match the photo's new output name. Their original extension is preserved.
+</Note>
+
+## Adding companion extensions
+
+Use the `settings` command to replace the `CompanionExtensions` value with a comma-separated list of the extensions you need:
+
+```bash
+photo-cli settings --key CompanionExtensions --value mov,aae,xmp
+```
+
+## Common use cases
+
+| Extension | Use case |
+|-----------|----------|
+| `mov` | iPhone Live Photos (default) |
+| `aae` | Apple photo edit sidecar files |
+| `xmp` | Adobe Lightroom and Camera Raw sidecar files |

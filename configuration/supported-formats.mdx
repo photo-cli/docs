@@ -1,0 +1,38 @@
+---
+title: "Supported Photo File Formats and Extensions in photo-cli"
+sidebarTitle: "Photo Formats"
+description: "photo-cli processes jpg, jpeg, heic, and png by default. Learn how to extend support to any format the MetadataExtractor library can read."
+---
+
+photo-cli processes `jpg`, `jpeg`, `heic`, and `png` files by default. Because the tool uses the [MetadataExtractor](https://github.com/drewnoakes/metadata-extractor-dotnet) .NET library to read EXIF data, you can extend this list to support any image format that MetadataExtractor handles — without recompiling or upgrading photo-cli itself.
+
+## Default supported extensions
+
+Out of the box, photo-cli looks for files with these extensions (matched case-insensitively):
+
+- `jpg`
+- `jpeg`
+- `heic`
+- `png`
+
+<Note>
+  Extension matching is case-insensitive. Files named `IMG_1234.JPG` and `IMG_1234.jpg` are both processed.
+</Note>
+
+## Adding extra extensions
+
+Use the `settings` command to replace the `SupportedExtensions` value with a comma-separated list of the extensions you need:
+
+```bash
+photo-cli settings --key SupportedExtensions --value jpg,jpeg,heic,png,tiff,cr2
+```
+
+The new value takes effect immediately for all subsequent commands. You do not need to restart anything.
+
+## MetadataExtractor compatibility
+
+photo-cli delegates all EXIF reading to the [MetadataExtractor .NET library](https://github.com/drewnoakes/metadata-extractor-dotnet). Any format listed in that library's supported file types can be enabled by adding the extension to `SupportedExtensions`.
+
+<Warning>
+  photo-cli reads EXIF data to determine the taken date and GPS coordinates. Image formats that do not embed EXIF metadata — such as plain PNG exports from design tools — will have neither a date nor location. Those photos are handled according to your `--no-taken-date` and `--no-coordinate` settings, and may end up in the configured fallback folders.
+</Warning>

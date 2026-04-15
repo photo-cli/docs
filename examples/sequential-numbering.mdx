@@ -1,0 +1,97 @@
+---
+sidebarTitle: "Sequential Numbers"
+title: "Rename Photos as Sequential Numbers Using photo-cli"
+description: "Use photo-cli copy to rename every photo to a padded sequential number ordered by taken date, while keeping the original subfolder hierarchy unchanged."
+---
+
+This example renames every photo to a padded sequential number while preserving the original subfolder hierarchy. Photo-cli orders files within each folder by their EXIF taken date before assigning numbers, so the sequence always reflects chronological order rather than the original file names.
+
+## Command
+
+<CodeGroup>
+```bash Long form
+photo-cli copy \
+  --process-type SubFoldersPreserveFolderHierarchy \
+  --naming-style Numeric \
+  --number-style PaddingZeroCharacter \
+  --input photos \
+  --output organized-albums
+```
+
+```bash Short form
+photo-cli copy -f 2 -s 1 -n 2 -i photos -o organized-albums
+```
+</CodeGroup>
+
+## Key arguments
+
+| Argument | Value | What it does |
+|---|---|---|
+| `--process-type` | `SubFoldersPreserveFolderHierarchy` | Keeps the original folder structure intact in the output. |
+| `--naming-style` | `Numeric` | Names every output file with a sequential number instead of a date or address. |
+| `--number-style` | `PaddingZeroCharacter` | Pads numbers with leading zeros so that all names within a folder are the same character length (e.g., `01`, `02`, … `12`). |
+
+## Before and after
+
+**Before** (`photos/`):
+
+```text
+├── DSC_5727.jpg
+├── GOPR6742.jpg
+├── Italy album
+│   ├── DJI_01732.jpg
+│   ├── DJI_01733.jpg
+│   ├── DSC00001.JPG
+│   ├── DSC03467.jpg
+│   ├── DSC_1769.JPG
+│   ├── DSC_1770.JPG
+│   ├── DSC_1770_(same).jpg
+│   ├── DSC_1771.JPG
+│   ├── GOPR7496.jpg
+│   ├── GOPR7497.jpg
+│   ├── IMG_0747.JPG
+│   └── IMG_2371.jpg
+└── Spain Journey
+    ├── DSC_1807.jpg
+    ├── DSC_1808.jpg
+    └── IMG_5397.jpg
+
+2 directories, 17 files
+```
+
+**After** (`organized-albums/`):
+
+```text
+├── 1.jpg
+├── 2.jpg
+├── Italy album
+│   ├── 01.jpg
+│   ├── 02.jpg
+│   ├── 03.jpg
+│   ├── 04.jpg
+│   ├── 05.jpg
+│   ├── 06.jpg
+│   ├── 07.jpg
+│   ├── 08.jpg
+│   ├── 09.jpg
+│   ├── 10.jpg
+│   ├── 11.jpg
+│   └── 12.jpg
+├── photo-cli-report.csv
+└── Spain Journey
+    ├── 1.jpg
+    ├── 2.jpg
+    └── 3.jpg
+
+2 directories, 18 files
+```
+
+## What you see in the output
+
+Numbers are scoped per folder. The root level has only two photos (`DSC_5727.jpg` and `GOPR6742.jpg`), so they become `1.jpg` and `2.jpg` with no leading zero. The **Italy album** folder has 12 photos, so photo-cli pads to two digits: `01.jpg` through `12.jpg`. The **Spain Journey** folder has three photos, producing `1.jpg`, `2.jpg`, and `3.jpg`.
+
+Photo-cli also writes a `photo-cli-report.csv` file at the root of the output folder. This CSV maps every original file path to its new path so you can trace back any numbered file to its source.
+
+<Tip>
+Sequential numbering is a good choice when you want to anonymize a batch of photos before sharing them or when you need a simple, predictable sort order in software that orders files alphabetically. Because numbers are assigned by taken date, the sequence is always chronological even if the original file names were not.
+</Tip>

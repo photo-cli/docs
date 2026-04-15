@@ -1,0 +1,104 @@
+---
+title: "Get Started with photo-cli: Organize Photos in Minutes"
+description: "Run your first photo-cli copy command, understand the key arguments, and optionally add reverse geocoding to include location names in your file names."
+sidebarTitle: "Quick Start"
+---
+
+This guide walks you through installing photo-cli and running your first command to organize a folder of photos by date. By the end, you will have a new organized folder, renamed files, and a CSV report you can review — all without touching your originals.
+
+<Steps>
+  <Step title="Install photo-cli">
+    Follow the [Installation](/installation) guide to install photo-cli on your system.
+
+    Once installed, verify the tool is available:
+
+    ```bash
+    photo-cli --version
+    ```
+  </Step>
+  <Step title="Navigate to your photos folder">
+    Open a terminal and change to the directory that contains the photos you want to organize:
+
+    ```bash
+    cd /path/to/your/photos
+    ```
+
+    photo-cli will scan this directory (including any subfolders) for photos and read their EXIF metadata.
+  </Step>
+  <Step title="Run your first copy command">
+    Run the following command to copy your photos into a new organized folder:
+
+    ```bash
+    photo-cli copy \
+      --process-type SubFoldersPreserveFolderHierarchy \
+      --naming-style DateTimeWithSeconds \
+      --number-style PaddingZeroCharacter \
+      --no-taken-date InSubFolder \
+      --no-coordinate Continue \
+      --output organized-photos
+    ```
+
+    Here is what each argument does:
+
+    | Argument | Value | Effect |
+    | -------- | ----- | ------ |
+    | `--process-type` | `SubFoldersPreserveFolderHierarchy` | Preserves your existing subfolder structure in the output |
+    | `--naming-style` | `DateTimeWithSeconds` | Renames each file using its taken date and time, down to the second (e.g., `2024.03.15_14.22.01.jpg`) |
+    | `--number-style` | `PaddingZeroCharacter` | Appends a zero-padded number when two photos share the same timestamp (e.g., `-1`, `-2`) |
+    | `--no-taken-date` | `InSubFolder` | Copies photos with no taken date into a `no-photo-taken-date` subfolder instead of skipping them |
+    | `--no-coordinate` | `Continue` | Copies photos with no GPS data using the date only, without an address |
+    | `--output` | `organized-photos` | Name of the new folder where organized photos are written |
+
+    <Note>
+      photo-cli never modifies or deletes your source photos. The `--output` folder is always separate from your source directory.
+    </Note>
+  </Step>
+  <Step title="Check the output">
+    After the command completes, open the `organized-photos` folder. You will find:
+
+    - Your photos renamed with a date-time prefix (e.g., `2024.03.15_14.22.01.jpg`)
+    - Subfolders preserved from your original structure
+    - Photos missing a taken date placed in a `no-photo-taken-date` subfolder
+    - A `photo-cli-report.csv` file listing every photo, its original path, new path, taken date, and GPS data
+
+    You can open the CSV in Excel, Numbers, LibreOffice Calc, or Google Sheets to review all extracted metadata.
+  </Step>
+  <Step title="Add location names with reverse geocoding (optional)">
+    To include place names in your file names, add the `--reverse-geocode` and `--openstreetmap-properties` arguments. This sends each photo's GPS coordinates to OpenStreetMap to resolve a human-readable address.
+
+    ```bash
+    photo-cli copy \
+      --process-type SubFoldersPreserveFolderHierarchy \
+      --naming-style DateTimeWithSeconds \
+      --number-style PaddingZeroCharacter \
+      --no-taken-date InSubFolder \
+      --no-coordinate Continue \
+      --reverse-geocode OpenStreetMapFoundation \
+      --openstreetmap-properties country city town \
+      --output organized-photos-with-location
+    ```
+
+    With these arguments added, photo-cli resolves each coordinate to an address built from the `country`, `city`, and `town` administrative levels. File names will look like `2024.03.15_14.22.01-France-Paris.jpg`.
+
+    <Tip>
+      OpenStreetMapFoundation is a free provider with a rate limit of one request per second. For large photo libraries, the reverse geocoding step will take time proportional to the number of unique coordinates.
+    </Tip>
+  </Step>
+</Steps>
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Explore copy options" icon="copy" href="/commands/copy">
+    Learn all the arguments available for the copy command, including folder append strategies and verify mode.
+  </Card>
+  <Card title="Add location names" icon="location-dot" href="/reverse-geocoding/overview">
+    Configure a reverse geocode provider and control which address levels appear in your file names.
+  </Card>
+  <Card title="See more examples" icon="images" href="/examples/overview">
+    Browse real before-and-after examples for common organization strategies.
+  </Card>
+  <Card title="All arguments" icon="list" href="/reference/arguments">
+    Full reference for every argument accepted by photo-cli commands.
+  </Card>
+</CardGroup>
