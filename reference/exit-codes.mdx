@@ -13,6 +13,7 @@ photo-cli returns a specific numeric exit code when it finishes. A code of `0` m
 | `0` | `Success` | Command completed successfully |
 | `1` | `ParseArgsFailed` | Invalid or missing command-line arguments |
 | `2` | `AppSettingsInvalidFile` | The settings file is corrupt or cannot be read |
+| `3` | `UnexpectedError` | An unhandled exception occurred during execution |
 | `10` | `ApiKeyStoreValidationFailed` | API key validation failed |
 | `11` | `AddressOptionsValidationFailed` | Invalid options passed to the `address` command |
 | `12` | `InfoOptionsValidationFailed` | Invalid options passed to the `info` command |
@@ -26,11 +27,27 @@ photo-cli returns a specific numeric exit code when it finishes. A code of `0` m
 | `24` | `OutputPathDontHaveWriteFilePermission` | photo-cli does not have write permission at the output path |
 | `25` | `OutputPathDontHaveCreateDirectoryPermission` | photo-cli cannot create directories at the output path |
 | `26` | `InputFileNotExists` | The file given with `--input` does not exist (used by the `address` command) |
+| `27` | `FileVerifyErrors` | File integrity verification failed after copying |
 | `30` | `PhotosWithNoDatePreventedProcess` | `--no-taken-date` was set to `PreventProcess` and at least one photo has no EXIF date |
 | `31` | `PhotosWithNoCoordinatePreventedProcess` | `--no-coordinate` was set to `PreventProcess` and at least one photo has no GPS coordinates |
 | `32` | `PhotosWithNoCoordinateAndNoDatePreventedProcess` | Both date and coordinate are missing and `PreventProcess` is in effect |
+| `33` | `PhotosWithInvalidFileFormatPreventedProcess` | `--invalid-format` was set to `PreventProcess` and photos with invalid or unreadable EXIF data were found |
+| `34` | `PhotosWithMissingReverseGeocodeInfoAsRequested` | `--missing-reverse-geocode` was set to `PreventProcess` and reverse geocoding could not be completed for all photos |
+| `35` | `PhotosWithUnexpectedDateRangePreventedProcess` | The photo date range exceeded the threshold set by `--expected-day-range` |
 | `40` | `PropertyNotFound` | The settings key passed with `--key` does not exist |
 | `41` | `InvalidSettingsValue` | The value passed to the `settings` command is not valid for the given key |
+| `42` | `InvalidSettingsLogLevelChange` | The log level value is not in the required `Namespace=LogLevel` format |
+| `50` | `AlbumExist` | An album with the specified name already exists |
+| `51` | `InconsistencyOnSavingPhotosToDatabase` | Saving archived photos to the database failed due to a data inconsistency |
+| `52` | `InconsistencyOnSavingUserDefinedAlbumToDatabase` | Saving a user-defined album to the database failed due to a data inconsistency |
+| `53` | `AlbumNameMustBeUniqueWhileAddingOrUseUpdate` | An album with the new name already exists; use the `--update-album` flag instead |
+| `54` | `AlbumNotFoundById` | No album with the specified ID was found in the database |
+| `55` | `NoPhotosToAddInAlbum` | No valid photos are available to add to the album |
+| `56` | `NoDataRangeFoundOnPhotos` | A date-range album could not be created because the photos have no valid date range |
+| `57` | `ExistingAlbumConfigurationNotValid` | The existing album configuration in the database is corrupted or invalid |
+| `60` | `NoArchiveDatabaseFound` | The archive database file was not found at the expected location |
+| `61` | `NoPhotoFoundToList` | No photos matched the specified query filters |
+| `62` | `AlbumNotFoundByName` | No album with the specified name was found in the database |
 
 ## Using exit codes in shell scripts
 

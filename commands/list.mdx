@@ -1,0 +1,170 @@
+---
+sidebarTitle: "list"
+title: "photo-cli list — List and Open Archived Photos"
+description: "Browse, filter, and open photos from an archive folder by album, date, or date range using the photo-cli list command."
+---
+
+`photo-cli list` queries the SQLite database created by `photo-cli archive` and displays photo metadata or opens matching photos directly in your default viewer. You can filter by album, exact date, or date range.
+
+## Synopsis
+
+```bash
+photo-cli list [options]
+```
+
+## Prerequisites
+
+The `list` command works only on folders created by `photo-cli archive`. The folder must contain a `photo-cli.sqlite3` database.
+
+## Arguments
+
+### Optional
+
+<ParamField query="--input, -i" type="string">
+  Path to the archive folder containing the `photo-cli.sqlite3` database. Defaults to the current working directory.
+</ParamField>
+
+<ParamField query="--type, -t" type="enum">
+  The type of listing to display. Determines which data is queried and how results are presented.
+
+  | Name | Value |
+  | --- | --- |
+  | Summary (default) | 0 |
+  | Albums | 1 |
+  | PhotosByAlbumId | 2 |
+  | PhotosByAlbumName | 3 |
+  | PhotosByExactDate | 4 |
+  | PhotosByDateRange | 5 |
+</ParamField>
+
+<ParamField query="--id, -n" type="integer">
+  Album ID to filter photos. Required when `--type` is `PhotosByAlbumId`. Album IDs can be found by running `photo-cli list --type Albums`.
+</ParamField>
+
+<ParamField query="--name, -a" type="string">
+  Album name to filter photos. Required when `--type` is `PhotosByAlbumName`.
+</ParamField>
+
+<ParamField query="--year, -y" type="integer">
+  Year to filter photos. Used when `--type` is `PhotosByExactDate`.
+</ParamField>
+
+<ParamField query="--month, -m" type="integer">
+  Month to filter photos. Used when `--type` is `PhotosByExactDate`.
+</ParamField>
+
+<ParamField query="--day, -d" type="integer">
+  Day to filter photos. Used when `--type` is `PhotosByExactDate`.
+</ParamField>
+
+<ParamField query="--start-date, -s" type="string">
+  Start date (inclusive) in `yyyy-MM-dd` format. Required when `--type` is `PhotosByDateRange`.
+</ParamField>
+
+<ParamField query="--end-date, -e" type="string">
+  End date (inclusive) in `yyyy-MM-dd` format. Required when `--type` is `PhotosByDateRange`.
+</ParamField>
+
+<ParamField query="--raw, -r" type="boolean">
+  Output photo paths as plain text (one per line) instead of opening them in the default OS viewer. Useful for piping to other tools. No extra value required — pass the flag alone.
+</ParamField>
+
+## List types explained
+
+### Summary (default)
+
+Shows total counts of albums, photos, and reverse geocode cache entries in the archive.
+
+```bash
+photo-cli list --input archive-folder
+```
+
+### Albums
+
+Lists all albums with their ID, name, type, creation date, and configuration.
+
+<CodeGroup>
+
+```bash Long form
+photo-cli list --input archive-folder --type Albums
+```
+
+```bash Short form
+photo-cli list -i archive-folder -t Albums
+```
+
+</CodeGroup>
+
+### Photos by album ID
+
+Lists or opens photos belonging to a specific album, identified by its numeric ID.
+
+<CodeGroup>
+
+```bash Long form
+photo-cli list --input archive-folder --type PhotosByAlbumId --id 1
+```
+
+```bash Short form
+photo-cli list -i archive-folder -t 2 -n 1
+```
+
+</CodeGroup>
+
+### Photos by album name
+
+Lists or opens photos belonging to a specific album, identified by name.
+
+<CodeGroup>
+
+```bash Long form
+photo-cli list --input archive-folder --type PhotosByAlbumName --name "Italia"
+```
+
+```bash Short form
+photo-cli list -i archive-folder -t 3 -a "Italia"
+```
+
+</CodeGroup>
+
+### Photos by exact date
+
+Lists or opens photos filtered by year, month, and/or day. All date parameters are optional — you can filter by year alone, year and month, or all three.
+
+<CodeGroup>
+
+```bash Long form
+photo-cli list --input archive-folder --type PhotosByExactDate --year 2008 --month 10
+```
+
+```bash Short form
+photo-cli list -i archive-folder -t 4 -y 2008 -m 10
+```
+
+</CodeGroup>
+
+### Photos by date range
+
+Lists or opens photos taken within an inclusive date range.
+
+<CodeGroup>
+
+```bash Long form
+photo-cli list --input archive-folder --type PhotosByDateRange --start-date 2025-09-21 --end-date 2026-01-30
+```
+
+```bash Short form
+photo-cli list -i archive-folder -t 5 -s 2025-09-21 -e 2026-01-30
+```
+
+</CodeGroup>
+
+## Photo viewing behavior
+
+On **macOS**, matching photos are opened directly in the Preview app. On **Windows and Linux**, photo file paths are printed to the console (one per line) since there is no universal default photo viewer. You can pipe these paths to your preferred viewer.
+
+Use the `--raw` flag on any platform to force plain-text path output instead of opening the viewer.
+
+<Note>
+  Instead of option names (e.g., `PhotosByExactDate`), you can use the numeric values (e.g., `4`). You can also use relative folder paths — if your working directory is the archive folder, you can omit the `--input` argument entirely.
+</Note>

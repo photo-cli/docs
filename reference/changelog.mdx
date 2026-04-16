@@ -6,6 +6,19 @@ description: "Full release history for photo-cli listed in reverse chronological
 
 This page lists every published version of photo-cli in reverse chronological order. Each entry describes what was added, changed, or fixed in that release.
 
+<Update label="0.4.0">
+  - The `archive` command now supports named and address-based album metadata linking to photos via `--album-type`, `--album-name`, `--update-album`, and `--auto-reverse-geocode-album`.
+  - Added the `list` command to browse, filter, and open photos from archived folders based on metadata (by album, exact date, or date range).
+  - Added the `mcp` command to run photo-cli as an MCP (Model Context Protocol) stdio server, exposing the photo archive to AI assistants.
+  - Refactored console output with colours and table support for better readability.
+  - Added container (Docker, Podman) support.
+  - Reverse geocode caching now persists between archive runs.
+  - Customizable logging infrastructure with per-namespace log levels.
+  - Added `hif` to the default supported photo extensions.
+  - Added `--invalid-format`, `--missing-reverse-geocode`, `--expected-day-range`, and `--language` arguments across commands.
+  - Upgraded the runtime to .NET 10.
+</Update>
+
 <Update label="0.3.1 – 0.3.3">
   - Homebrew and standalone executable builds are now produced automatically by release automation.
 </Update>

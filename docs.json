@@ -32,9 +32,11 @@
             "pages": [
               "commands/copy",
               "commands/archive",
+              "commands/list",
               "commands/info",
               "commands/address",
-              "commands/settings"
+              "commands/settings",
+              "commands/mcp"
             ]
           },
           {

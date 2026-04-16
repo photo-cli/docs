@@ -120,6 +120,54 @@ This page is a complete reference for all command-line arguments accepted by pho
 
   </Accordion>
 
+  <Accordion title="Archive: albums & source management">
+
+    **`-y` / `--album-type`**
+
+    Applies to: `archive`
+
+    Whether to link archived photos to an album.
+
+    | Value | Name |
+    |-------|------|
+    | `0` | `NoAlbumLinking` (default) |
+    | `1` | `Individual` |
+    | `2` | `DateRange` |
+
+    ---
+
+    **`-a` / `--album-name`**
+
+    Applies to: `archive`
+
+    Name for a new album to create and link the currently archiving photos to. Use with `--album-type` set to `Individual` or `DateRange`.
+
+    ---
+
+    **`-p` / `--update-album`**
+
+    Applies to: `archive`
+
+    Existing album ID to link the currently archiving photos to. Use with `--album-type` set to `Individual` or `DateRange`.
+
+    ---
+
+    **`-s` / `--auto-reverse-geocode-album`**
+
+    Applies to: `archive`
+
+    Automatically create or update albums for each reverse geocode property level. No additional value needed.
+
+    ---
+
+    **`-f` / `--delete-on-source`**
+
+    Applies to: `archive`
+
+    Delete source photo files, companion files, and empty directories after a successful archive. No additional value needed.
+
+  </Accordion>
+
   <Accordion title="Missing data handling">
 
     **`-t` / `--no-taken-date`**
@@ -165,6 +213,49 @@ This page is a complete reference for all command-line arguments accepted by pho
     |-------|------|
     | `0` | `Continue` |
     | `1` | `PreventProcess` |
+
+    ---
+
+    **`-x` / `--invalid-format`**
+
+    Action to take when a file cannot be parsed as a valid photo format. Default is `Continue` (`0`).
+
+    For `copy`:
+
+    | Value | Name |
+    |-------|------|
+    | `0` | `Continue` (default) |
+    | `1` | `PreventProcess` |
+    | `2` | `DontCopyToOutput` |
+    | `3` | `InSubFolder` |
+
+    For `archive` and `info`:
+
+    | Value | Name |
+    |-------|------|
+    | `0` | `Continue` (default) |
+    | `1` | `PreventProcess` |
+
+    ---
+
+    **`-z` / `--missing-reverse-geocode`**
+
+    Applies to: `archive`, `copy`, `info`
+
+    Action to take when any photo has missing reverse geocode information. Default is `Continue` (`0`).
+
+    | Value | Name |
+    |-------|------|
+    | `0` | `Continue` (default) |
+    | `1` | `PreventProcess` |
+
+    ---
+
+    **`-w` / `--expected-day-range`**
+
+    Applies to: `archive`, `copy`
+
+    Maximum expected day difference between the earliest and latest photo taken dates. If exceeded, the process stops.
 
   </Accordion>
 
@@ -226,6 +317,14 @@ This page is a complete reference for all command-line arguments accepted by pho
 
     Pass this flag to bypass the free-tier rate limit when you have a paid LocationIq license. No additional value is needed.
 
+    ---
+
+    **`-l` / `--language`**
+
+    Applies to: `archive`, `copy`, `info`, `address`
+
+    Language/culture value to get localized address results from the reverse geocode provider.
+
   </Accordion>
 
   <Accordion title="Utilities">
@@ -265,6 +364,79 @@ This page is a complete reference for all command-line arguments accepted by pho
     | `0` | `AllAvailableProperties` |
     | `1` | `SelectedProperties` |
     | `2` | `FullResponse` |
+
+  </Accordion>
+
+  <Accordion title="list command">
+
+    **`-t` / `--type`**
+
+    The type of listing to display from the archive database.
+
+    | Value | Name |
+    |-------|------|
+    | `0` | `Summary` (default) |
+    | `1` | `Albums` |
+    | `2` | `PhotosByAlbumId` |
+    | `3` | `PhotosByAlbumName` |
+    | `4` | `PhotosByExactDate` |
+    | `5` | `PhotosByDateRange` |
+
+    ---
+
+    **`-n` / `--id`**
+
+    Album ID to filter photos when using list type `PhotosByAlbumId`.
+
+    ---
+
+    **`-a` / `--name`**
+
+    Album name to filter photos when using list type `PhotosByAlbumName`.
+
+    ---
+
+    **`-y` / `--year`**
+
+    Year to filter photos when using list type `PhotosByExactDate`.
+
+    ---
+
+    **`-m` / `--month`**
+
+    Month to filter photos when using list type `PhotosByExactDate`.
+
+    ---
+
+    **`-d` / `--day`**
+
+    Day to filter photos when using list type `PhotosByExactDate`.
+
+    ---
+
+    **`-s` / `--start-date`**
+
+    Start date (inclusive) in `yyyy-MM-dd` format for `PhotosByDateRange`.
+
+    ---
+
+    **`-e` / `--end-date`**
+
+    End date (inclusive) in `yyyy-MM-dd` format for `PhotosByDateRange`.
+
+    ---
+
+    **`-r` / `--raw`**
+
+    Output photo paths as plain text instead of opening them in the default viewer. No additional value needed.
+
+  </Accordion>
+
+  <Accordion title="mcp command">
+
+    **`-i` / `--input`**
+
+    Path to the archive folder containing the `photo-cli.sqlite3` database. Defaults to the current working directory.
 
   </Accordion>
 

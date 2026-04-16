@@ -136,8 +136,32 @@ Add `--dry-run` (`-d`) to simulate the entire process without writing any files 
   | Suffix | 2 |
 </ParamField>
 
+<ParamField query="--invalid-format, -x" type="enum">
+  Action to take when a file cannot be parsed as a valid photo format.
+
+  | Name | Value |
+  | --- | --- |
+  | Continue (default) | 0 |
+  | PreventProcess | 1 |
+  | DontCopyToOutput | 2 |
+  | InSubFolder | 3 |
+</ParamField>
+
 <ParamField query="--verify, -v" type="boolean">
   Verifies every copied file by comparing its SHA1 hash against the original. All hashes are also written to `sha1.lst` in the output folder so you can re-verify later with `sha1sum --check sha1.lst`.
+</ParamField>
+
+<ParamField query="--expected-day-range, -w" type="integer">
+  Maximum expected day difference between the earliest and latest photo taken dates. If the range exceeds this value, the process stops before copying.
+</ParamField>
+
+<ParamField query="--missing-reverse-geocode, -z" type="enum">
+  Action to take when any photo has missing reverse geocode information.
+
+  | Name | Value |
+  | --- | --- |
+  | Continue (default) | 0 |
+  | PreventProcess | 1 |
 </ParamField>
 
 <ParamField query="--reverse-geocode, -e" type="enum">
@@ -178,6 +202,10 @@ Add `--dry-run` (`-d`) to simulate the entire process without writing any files 
 
 <ParamField query="--has-paid-license, -h" type="boolean">
   Bypass the free-tier rate limit when using LocationIq with a paid license.
+</ParamField>
+
+<ParamField query="--language, -l" type="string">
+  Language/culture value to get localized address results from the reverse geocode provider. See your provider's documentation for supported values.
 </ParamField>
 
 ## Example

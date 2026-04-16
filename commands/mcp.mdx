@@ -1,0 +1,126 @@
+---
+sidebarTitle: "mcp"
+title: "photo-cli mcp — MCP Server for AI Assistants"
+description: "Run photo-cli as an MCP stdio server to expose your archived photo database to AI assistants like Claude, VS Code, and other MCP-compatible clients."
+---
+
+`photo-cli mcp` starts a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) stdio server that exposes your archived photo database to AI assistants. This lets tools like Claude Desktop, Claude Code, and VS Code query your photos conversationally — searching by date, location, album, or proximity to a GPS coordinate.
+
+## Synopsis
+
+```bash
+photo-cli mcp [options]
+```
+
+## Prerequisites
+
+- An archive folder created with `photo-cli archive` that contains the `photo-cli.sqlite3` database.
+- .NET runtime available, or use the self-contained executable.
+
+## Arguments
+
+<ParamField query="--input, -i" type="string">
+  Path to the archive folder containing the `photo-cli.sqlite3` database. Defaults to the current working directory.
+</ParamField>
+
+## MCP tools exposed
+
+When a client connects, photo-cli registers the following tools:
+
+| Tool | Description |
+| --- | --- |
+| `search_photos` | Search photos by date range, location text, or limit. Returns paths, dates, and location info. |
+| `get_photo` | Get full metadata for a specific photo by its archive file path. |
+| `list_albums` | List all albums with ID, name, type, creation date, and configuration. |
+| `get_statistics` | Get photo counts grouped by year, month, country, city, or camera model. |
+| `find_near_location` | Find photos taken near a GPS coordinate within a given radius (Haversine formula). |
+| `list_photos_by_album_id` | List photos belonging to an album by its numeric ID. |
+| `list_photos_by_album_name` | List photos belonging to an album by its name. |
+| `list_photos_by_exact_date` | List photos matching an exact date (year, month, day). All parameters are optional. |
+| `list_photos_by_date_range` | List photos within a date range. Both start and end dates are inclusive. |
+| `open_photos_by_album_id` | Open photos belonging to an album by its numeric ID in the default viewer (macOS Preview). |
+| `open_photos_by_album_name` | Open photos belonging to an album by its name in the default viewer (macOS Preview). |
+| `open_photos_by_exact_date` | Open photos matching an exact date in the default viewer (macOS Preview). |
+| `open_photos_by_date_range` | Open photos within a date range in the default viewer (macOS Preview). |
+
+## Setup
+
+### Claude Code (CLI)
+
+```bash
+claude mcp add photo-cli --scope user -- photo-cli mcp --input /path/to/archive-folder
+```
+
+### Claude Desktop
+
+Add the following to your `claude_desktop_config.json`:
+
+```json
+"mcpServers": {
+  "photo-cli": {
+    "command": "{photo-cli-executable-path}",
+    "args": [
+      "mcp",
+      "--input",
+      "{archive-folder-path}"
+    ]
+  }
+}
+```
+
+<Accordion title="macOS example with .NET global tool">
+
+```json
+"mcpServers": {
+  "photo-cli": {
+    "command": "/Users/{your-user}/.dotnet/tools/photo-cli",
+    "args": [
+      "mcp",
+      "--input",
+      "/Users/{your-user}/{archive-folder}"
+    ]
+  }
+}
+```
+
+</Accordion>
+
+### VS Code
+
+Add to `.vscode/mcp.json` or your user settings:
+
+```json
+"photo-cli": {
+  "type": "stdio",
+  "command": "{photo-cli-executable-path}",
+  "args": [
+    "mcp",
+    "--input",
+    "{archive-folder-path}"
+  ]
+}
+```
+
+<Accordion title="macOS example with .NET global tool">
+
+```json
+"photo-cli": {
+  "type": "stdio",
+  "command": "/Users/{your-user}/.dotnet/tools/photo-cli",
+  "args": [
+    "mcp",
+    "--input",
+    "/Users/{your-user}/{archive-folder}"
+  ]
+}
+```
+
+</Accordion>
+
+### MCP Inspector (debugging)
+
+Use the [MCP Inspector](https://github.com/modelcontextprotocol/inspector) to test and debug the server interactively:
+
+```bash
+npx @modelcontextprotocol/inspector photo-cli mcp --input {archive-folder-path}
+```

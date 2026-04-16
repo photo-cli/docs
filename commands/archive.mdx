@@ -61,6 +61,51 @@ Because duplicates are detected by file hash rather than file name, you can safe
   | PreventProcess | 1 |
 </ParamField>
 
+<ParamField query="--expected-day-range, -w" type="integer">
+  Maximum expected day difference between the earliest and latest photo taken dates. If the range exceeds this value, the process stops before archiving. Useful for preventing accidental archiving of unrelated photo sets.
+</ParamField>
+
+<ParamField query="--album-type, -y" type="enum">
+  Whether to link archived photos to an album.
+
+  | Name | Value |
+  | --- | --- |
+  | NoAlbumLinking (default) | 0 |
+  | Individual | 1 |
+  | DateRange | 2 |
+</ParamField>
+
+<ParamField query="--album-name, -a" type="string">
+  Name for a new album to create and link the currently archiving photos to. Use with `--album-type` set to `Individual` or `DateRange`.
+</ParamField>
+
+<ParamField query="--update-album, -p" type="integer">
+  Existing album ID to link the currently archiving photos to. Use with `--album-type` set to `Individual` or `DateRange`. Album IDs can be listed with `photo-cli list --type Albums`.
+</ParamField>
+
+<ParamField query="--auto-reverse-geocode-album, -s" type="boolean">
+  Automatically create or update albums for each reverse geocode property level. For example, if you use `country city` as reverse geocode properties, albums are created for each country and city found. No extra value required — pass the flag alone.
+</ParamField>
+
+<ParamField query="--delete-on-source, -f" type="boolean">
+  Delete source photo files, companion files, and empty directories after a successful archive operation. No extra value required — pass the flag alone.
+
+  <Warning>This is a destructive operation. Source files are permanently deleted after archiving completes successfully.</Warning>
+</ParamField>
+
+<ParamField query="--missing-reverse-geocode, -z" type="enum">
+  Action to take when any photo has missing reverse geocode information.
+
+  | Name | Value |
+  | --- | --- |
+  | Continue (default) | 0 |
+  | PreventProcess | 1 |
+</ParamField>
+
+<ParamField query="--language, -l" type="string">
+  Language/culture value to get localized address results from the reverse geocode provider. See your provider's documentation for supported values.
+</ParamField>
+
 <ParamField query="--invalid-format, -x" type="enum">
   Action to take when a file cannot be parsed as a valid photo format.
 
@@ -112,41 +157,28 @@ Because duplicates are detected by file hash rather than file name, you can safe
 
 ## Example
 
+The following example archives photos with a user-defined album, auto-creates reverse geocode albums, and deletes source files on success.
+
 <CodeGroup>
 
 ```bash Long form
 photo-cli archive \
+  --input photos \
   --output archive-folder \
+  --album-type DateRange \
+  --album-name My-Album \
+  --auto-reverse-geocode-album \
+  --expected-day-range 7300 \
+  --delete-on-source \
   --reverse-geocode OpenStreetMapFoundation \
-  --openstreetmap-properties country city town suburb
+  --openstreetmap-properties country city
 ```
 
 ```bash Short form
-photo-cli archive -o archive-folder -e 2 -r country city town suburb
+photo-cli archive -i photos -o archive-folder -y 2 -a My-Album -s -w 7300 -f -e 2 -r country city
 ```
 
 </CodeGroup>
-
-### Console output
-
-```text
-Searching photos: finished. 17 photo(s) found.
-warn: No coordinate found on `Gps` directory for .../Spain Journey/IMG_5397.jpg
-warn: No coordinate found on `Gps` directory for .../Italy album/IMG_2371.jpg
-Parsing photo exif information: finished.
-This OpenStreetMapFoundation provider is using rate limit of 1 second(s) between each request
-Reverse Geocoding: finished.
-Directory grouping: finished.
-warn: Photo is skipped due to same photo has already been archived.
-      Same photo paths: .../Italy album/DSC_1770.JPG, .../Italy album/DSC_1770_(same).jpg
-Processing target folder: finished.
-Verified all photo files copied successfully by comparing file hashes from original photo files.
-- 16 photo(s) existed on the output.
-- 1 photo(s) are skipped, they have the same photo.
-- 15 photo(s) has taken date and coordinate.
-- 1 photo(s) has taken date but no coordinate.
-- 1 photo(s) has no taken date and coordinate.
-```
 
 ### Output folder structure
 
@@ -176,10 +208,29 @@ archive-folder/
 │       └── 10/
 │           ├── 2015.04.10_20.12.23-3907fc960f2873f40c8f35643dd444e0468be131.jpg
 │           └── 2015.04.10_20.12.23-9f4e6d352ec172e1059571250655e376769080fe.jpg
+├── 2025/
+│   └── 06/
+│       └── 03/
+│           ├── 2025.06.03_13.53.36-8a45af72730474e22582afbe72f53685d705a72c.heic
+│           └── 2025.06.03_13.53.36-8a45af72730474e22582afbe72f53685d705a72c.mov
 ├── no-photo-taken-date/
 │   └── cf756397cc3ca81b2650c8801fd64e172504015a.jpg
 └── photo-cli.sqlite3
 ```
+
+<Note>
+  Companion files (like `.mov` from iPhone Live Photos) are automatically copied alongside their parent photo with the same base name. The `2025/06/03` entry above shows a `.heic` photo with its companion `.mov` file.
+</Note>
+
+### Listing albums after archiving
+
+After archiving with `--album-name` and `--auto-reverse-geocode-album`, you can list the created albums:
+
+```bash
+photo-cli list --input archive-folder --type Albums
+```
+
+This shows both the user-defined album (`My-Album`) and auto-created reverse geocode albums for each location property level (e.g., `Italia`, `Firenze`, `Venezia`, `United Kingdom`).
 
 ## SQLite database
 
@@ -202,3 +253,5 @@ archive-folder/
 | `Seconds` | Seconds component of the taken date |
 | `Address1`–`Address8` | Individual address components from the reverse geocode provider |
 | `Sha1Hash` | SHA1 hash of the file, used for deduplication |
+| `IsDeleted` | Whether the photo has been marked as deleted |
+| `ModifiedAt` | UTC timestamp when this record was last modified |

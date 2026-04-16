@@ -1,14 +1,14 @@
 ---
 title: "How to Install photo-cli on macOS, Windows, and Linux"
-description: "Step-by-step instructions to install photo-cli via Homebrew on macOS or as a .NET global tool on Windows and Linux, including PATH troubleshooting."
+description: "Step-by-step instructions to install photo-cli as a self-contained executable, via Homebrew, as a .NET global tool, or in a container (Docker, Podman), including PATH troubleshooting."
 sidebarTitle: "Installation"
 ---
 
-photo-cli runs on macOS, Windows, and Linux across arm64, x64, and x86 architectures. You can install it through Homebrew on macOS or as a .NET global tool on any platform. Choose the method that fits your operating system below.
+photo-cli runs on macOS, Windows, and Linux across arm64, x64, and x86 architectures. You can install it as a self-contained executable, through Homebrew on macOS and Linux, as a .NET global tool on any platform, or in a container (Docker, Podman). Choose the method that fits your operating system below.
 
 ## Prerequisites
 
-photo-cli requires the **.NET SDK 8 or later**. The `dotnet` command must be available on your PATH before you install photo-cli as a .NET tool.
+photo-cli requires the **.NET SDK 10 or later** when installing as a .NET tool. The `dotnet` command must be available on your PATH before you install photo-cli as a .NET tool.
 
 You can install the .NET SDK in two ways:
 
@@ -26,8 +26,13 @@ brew install dotnet-sdk --cask
 ## Installation
 
 <Tabs>
-  <Tab title="macOS">
-    Homebrew is the recommended installation method on macOS. It handles all dependencies, including the .NET runtime.
+  <Tab title="Self-Contained Executable">
+    The easiest way to run photo-cli without installing any dependency. The executable contains the .NET runtime in a single file and is available for macOS, Windows, and Linux across arm64, x64, and x86 architectures.
+
+    Download the executable for your OS and architecture directly from the [releases page](https://github.com/photo-cli/photo-cli/releases).
+  </Tab>
+  <Tab title="Homebrew (macOS & Linux)">
+    Homebrew is the recommended installation method on macOS and Linux. It handles all dependencies, including the .NET runtime, and keeps photo-cli up to date automatically.
 
     <Steps>
       <Step title="Add the photo-cli Homebrew tap">
@@ -60,44 +65,13 @@ brew install dotnet-sdk --cask
         ```
       </Step>
     </Steps>
-
-    Alternatively, you can install photo-cli as a .NET global tool on macOS. See the **.NET Tool** tab for instructions.
-  </Tab>
-  <Tab title="Windows & Linux">
-    On Windows and Linux, install photo-cli as a .NET global tool (recommended) or download a standalone executable.
-
-    <Steps>
-      <Step title="Install the .NET SDK">
-        Download and install the .NET SDK 8 or later from [https://dotnet.microsoft.com/en-us/download](https://dotnet.microsoft.com/en-us/download). Confirm the installation by running:
-
-        ```bash
-        dotnet --version
-        ```
-      </Step>
-      <Step title="Install photo-cli as a .NET global tool">
-        Run the following command to install photo-cli globally:
-
-        ```bash
-        dotnet tool install photo-cli -g
-        ```
-      </Step>
-      <Step title="Verify the installation">
-        Confirm that photo-cli is available in your terminal:
-
-        ```bash
-        photo-cli --version
-        ```
-      </Step>
-    </Steps>
-
-    If you prefer a standalone executable, download it from the assets section on [https://www.nuget.org/packages/photo-cli/](https://www.nuget.org/packages/photo-cli/).
   </Tab>
   <Tab title=".NET Tool (all platforms)">
     You can install photo-cli as a .NET global tool on any platform where the .NET SDK is available.
 
     <Steps>
       <Step title="Install the .NET SDK">
-        Download and install the .NET SDK 8 or later from [https://dotnet.microsoft.com/en-us/download](https://dotnet.microsoft.com/en-us/download). Confirm the installation:
+        Download and install the .NET SDK 10 or later from [https://dotnet.microsoft.com/en-us/download](https://dotnet.microsoft.com/en-us/download). Confirm the installation:
 
         ```bash
         dotnet --version
@@ -118,6 +92,29 @@ brew install dotnet-sdk --cask
         ```
       </Step>
     </Steps>
+  </Tab>
+  <Tab title="Container (Docker, Podman)">
+    Using the published Docker [image on DockerHub](https://hub.docker.com/r/photocli/photocli), you can run photo-cli in an isolated container environment by mounting your photographs and output directory as bind mounts.
+
+    ```bash
+    docker run --rm \
+      --volume ./test-photographs:/photos/input \
+      --volume ./archive:/photos/output \
+      photocli/photocli archive \
+        --input /photos/input \
+        --output /photos/output \
+        --album-type DateRange \
+        --album-name My-Album \
+        --auto-reverse-geocode-album \
+        --expected-day-range 7300 \
+        --delete-on-source \
+        --reverse-geocode OpenStreetMapFoundation \
+        --openstreetmap-properties country city
+    ```
+
+    <Note>
+      The bind-mounted directories appear as empty directories in the container filesystem and must be given as the input and output directories to the application. The container can be safely discarded after execution.
+    </Note>
   </Tab>
 </Tabs>
 
@@ -157,3 +154,17 @@ Replace `[your-account-name]` with your actual system username, then open a new 
 <Tip>
   The exact path to `.dotnet/tools` may differ depending on how you installed the .NET SDK. Check your installation directory if the paths above do not work.
 </Tip>
+
+## Uninstallation
+
+### .NET Tool
+
+```bash
+dotnet tool uninstall -g photo-cli
+```
+
+## MCP Server Setup
+
+The `mcp` command is built into photo-cli and requires no additional installation. It starts an [MCP](https://modelcontextprotocol.io/) stdio server on top of an existing archive folder (one previously created with `photo-cli archive`).
+
+See the [MCP command page](/commands/mcp) for setup instructions for Claude Code, Claude Desktop, VS Code, and MCP Inspector.

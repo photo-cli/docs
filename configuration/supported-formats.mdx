@@ -1,10 +1,10 @@
 ---
 title: "Supported Photo File Formats and Extensions in photo-cli"
 sidebarTitle: "Photo Formats"
-description: "photo-cli processes jpg, jpeg, heic, and png by default. Learn how to extend support to any format the MetadataExtractor library can read."
+description: "photo-cli processes jpg, jpeg, heic, png, and hif by default. Learn how to extend support to any format the MetadataExtractor library can read."
 ---
 
-photo-cli processes `jpg`, `jpeg`, `heic`, and `png` files by default. Because the tool uses the [MetadataExtractor](https://github.com/drewnoakes/metadata-extractor-dotnet) .NET library to read EXIF data, you can extend this list to support any image format that MetadataExtractor handles — without recompiling or upgrading photo-cli itself.
+photo-cli processes `jpg`, `jpeg`, `heic`, `png`, and `hif` files by default. Because the tool uses the [MetadataExtractor](https://github.com/drewnoakes/metadata-extractor-dotnet) .NET library to read EXIF data, you can extend this list to support any image format that MetadataExtractor handles — without recompiling or upgrading photo-cli itself.
 
 ## Default supported extensions
 
@@ -14,6 +14,7 @@ Out of the box, photo-cli looks for files with these extensions (matched case-in
 - `jpeg`
 - `heic`
 - `png`
+- `hif`
 
 <Note>
   Extension matching is case-insensitive. Files named `IMG_1234.JPG` and `IMG_1234.jpg` are both processed.

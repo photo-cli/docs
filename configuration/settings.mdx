@@ -63,9 +63,12 @@ photo-cli settings --reset
 | `NoPhotoTakenDateFolderName` | `no-photo-taken-date` | Folder name used for photos that have no EXIF taken date |
 | `PhotoFormatInvalidFolderName` | `invalid-photo-format` | Folder name used for files that cannot be read as a valid photo |
 | `SameNameNumberSeparator` | `-` | Separator inserted before the sequential number when two output files would share a name |
-| `SupportedExtensions` | `jpg,jpeg,heic,png` | Comma-separated list of file extensions to process |
+| `SupportedExtensions` | `jpg,jpeg,heic,png,hif` | Comma-separated list of file extensions to process |
 | `CompanionExtensions` | `mov` | Comma-separated list of companion file extensions to copy alongside photos |
 | `YearFormat` | `yyyy` | Format string for the year component alone |
+| `LogCategoryNameOutput` | `False` | Whether to include the log category name in console output |
+| `MacOsCommand` | `open` | Command used to open photos on macOS |
+| `MacOsArgumentPrefix` | `-a Preview` | Arguments prefixed before file paths when opening photos on macOS |
 
 <Note>
   Date and time format strings follow .NET conventions. You can find the full list of supported tokens in the [Microsoft .NET date and time format strings reference](https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings).
