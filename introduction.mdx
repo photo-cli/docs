@@ -4,7 +4,7 @@ description: "Learn how photo-cli uses EXIF metadata and GPS reverse geocoding t
 sidebarTitle: "Introduction"
 ---
 
-photo-cli is a cross-platform command-line tool that organizes your photos using the information already embedded in each file. This page explains what photo-cli does, how it extracts and uses EXIF data, and what features are available across macOS, Windows, and Linux.
+photo-cli is a [CLI](https://en.wikipedia.org/wiki/Command-line_interface) tool (works on Linux, macOS, and Windows) that extracts when and where ([reverse geocode](https://en.wikipedia.org/wiki/Reverse_geocoding)) your photographs were taken, [archives](/commands/archive) or [copies](/commands/copy) them into a new organized folder (without modifying the source folder) with various [folder](/commands/copy) and [file naming](/commands/copy) strategies, with album support to categorize, [list and view](/commands/list) them easily. All photo metadata is stored in a local SQLite database for archive operations and CSV for others. From the [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file (viewable in Microsoft Excel, Libre/OpenOffice Calc, Apple Numbers, Google Sheets), you can [navigate your photo locations on Google Maps and Earth with your custom label and pin style](#5-navigate-your-photo-locations-on-google-maps-and-google-earth).
 
 ## What photo-cli does
 
@@ -63,6 +63,641 @@ Your source folder is never modified. photo-cli always writes to a separate outp
     Preview what photo-cli would do before committing to any file operations, so you can verify your configuration first.
   </Card>
 </CardGroup>
+
+## Features explained with examples
+
+There are five main features, each best understood through a concrete example:
+
+1. [Archive and index with albums into a specific folder with metadata stored locally on SQLite using `photo-cli archive`](#1-archive-and-index-with-albums-using-photo-cli-archive)
+2. [Copy into a new organized folder using `photo-cli copy`](#2-copy-into-a-new-organized-folder-using-photo-cli-copy)
+3. [List and open photos by their metadata on an archived folder](#3-list-and-open-photos-by-their-metadata-on-an-archived-folder)
+4. [Export all extracted information into a CSV report using `photo-cli info`](#4-export-all-extracted-information-into-a-csv-report-using-photo-cli-info)
+5. [Navigate your photo locations on Google Maps and Google Earth](#5-navigate-your-photo-locations-on-google-maps-and-google-earth)
+
+### 1. Archive and index with albums using `photo-cli archive`
+
+#### Folder and file hierarchy: before → after
+
+<Tabs>
+<Tab title="Original folder">
+```text
+├── DSC_5727.jpg
+├── GOPR6742.jpg
+├── Italy album
+│   ├── DJI_01732.jpg
+│   ├── DJI_01733.jpg
+│   ├── DSC00001.JPG
+│   ├── DSC03467.jpg
+│   ├── DSC_1769.JPG
+│   ├── DSC_1770.JPG
+│   ├── DSC_1770_(same).jpg
+│   ├── DSC_1771.JPG
+│   ├── GOPR7496.jpg
+│   ├── GOPR7497.jpg
+│   ├── IMG_0747.JPG
+│   ├── IMG_1979.HEIC
+│   ├── IMG_1979.mov
+│   ├── IMG_1979.xmp
+│   ├── IMG_2371.jpg
+│   └── IMG_O1979.aae
+└── Spain Journey
+    ├── DSC_1807.jpg
+    ├── DSC_1808.jpg
+    └── IMG_5397.jpg
+
+2 directories, 21 files
+```
+</Tab>
+<Tab title="After photo-cli archive">
+```text
+├── 2005
+│   ├── 08
+│   │   └── 13
+│   │       └── 2005.08.13_09.47.23-5842c73cfdc5f347551bb6016e00c71bb1393169.jpg
+│   └── 12
+│       └── 14
+│           └── 2005.12.14_14.39.47-03cb14d5c68beed97cbe73164de9771d537fcd96.jpg
+├── 2008
+│   ├── 07
+│   │   └── 16
+│   │       └── 2008.07.16_11.33.20-90d835861e1aa3c829e3ab28a7f01ec3a090f664.jpg
+│   └── 10
+│       └── 22
+│           ├── 2008.10.22_16.28.39-5d66eec547469a1817bda4abe35c801359b2bb55.jpg
+│           ├── 2008.10.22_16.29.49-629b0b141634d6c0906e49af448bec8d755ba32c.jpg
+│           ├── 2008.10.22_16.38.20-620d23336a12ab54f9f0190fe93960a4dba2df59.jpg
+│           ├── 2008.10.22_16.43.21-3b0a3215b4f66d7ff4804dd223f192c21aee71bc.jpg
+│           ├── 2008.10.22_16.44.01-d470205a1d331a9d3765b3762b7c954bb8efc6ea.jpg
+│           ├── 2008.10.22_16.46.53-f670f2bb6c54898894b06b083185b05086bd4e6e.jpg
+│           ├── 2008.10.22_16.52.15-6b89a245809031ecc47789cdeaa332545330fc39.jpg
+│           ├── 2008.10.22_16.55.37-dd42edcde2433a7df4a3d67bf61944a20884da89.jpg
+│           └── 2008.10.22_17.00.07-a0ab699f5f99fce8ff49163e87c7590c2c9a66eb.jpg
+├── 2012
+│   └── 06
+│       └── 22
+│           └── 2012.06.22_19.52.31-bb649a18b3e7bb3df3701587a13f833749091817.jpg
+├── 2015
+│   └── 04
+│       └── 10
+│           ├── 2015.04.10_20.12.23-3907fc960f2873f40c8f35643dd444e0468be131.jpg
+│           └── 2015.04.10_20.12.23-9f4e6d352ec172e1059571250655e376769080fe.jpg
+├── 2025
+│   └── 06
+│       └── 03
+│           ├── 2025.06.03_13.53.36-8a45af72730474e22582afbe72f53685d705a72c.heic
+│           └── 2025.06.03_13.53.36-8a45af72730474e22582afbe72f53685d705a72c.mov
+├── no-photo-taken-date
+│   └── cf756397cc3ca81b2650c8801fd64e172504015a.jpg
+└── photo-cli.sqlite3
+
+20 directories, 19 files
+```
+</Tab>
+</Tabs>
+
+#### What happened? How is it processed?
+
+This archive process runs as a single command:
+
+<CodeGroup>
+```bash Long form
+photo-cli archive \
+  --input [relative|full folder path] \
+  --output [relative|full folder path] \
+  --album-type DateRange \
+  --album-name My-Album \
+  --auto-reverse-geocode-album \
+  --expected-day-range 7300 \
+  --delete-on-source \
+  --reverse-geocode OpenStreetMapFoundation \
+  --openstreetmap-properties country city
+```
+
+```bash Short form
+photo-cli archive -i [relative|full folder path] -o [relative|full folder path] -y 2 -a My-Album -s -w 7300 -f -e 2 -r country city
+```
+</CodeGroup>
+
+<Accordion title="Console/terminal output (progress shown for each operation)">
+```
+[17:07:27] Searching photo main files: started
+[17:07:27] Searching photo main files: finished. 18 photo(s) found.
+[17:07:27] Searching photo companion files: started
+[17:07:27] Searching photo companion files: finished. 1 companion file(s) found.
+[17:07:27] No coordinate found on `Gps` directory. Path:</test-photographs/Spain Journey/IMG_5397.jpg>
+[17:07:27] No coordinate found on `Gps` directory. Path:</test-photographs/Italy album/IMG_2371.jpg>
+[17:07:28] Calculating file hashes: started
+[17:07:28] Calculating file hashes: finished.
+[17:07:28] This OpenStreetMapFoundation provider is using rate limit of 1 second(s) between each request
+[17:07:28] Reverse Geocoding: started
+[17:07:31] Requested address types: City on index #2, not found on OpenStreetMap's response. Available types found:
+{"country_code":"gb","country":"United Kingdom","postcode":"SL4 2DR","suburb":"Sunninghill and Ascot","road":"Windsor Road"}
+. Path:</test-photographs/GOPR6742.jpg>
+[17:07:47] Reverse Geocoding: finished.
+[17:07:47] Directory grouping: started
+[17:07:47] Directory grouping: finished.
+[17:07:47] Processing target folder: started
+[17:07:47] Photo is skipped due to same photo has already been archived. Same photo paths: <test-photographs/Italy album/DSC_1770.JPG>, <
+/test-photographs/Italy album/DSC_1770_(same).jpg>
+[17:07:47] Processing target folder: finished.
+[17:07:47] Verified all photo files copied successfully by comparing file hashes from original photo files.
+[17:07:47] Archiving photos to SQLite: started
+[17:07:47] Archiving photos to SQLite: finished.
+[17:07:47] Saving new date range album: started
+[17:07:47] Saving new date range album: finished.
+[17:07:47] Saving reverse geocode albums: started
+[17:07:47] Saving reverse geocode albums: finished.
+[17:07:47] Deleting source files: started
+[17:07:47] Deleting source files: finished.
+[17:07:47] Deleting empty directories: started
+[17:07:47] Deleting empty directories: finished.
+                        Statistics
+┌────────────────────────────────────────────────┬───────┐
+│ Statistic                                      │ Count │
+├────────────────────────────────────────────────┼───────┤
+│ File System Error(s)                           │ 0     │
+│ Photo(s) found                                 │ 18    │
+│ Photo(s) copied                                │ 17    │
+│ Photo(s) existed on the output                 │ 0     │
+│ Photo(s) are skipped, they have the same photo │ 1     │
+│ Directory/directories created                  │ 8     │
+│                                                │       │
+│ Companion file(s) found                        │ 1     │
+│ Companion file(s) copied                       │ 1     │
+│ Companion file(s) existed on the output        │ 0     │
+│                                                │       │
+│ Source photo file(s) deleted                   │ 17    │
+│ Source companion file(s) deleted               │ 1     │
+│ Source empty directory(ies) deleted            │ 1     │
+│                                                │       │
+│ User defined album created                     │ 1     │
+│ User defined album updated                     │ 0     │
+│ Auto address album created                     │ 15    │
+│                                                │       │
+│ Reverse geocode request sent                   │ 14    │
+│ Reverse geocode evaluated from memory          │ 2     │
+│ Reverse geocode evaluated from database        │ 0     │
+│ Photo(s) has taken date and coordinate         │ 16    │
+│ Photo(s) has taken date but no coordinate      │ 1     │
+│ Photo(s) has coordinate but no taken date      │ 0     │
+│ Photo(s) has no taken date and coordinate      │ 1     │
+│                                                │       │
+│ Photo(s) has unknown/invalid format            │ 0     │
+│ Photo(s) caused unexpected error internally    │ 0     │
+└────────────────────────────────────────────────┴───────┘
+[17:07:47] Archive process completed successfully
+```
+</Accordion>
+
+#### Step by step `photo-cli archive` process
+
+1. Gather all photo paths in the source folder within subfolders.
+2. Gather all photo companion files (if there are any) — files used for storing metadata, edits, or RAW versions saved alongside the photo (for example, iPhone Live Photos store a short `mov` clip with the same name).
+3. Extract EXIF data — taken date and coordinates — from each photo. As a third-party reverse geocode provider is selected, photo-cli builds an address with `OpenStreetMap` using the given administrative levels (`city town`) for each photo.
+4. Because `expected-day-range` is given, photo-cli validates that all photos fall within the expected day range. If any photo is outside the range, the process won't start. This argument is optional.
+5. Photos missing coordinate information or with reverse geocode properties missing are listed as warnings.
+6. With the `verify` argument, photo-cli calculates SHA1 file hashes and confirms all photos copied correctly by comparing hashes against the originals.
+7. In the output folder, photos are placed under `/[year]/[month]/[day]/`. For example: `/2008/07/16/`.
+8. Photo file names are formatted as `yyyy.MM.dd_HH.mm.ss-{sha1-hash-of-file}.{extension}`. For example: `2008.07.16_11.33.20-90d835861e1aa3c829e3ab28a7f01ec3a090f664.jpg` (originally `IMG_2371.jpg`). Companion files keep their original extension.
+9. Duplicate photos with different names (`DSC_1770.JPG`, `DSC_1770_(same).JPG`) are detected by file hash. Only one is archived as `2008/10/22/2008.10.22_17.00.07-a0ab699f5f99fce8ff49163e87c7590c2c9a66eb.jpg`, and a warning is logged with the duplicate paths.
+10. Photos without a taken date (e.g. `Spain Journey/IMG_5397.jpg`) are copied to a `no-photo-taken-date` folder and named only with their SHA1 hash: `cf756397cc3ca81b2650c8801fd64e172504015a.jpg`.
+11. After copying, photo-cli verifies all files by comparing SHA1 hashes — guaranteeing no corruption from disk operation failures.
+12. Taken dates and addresses are stored in a local SQLite database (`photo-cli.sqlite3`) at the top of the output folder so you can later query photos by metadata.
+13. The `album-name` argument creates a `DateRange` album named `My-Album` in the database, spanning the earliest and latest photo dates.
+14. The `auto-reverse-geocode-album` argument creates an album per reverse geocode level — for example `Firenze`, `Venezia`, `Italia`, `United Kingdom`.
+15. The `delete-on-source` argument removes all source photos, companion files, and empty directories after a successful archive.
+16. Final statistics are printed to the console.
+
+##### Using `photo-cli list` to see album metadata
+
+<CodeGroup>
+```bash Long form
+photo-cli list --input [relative|full folder path] --type Albums
+```
+
+```bash Short form
+photo-cli list -i [relative|full folder path] -t 1
+```
+</CodeGroup>
+
+<Accordion title="Console output: albums table">
+```
+┌────┬──────────────────┬────────────────┬─────────────────────┬──────────────────────────────────────────────────────────────────────────────────────────┐
+│ Id │ Name             │ Type           │ Created At          │ Configuration                                                                            │
+├────┼──────────────────┼────────────────┼─────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
+│ 1  │ My-Album         │ UserDefined    │ 2025-07-27 17:07:47 │ {"PhotoIds":[3],"DateRange":{"Start":"2005-08-13T09:47:23","End":"2025-06-03T13:53:36"}} │
+│ 2  │ United Kingdom   │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"ReverseGeocodeFormatted":"United Kingdom"}}                          │
+│ 3  │ Kenya-Barut ward │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"ReverseGeocodeFormatted":"Kenya-Barut ward"}}                        │
+│ 4  │ España-Madrid    │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"ReverseGeocodeFormatted":"España-Madrid"}}                           │
+│ 5  │ Italia-Arezzo    │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"ReverseGeocodeFormatted":"Italia-Arezzo"}}                           │
+│ 6  │ Italia-Venezia   │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"ReverseGeocodeFormatted":"Italia-Venezia"}}                          │
+│ 7  │ Italia-Firenze   │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"ReverseGeocodeFormatted":"Italia-Firenze"}}                          │
+│ 8  │ United Kingdom   │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"Address1":"United Kingdom"}}                                         │
+│ 9  │ Kenya            │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"Address1":"Kenya"}}                                                  │
+│ 10 │ España           │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"Address1":"España"}}                                                 │
+│ 11 │ Italia           │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"Address1":"Italia"}}                                                 │
+│ 12 │ Barut ward       │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"Address2":"Barut ward"}}                                             │
+│ 13 │ Madrid           │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"Address2":"Madrid"}}                                                 │
+│ 14 │ Arezzo           │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"Address2":"Arezzo"}}                                                 │
+│ 15 │ Venezia          │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"Address2":"Venezia"}}                                                │
+│ 16 │ Firenze          │ ReverseGeocode │ 2025-07-27 17:07:47 │ {"ReverseGeocode":{"Address2":"Firenze"}}                                                │
+└────┴──────────────────┴────────────────┴─────────────────────┴──────────────────────────────────────────────────────────────────────────────────────────┘
+```
+</Accordion>
+
+<Accordion title="Contents of the `Photos` table in `photo-cli.sqlite3` (output of archive command)">
+| Id | Path | CreatedAt | DateTaken | ReverseGeocodeFormatted | Latitude | Longitude | Year | Month | Day | Hour | Minute | Seconds | Address1 | Address2 | Sha1Hash |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | 2012/06/22/2012.06.22\_19.52.31-bb649a18b3e7bb3df3701587a13f833749091817.jpg | 2025-07-27 17:07:47 | 2012-06-22 19:52:31 | United Kingdom | 51.4248 | -0.6736 | 2012 | 6 | 22 | 19 | 52 | 31 | United Kingdom | null | bb649a18b3e7bb3df3701587a13f833749091817 |
+| 2 | 2005/08/13/2005.08.13\_09.47.23-5842c73cfdc5f347551bb6016e00c71bb1393169.jpg | 2025-07-27 17:07:47 | 2005-08-13 09:47:23 | Kenya-Barut ward | -0.3713 | 36.0564 | 2005 | 8 | 13 | 9 | 47 | 23 | Kenya | Barut ward | 5842c73cfdc5f347551bb6016e00c71bb1393169 |
+| 3 | no-photo-taken-date/cf756397cc3ca81b2650c8801fd64e172504015a.jpg | 2025-07-27 17:07:47 | null | null | null | null | null | null | null | null | null | null | null | null | cf756397cc3ca81b2650c8801fd64e172504015a |
+| 4 | 2015/04/10/2015.04.10\_20.12.23-9f4e6d352ec172e1059571250655e376769080fe.jpg | 2025-07-27 17:07:47 | 2015-04-10 20:12:23 | España-Madrid | 40.447 | -3.7248 | 2015 | 4 | 10 | 20 | 12 | 23 | España | Madrid | 9f4e6d352ec172e1059571250655e376769080fe |
+| 5 | 2015/04/10/2015.04.10\_20.12.23-3907fc960f2873f40c8f35643dd444e0468be131.jpg | 2025-07-27 17:07:47 | 2015-04-10 20:12:23 | España-Madrid | 40.447 | -3.7248 | 2015 | 4 | 10 | 20 | 12 | 23 | España | Madrid | 3907fc960f2873f40c8f35643dd444e0468be131 |
+| 6 | 2008/07/16/2008.07.16\_11.33.20-90d835861e1aa3c829e3ab28a7f01ec3a090f664.jpg | 2025-07-27 17:07:47 | 2008-07-16 11:33:20 | null | null | null | 2008 | 7 | 16 | 11 | 33 | 20 | null | null | 90d835861e1aa3c829e3ab28a7f01ec3a090f664 |
+| 7 | 2008/10/22/2008.10.22\_16.44.01-d470205a1d331a9d3765b3762b7c954bb8efc6ea.jpg | 2025-07-27 17:07:47 | 2008-10-22 16:44:01 | Italia-Arezzo | 43.4684 | 11.8815 | 2008 | 10 | 22 | 16 | 44 | 1 | Italia | Arezzo | d470205a1d331a9d3765b3762b7c954bb8efc6ea |
+| 8 | 2008/10/22/2008.10.22\_17.00.07-a0ab699f5f99fce8ff49163e87c7590c2c9a66eb.jpg | 2025-07-27 17:07:47 | 2008-10-22 17:00:07 | Italia-Arezzo | 43.4645 | 11.8815 | 2008 | 10 | 22 | 17 | 0 | 7 | Italia | Arezzo | a0ab699f5f99fce8ff49163e87c7590c2c9a66eb |
+| 16 | 2025/06/03/2025.06.03\_13.53.36-8a45af72730474e22582afbe72f53685d705a72c.heic | 2025-07-27 17:07:47 | 2025-06-03 13:53:36 | Italia-Venezia | 45.4332 | 12.3246 | 2025 | 6 | 3 | 13 | 53 | 36 | Italia | Venezia | 8a45af72730474e22582afbe72f53685d705a72c |
+| 17 | 2005/12/14/2005.12.14\_14.39.47-03cb14d5c68beed97cbe73164de9771d537fcd96.jpg | 2025-07-27 17:07:47 | 2005-12-14 14:39:47 | Italia-Firenze | 43.7856 | 11.2346 | 2005 | 12 | 14 | 14 | 39 | 47 | Italia | Firenze | 03cb14d5c68beed97cbe73164de9771d537fcd96 |
+</Accordion>
+
+### 2. Copy into a new organized folder using `photo-cli copy`
+
+#### Folder and file hierarchy: before → after
+
+<Tabs>
+<Tab title="Original folder">
+```text
+├── DSC_5727.jpg
+├── GOPR6742.jpg
+├── Italy album
+│   ├── DJI_01732.jpg
+│   ├── DJI_01733.jpg
+│   ├── DSC00001.JPG
+│   ├── DSC03467.jpg
+│   ├── DSC_1769.JPG
+│   ├── DSC_1770.JPG
+│   ├── DSC_1770_(same).jpg
+│   ├── DSC_1771.JPG
+│   ├── GOPR7496.jpg
+│   ├── GOPR7497.jpg
+│   ├── IMG_0747.JPG
+│   ├── IMG_1979.HEIC
+│   ├── IMG_1979.mov
+│   ├── IMG_1979.xmp
+│   ├── IMG_2371.jpg
+│   └── IMG_O1979.aae
+└── Spain Journey
+    ├── DSC_1807.jpg
+    ├── DSC_1808.jpg
+    └── IMG_5397.jpg
+
+2 directories, 21 files
+```
+</Tab>
+<Tab title="After photo-cli copy">
+```text
+.
+├── 2005.08.13_09.47.23-Kenya-Barut ward.jpg
+├── 2005.12.14-2025.06.03-Italy album
+│   ├── 2005.12.14_14.39.47-Italia-Firenze.jpg
+│   ├── 2008.10.22_16.28.39-Italia-Arezzo.jpg
+│   ├── 2008.10.22_16.29.49-Italia-Arezzo.jpg
+│   ├── 2008.10.22_16.38.20-Italia-Arezzo.jpg
+│   ├── 2008.10.22_16.43.21-Italia-Arezzo.jpg
+│   ├── 2008.10.22_16.44.01-Italia-Arezzo.jpg
+│   ├── 2008.10.22_16.46.53-Italia-Arezzo.jpg
+│   ├── 2008.10.22_16.52.15-Italia-Arezzo.jpg
+│   ├── 2008.10.22_16.55.37-Italia-Arezzo.jpg
+│   ├── 2008.10.22_17.00.07-Italia-Arezzo-1.jpg
+│   ├── 2008.10.22_17.00.07-Italia-Arezzo-2.jpg
+│   ├── 2025.06.03_13.53.36-Italia-Venezia.heic
+│   └── 2025.06.03_13.53.36-Italia-Venezia.mov
+├── 2012.06.22_19.52.31-United Kingdom.jpg
+├── 2015.04.10-2015.04.10-Spain Journey
+│   ├── 2015.04.10_20.12.23-España-Madrid-1.jpg
+│   └── 2015.04.10_20.12.23-España-Madrid-2.jpg
+├── Italy album
+│   └── no-address
+│       └── IMG_2371.jpg
+├── Spain Journey
+│   └── no-address-and-no-photo-taken-date
+│       └── IMG_5397.jpg
+├── photo-cli-report.csv
+└── sha1.lst
+
+6 directories, 21 files
+```
+</Tab>
+</Tabs>
+
+#### What happened? How is it processed?
+
+There are many [transformation options](/commands/copy) and [customization settings](/commands/settings) — this is just one of them. The transformation above is produced by a single command:
+
+<CodeGroup>
+```bash Long form
+photo-cli copy \
+  --process-type SubFoldersPreserveFolderHierarchy \
+  --naming-style DateTimeWithSecondsAddress \
+  --number-style PaddingZeroCharacter \
+  --folder-append DayRange \
+  --folder-append-location Prefix \
+  --reverse-geocode OpenStreetMapFoundation \
+  --openstreetmap-properties country city \
+  --output photo-cli-test \
+  --no-coordinate InSubFolder \
+  --no-taken-date InSubFolder \
+  --verify \
+  --expected-day-range 7300 \
+  --missing-reverse-geocode Continue
+```
+
+```bash Short form
+photo-cli copy -f 2 -s 8 -n 2 -a 4 -p 1 -e 2 -r country city -o photo-cli-test -c 3 -t 3 -v -w 7300 -z 0
+```
+</CodeGroup>
+
+<Accordion title="Console/terminal output">
+```
+[17:07:28] Searching photo main files: started
+[17:07:28] Searching photo main files: finished. 18 photo(s) found.
+[17:07:28] Searching photo companion files: started
+[17:07:28] Searching photo companion files: finished. 1 companion file(s) found.
+[17:07:28] No coordinate found on `Gps` directory. Path:</test-photographs/Spain Journey/IMG_5397.jpg>
+[17:07:28] No coordinate found on `Gps` directory. Path:</test-photographs/Italy album/IMG_2371.jpg>
+[17:07:28] This OpenStreetMapFoundation provider is using rate limit of 1 second(s) between each request
+[17:07:28] Reverse Geocoding: started
+[17:07:29] Requested address types: City on index #2, not found on OpenStreetMap's response. Available types found:
+{"country_code":"gb","country":"United Kingdom","postcode":"SL4 2DR","suburb":"Sunninghill and Ascot","road":"Windsor Road"}
+. Path:</test-photographs/GOPR6742.jpg>
+[17:07:44] Reverse Geocoding: finished.
+[17:07:44] Directory grouping: started
+[17:07:44] Directory grouping: finished.
+[17:07:44] Processing target folder: started
+[17:07:45] Processing target folder: finished.
+[17:07:45] Verified all photo files copied successfully by comparing file hashes from original photo files.
+[17:07:45] All files SHA1 hashes written into file: sha1.lst. You may verify yourself with `sha1sum --check sha1.lst` tool in Linux/macOS.
+[17:07:45] Writing csv report: started
+[17:07:45] Writing csv report: finished.
+                        Statistics
+┌────────────────────────────────────────────────┬───────┐
+│ Statistic                                      │ Count │
+├────────────────────────────────────────────────┼───────┤
+│ File System Error(s)                           │ 0     │
+│ Photo(s) found                                 │ 18    │
+│ Photo(s) copied                                │ 18    │
+│ Photo(s) existed on the output                 │ 0     │
+│ Photo(s) are skipped, they have the same photo │ 0     │
+│ Directory/directories created                  │ 4     │
+│                                                │       │
+│ Companion file(s) found                        │ 1     │
+│ Companion file(s) copied                       │ 1     │
+│ Companion file(s) existed on the output        │ 0     │
+│                                                │       │
+│ Reverse geocode request sent                   │ 14    │
+│ Reverse geocode evaluated from memory          │ 2     │
+│ Reverse geocode evaluated from database        │ 0     │
+│ Photo(s) has taken date and coordinate         │ 16    │
+│ Photo(s) has taken date but no coordinate      │ 1     │
+│ Photo(s) has coordinate but no taken date      │ 0     │
+│ Photo(s) has no taken date and coordinate      │ 1     │
+│                                                │       │
+│ Photo(s) has unknown/invalid format            │ 0     │
+│ Photo(s) caused unexpected error internally    │ 0     │
+└────────────────────────────────────────────────┴───────┘
+[17:07:45] Copy process completed successfully
+```
+</Accordion>
+
+#### Step by step `photo-cli copy` process
+
+1. Gather all photo paths in the source folder within subfolders.
+2. Extract EXIF data — taken date and coordinate — from each photo.
+3. Because the file naming style is `DateTimeWithSecondsAddress` (which contains an address), photo-cli builds the address with `OpenStreetMap` using levels `city town suburb` for each photo.
+4. Because the folder process type is `SubFoldersPreserveFolderHierarchy`, the output folder mirrors the original folder hierarchy.
+5. The folder append type is `DayRange` and the folder append location is `Prefix`, so each output folder name is prefixed with the earliest and latest photo dates inside it. For example: `2005.12.14-2008.10.22-Italy album` (originally `Italy album`).
+6. Each file is named with the photo taken date and the address. For example: `2012.06.22_19.52.31-United Kingdom-Ascot-Sunninghill and Ascot.jpg` (originally `GOPR6742.jpg`).
+7. The no-taken-date and no-coordinate actions are both `InSubFolder`, so photos missing that EXIF data are placed into a sub-folder under the original folder hierarchy. For example: `/Italy album/no-address/IMG_2371.jpg` and `/Spain Journey/no-address-and-no-photo-taken-date/IMG_5397.jpg`.
+8. The `verify` flag computes and compares SHA1 hashes after copy — guaranteeing no corruption.
+9. A `photo-cli-report.csv` is created in the output, containing every photo's metadata.
+
+<Accordion title="Contents of `photo-cli-report.csv` (markdown table)">
+|PhotoPath                                  |PhotoNewPath                                                                                       |PhotoDateTaken     |ReverseGeocodeFormatted                   |Latitude            |Longitude          |Address1      |Address2|Address3             |
+|-------------------------------------------|---------------------------------------------------------------------------------------------------|-------------------|------------------------------------------|--------------------|-------------------|--------------|--------|---------------------|
+|/TestImages/DSC_5727.jpg                   |photo-cli-test/2005.08.13_09.47.23-Kenya.jpg                                                       |08/13/2005 09:47:23|Kenya                                     |-0.37129999999999996|36.056416666666664 |Kenya         |        |                     |
+|/TestImages/GOPR6742.jpg                   |photo-cli-test/2012.06.22_19.52.31-United Kingdom-Ascot-Sunninghill and Ascot.jpg                  |06/22/2012 19:52:31|United Kingdom-Ascot-Sunninghill and Ascot|51.424838333333334  |-0.6735616666666666|United Kingdom|Ascot   |Sunninghill and Ascot|
+|/TestImages/Italy album/DSC03467.jpg       |photo-cli-test/2005.12.14-2008.10.22-Italy album/2005.12.14_14.39.47-Italia-Firenze-Quartiere 1.jpg|12/14/2005 14:39:47|Italia-Firenze-Quartiere 1                |43.78559443333333   |11.234619433333334 |Italia        |Firenze |Quartiere 1          |
+|/TestImages/Italy album/GOPR7497.jpg       |photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_16.28.39-Italia-Arezzo.jpg             |10/22/2008 16:28:39|Italia-Arezzo                             |43.46744833333334   |11.885126666663888 |Italia        |Arezzo  |                     |
+|/TestImages/Italy album/DJI_01732.jpg      |photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_16.29.49-Italia-Arezzo.jpg             |10/22/2008 16:29:49|Italia-Arezzo                             |43.46715666666389   |11.885394999997223 |Italia        |Arezzo  |                     |
+|/TestImages/Italy album/IMG_2371.jpg       |photo-cli-test/Italy album/no-address/IMG_2371.jpg                                                 |07/16/2008 11:33:20|                                          |                    |                   |              |        |                     |
+|/TestImages/Spain Journey/DSC_1807.jpg     |photo-cli-test/2015.04.10-2015.04.10-Spain Journey/2015.04.10_20.12.23-España-Madrid-1.jpg         |04/10/2015 20:12:23|España-Madrid                             |40.44697222222222   |-3.724752777777778 |España        |Madrid  |                     |
+|/TestImages/Spain Journey/IMG_5397.jpg     |photo-cli-test/Spain Journey/no-address-and-no-photo-taken-date/IMG_5397.jpg                       |                   |                                          |                    |                   |              |        |                     |
+</Accordion>
+
+<Accordion title="Contents of `photo-cli-report.csv` (raw text format)">
+```csv
+PhotoPath,PhotoNewPath,PhotoDateTaken,ReverseGeocodeFormatted,Latitude,Longitude,PhotoTakenYear,PhotoTakenMonth,PhotoTakenDay,PhotoTakenHour,PhotoTakenMinute,PhotoTakenSeconds,Address1,Address2,Address3,Address4,Address5,Address6,Address7,Address8
+/TestImages/DSC_5727.jpg,photo-cli-test/2005.08.13_09.47.23-Kenya.jpg,08/13/2005 09:47:23,Kenya,-0.37129999999999996,36.056416666666664,2005,8,13,9,47,23,Kenya,,,,,,,
+/TestImages/GOPR6742.jpg,photo-cli-test/2012.06.22_19.52.31-United Kingdom-Ascot-Sunninghill and Ascot.jpg,06/22/2012 19:52:31,United Kingdom-Ascot-Sunninghill and Ascot,51.424838333333334,-0.6735616666666666,2012,6,22,19,52,31,United Kingdom,Ascot,Sunninghill and Ascot,,,,,
+/TestImages/Italy album/DSC03467.jpg,photo-cli-test/2005.12.14-2008.10.22-Italy album/2005.12.14_14.39.47-Italia-Firenze-Quartiere 1.jpg,12/14/2005 14:39:47,Italia-Firenze-Quartiere 1,43.78559443333333,11.234619433333334,2005,12,14,14,39,47,Italia,Firenze,Quartiere 1,,,,,
+/TestImages/Italy album/GOPR7497.jpg,photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_16.28.39-Italia-Arezzo.jpg,10/22/2008 16:28:39,Italia-Arezzo,43.46744833333334,11.885126666663888,2008,10,22,16,28,39,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DJI_01732.jpg,photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_16.29.49-Italia-Arezzo.jpg,10/22/2008 16:29:49,Italia-Arezzo,43.46715666666389,11.885394999997223,2008,10,22,16,29,49,Italia,Arezzo,,,,,,
+/TestImages/Italy album/GOPR7496.jpg,photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_16.38.20-Italia-Arezzo.jpg,10/22/2008 16:38:20,Italia-Arezzo,43.467081666663894,11.884538333330555,2008,10,22,16,38,20,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DJI_01733.jpg,photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_16.43.21-Italia-Arezzo.jpg,10/22/2008 16:43:21,Italia-Arezzo,43.468365,11.881634999972222,2008,10,22,16,43,21,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DSC00001.JPG,photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_16.44.01-Italia-Arezzo.jpg,10/22/2008 16:44:01,Italia-Arezzo,43.46844166666667,11.881515,2008,10,22,16,44,1,Italia,Arezzo,,,,,,
+/TestImages/Italy album/IMG_0747.JPG,photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_16.46.53-Italia-Arezzo.jpg,10/22/2008 16:46:53,Italia-Arezzo,43.468243333330555,11.880171666638889,2008,10,22,16,46,53,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DSC_1771.JPG,photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_16.52.15-Italia-Arezzo.jpg,10/22/2008 16:52:15,Italia-Arezzo,43.46725499999722,11.879213333333334,2008,10,22,16,52,15,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DSC_1769.JPG,photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_16.55.37-Italia-Arezzo.jpg,10/22/2008 16:55:37,Italia-Arezzo,43.46601166663889,11.87911166663889,2008,10,22,16,55,37,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DSC_1770.JPG,photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_17.00.07-Italia-Arezzo-1.jpg,10/22/2008 17:00:07,Italia-Arezzo,43.464455,11.881478333333334,2008,10,22,17,0,7,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DSC_1770_(same).jpg,photo-cli-test/2005.12.14-2008.10.22-Italy album/2008.10.22_17.00.07-Italia-Arezzo-2.jpg,10/22/2008 17:00:07,Italia-Arezzo,43.464455,11.881478333333334,2008,10,22,17,0,7,Italia,Arezzo,,,,,,
+/TestImages/Italy album/IMG_2371.jpg,photo-cli-test/Italy album/no-address/IMG_2371.jpg,07/16/2008 11:33:20,,,,2008,7,16,11,33,20,,,,,,,,
+/TestImages/Spain Journey/DSC_1807.jpg,photo-cli-test/2015.04.10-2015.04.10-Spain Journey/2015.04.10_20.12.23-España-Madrid-1.jpg,04/10/2015 20:12:23,España-Madrid,40.44697222222222,-3.724752777777778,2015,4,10,20,12,23,España,Madrid,,,,,,
+/TestImages/Spain Journey/DSC_1808.jpg,photo-cli-test/2015.04.10-2015.04.10-Spain Journey/2015.04.10_20.12.23-España-Madrid-2.jpg,04/10/2015 20:12:23,España-Madrid,40.44697222222222,-3.724752777777778,2015,4,10,20,12,23,España,Madrid,,,,,,
+/TestImages/Spain Journey/IMG_5397.jpg,photo-cli-test/Spain Journey/no-address-and-no-photo-taken-date/IMG_5397.jpg,,,,,,,,,,,,,,,,,,
+```
+</Accordion>
+
+### 3. List and open photos by their metadata on an archived folder
+
+After archiving photos as in the [first example](#1-archive-and-index-with-albums-using-photo-cli-archive), you can list metadata and open photos with various filters. The `list` command currently supports the macOS Preview app for opening photos directly.
+
+#### Viewing photos taken in October 2008 in macOS Preview
+
+<Frame>
+  <img src="/images/screenshots/macos/viewing-in-preview-app.png" alt="Viewing photos taken in October 2008 in macOS Preview app" />
+</Frame>
+
+This view is produced by a single command:
+
+<CodeGroup>
+```bash Long form
+photo-cli list --input [relative|full existing archive path] --type PhotosByDate --year 2008 --month 10
+```
+
+```bash Short form
+photo-cli list -i [relative|full existing archive path] -t 3 -y 2008 -m 10
+```
+</CodeGroup>
+
+<Note>
+You can also open photos by geolocation name (if you used `auto-reverse-geocode-album` while archiving) or by album ID.
+</Note>
+
+<Note>
+On Windows or Linux, `list` outputs full photo paths rather than opening a viewer (these systems have no default photo viewer app). You can pipe these paths into your preferred photo viewer.
+</Note>
+
+<Accordion title="Console output of `list` command on Windows and Linux">
+```
+/[archive-full-folder-path]/2008/10/22/2008.10.22_16.29.49-629b0b141634d6c0906e49af448bec8d755ba32c.jpg
+/[archive-full-folder-path]/2008/10/22/2008.10.22_16.55.37-dd42edcde2433a7df4a3d67bf61944a20884da89.jpg
+/[archive-full-folder-path]/2008/10/22/2008.10.22_17.00.07-a0ab699f5f99fce8ff49163e87c7590c2c9a66eb.jpg
+/[archive-full-folder-path]/2008/10/22/2008.10.22_16.46.53-f670f2bb6c54898894b06b083185b05086bd4e6e.jpg
+/[archive-full-folder-path]/2008/10/22/2008.10.22_16.44.01-d470205a1d331a9d3765b3762b7c954bb8efc6ea.jpg
+/[archive-full-folder-path]/2008/10/22/2008.10.22_16.52.15-6b89a245809031ecc47789cdeaa332545330fc39.jpg
+/[archive-full-folder-path]/2008/10/22/2008.10.22_16.28.39-5d66eec547469a1817bda4abe35c801359b2bb55.jpg
+/[archive-full-folder-path]/2008/10/22/2008.10.22_16.38.20-620d23336a12ab54f9f0190fe93960a4dba2df59.jpg
+/[archive-full-folder-path]/2008/10/22/2008.10.22_16.43.21-3b0a3215b4f66d7ff4804dd223f192c21aee71bc.jpg
+```
+</Accordion>
+
+### 4. Export all extracted information into a CSV report using `photo-cli info`
+
+Use `photo-cli info` to extract metadata without copying any files. The result is a CSV report you can inspect, share, or import into a spreadsheet or mapping tool.
+
+<CodeGroup>
+```bash Long form
+photo-cli info \
+  --all-folders \
+  --output photo-info.csv \
+  --reverse-geocode OpenStreetMapFoundation \
+  --openstreetmap-properties country city \
+  --no-taken-date Continue \
+  --no-coordinate Continue \
+  --missing-reverse-geocode Continue
+```
+
+```bash Short form
+photo-cli info -a -o photo-info.csv -e 2 -r country city -t 0 -c 0 -z 0
+```
+</CodeGroup>
+
+<Accordion title="Contents of `photo-info.csv` (markdown table)">
+|PhotoPath                                  |PhotoDateTaken     |ReverseGeocodeFormatted                   |Latitude            |Longitude          |Address1      |Address2|Address3             |
+|-------------------------------------------|-------------------|------------------------------------------|--------------------|-------------------|--------------|--------|---------------------|
+|/TestImages/DSC_5727.jpg                   |08/13/2005 09:47:23|Kenya                                     |-0.37129999999999996|36.056416666666664 |Kenya         |        |                     |
+|/TestImages/GOPR6742.jpg                   |06/22/2012 19:52:31|United Kingdom-Ascot-Sunninghill and Ascot|51.424838333333334  |-0.6735616666666666|United Kingdom|Ascot   |Sunninghill and Ascot|
+|/TestImages/Italy album/DSC_1770.JPG       |10/22/2008 17:00:07|Italia-Arezzo                             |43.464455           |11.881478333333334 |Italia        |Arezzo  |                     |
+|/TestImages/Italy album/DSC_1771.JPG       |10/22/2008 16:52:15|Italia-Arezzo                             |43.46725499999722   |11.879213333333334 |Italia        |Arezzo  |                     |
+|/TestImages/Italy album/IMG_2371.jpg       |07/16/2008 11:33:20|                                          |                    |                   |              |        |                     |
+|/TestImages/Italy album/DSC03467.jpg       |12/14/2005 14:39:47|Italia-Firenze-Quartiere 1                |43.78559443333333   |11.234619433333334 |Italia        |Firenze |Quartiere 1          |
+|/TestImages/Spain Journey/DSC_1807.jpg     |04/10/2015 20:12:23|España-Madrid                             |40.44697222222222   |-3.724752777777778 |España        |Madrid  |                     |
+|/TestImages/Spain Journey/IMG_5397.jpg     |                   |                                          |                    |                   |              |        |                     |
+</Accordion>
+
+<Accordion title="Contents of `photo-info.csv` (raw text format)">
+```csv
+PhotoPath,PhotoNewPath,PhotoDateTaken,ReverseGeocodeFormatted,Latitude,Longitude,PhotoTakenYear,PhotoTakenMonth,PhotoTakenDay,PhotoTakenHour,PhotoTakenMinute,PhotoTakenSeconds,Address1,Address2,Address3,Address4,Address5,Address6,Address7,Address8
+/TestImages/DSC_5727.jpg,,08/13/2005 09:47:23,Kenya,-0.37129999999999996,36.056416666666664,2005,8,13,9,47,23,Kenya,,,,,,,
+/TestImages/GOPR6742.jpg,,06/22/2012 19:52:31,United Kingdom-Ascot-Sunninghill and Ascot,51.424838333333334,-0.6735616666666666,2012,6,22,19,52,31,United Kingdom,Ascot,Sunninghill and Ascot,,,,,
+/TestImages/Italy album/DSC_1770.JPG,,10/22/2008 17:00:07,Italia-Arezzo,43.464455,11.881478333333334,2008,10,22,17,0,7,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DSC_1771.JPG,,10/22/2008 16:52:15,Italia-Arezzo,43.46725499999722,11.879213333333334,2008,10,22,16,52,15,Italia,Arezzo,,,,,,
+/TestImages/Italy album/IMG_0747.JPG,,10/22/2008 16:46:53,Italia-Arezzo,43.468243333330555,11.880171666638889,2008,10,22,16,46,53,Italia,Arezzo,,,,,,
+/TestImages/Italy album/IMG_2371.jpg,,07/16/2008 11:33:20,,,,2008,7,16,11,33,20,,,,,,,,
+/TestImages/Italy album/DSC_1770_(same).jpg,,10/22/2008 17:00:07,Italia-Arezzo,43.464455,11.881478333333334,2008,10,22,17,0,7,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DJI_01733.jpg,,10/22/2008 16:43:21,Italia-Arezzo,43.468365,11.881634999972222,2008,10,22,16,43,21,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DSC00001.JPG,,10/22/2008 16:44:01,Italia-Arezzo,43.46844166666667,11.881515,2008,10,22,16,44,1,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DSC_1769.JPG,,10/22/2008 16:55:37,Italia-Arezzo,43.46601166663889,11.87911166663889,2008,10,22,16,55,37,Italia,Arezzo,,,,,,
+/TestImages/Italy album/GOPR7497.jpg,,10/22/2008 16:28:39,Italia-Arezzo,43.46744833333334,11.885126666663888,2008,10,22,16,28,39,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DSC03467.jpg,,12/14/2005 14:39:47,Italia-Firenze-Quartiere 1,43.78559443333333,11.234619433333334,2005,12,14,14,39,47,Italia,Firenze,Quartiere 1,,,,,
+/TestImages/Italy album/GOPR7496.jpg,,10/22/2008 16:38:20,Italia-Arezzo,43.467081666663894,11.884538333330555,2008,10,22,16,38,20,Italia,Arezzo,,,,,,
+/TestImages/Italy album/DJI_01732.jpg,,10/22/2008 16:29:49,Italia-Arezzo,43.46715666666389,11.885394999997223,2008,10,22,16,29,49,Italia,Arezzo,,,,,,
+/TestImages/Spain Journey/DSC_1807.jpg,,04/10/2015 20:12:23,España-Madrid,40.44697222222222,-3.724752777777778,2015,4,10,20,12,23,España,Madrid,,,,,,
+/TestImages/Spain Journey/DSC_1808.jpg,,04/10/2015 20:12:23,España-Madrid,40.44697222222222,-3.724752777777778,2015,4,10,20,12,23,España,Madrid,,,,,,
+/TestImages/Spain Journey/IMG_5397.jpg,,,,,,,,,,,,,,,,,,,
+```
+</Accordion>
+
+#### Step by step `photo-cli info` process
+
+1. With `all-folders` selected, gather all photo paths in the source folder including subfolders.
+2. Extract EXIF data — taken date and coordinate — from each photo.
+3. With a third-party reverse geocode provider selected, build the address using `OpenStreetMap` and the given administrative levels (`city town suburb`).
+4. With both `no-taken-date` and `no-coordinate` set to `Continue`, photos missing that data are still listed in the report — with empty fields.
+
+### 5. Navigate your photo locations on Google Maps and Google Earth
+
+If you want to discover your photos interactively in the world, import the CSV output from [`photo-cli copy`](/commands/copy) or [`photo-cli info`](/commands/info) into [Google Maps](https://maps.google.com) or [Google Earth](https://earth.google.com).
+
+#### Google Maps
+
+[Open Google My Maps](https://www.google.com/maps/d), click `Create a New Map`, then import your CSV file as a layer (you can add many layers).
+
+<Frame>
+  <img src="/images/screenshots/google/google-maps.png" alt="Photo locations imported into Google My Maps" />
+</Frame>
+
+#### Google Earth Desktop
+
+After installing [Google Earth Desktop](https://www.google.com/earth/versions/#earth-pro), open the `File` menu and use `Import` to load your CSV file.
+
+<Frame>
+  <img src="/images/screenshots/google/google-earth-pro-desktop.png" alt="Photo locations imported into Google Earth Desktop" />
+</Frame>
+
+#### Google Earth Web
+
+To navigate your photos on [Google Earth Web](https://earth.google.com/web/), first import your CSV into Google Earth Desktop and save the result as a [KMZ or KML](https://en.wikipedia.org/wiki/Keyhole_Markup_Language) file. Then create a project in Google Earth Web and add the KML file.
+
+<Frame>
+  <img src="/images/screenshots/google/google-earth-web.png" alt="Photo locations imported into Google Earth Web" />
+</Frame>
+
+## How it's done
+
+photo-cli works by extracting [Exchangeable image file format (EXIF)](https://en.wikipedia.org/wiki/Exif) data stored in each of your photographs.
+
+### When
+
+[The photograph's taken date](https://en.wikipedia.org/wiki/Exif#Background) is used to determine when the photo was taken. Most cameras and cell phones save this data without any special setting.
+
+### Where
+
+[The photograph's coordinate data](https://en.wikipedia.org/wiki/Exif#Geolocation) is sent to the selected third-party reverse geocode provider to [build an address](/reverse-geocoding/building-address).
+
+Most cameras and cell phones have a [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) receiver — you just need to make sure that a setting such as `Save GPS location` is enabled.
+
+## Supported photo types
+
+With the default settings, `jpg`, `jpeg`, `heic`, and `png` photo files are supported. Internally, photo-cli uses the [MetadataExtractor](https://www.nuget.org/packages/MetadataExtractor/) package to read EXIF data, so you can extend the supported formats to any [MetadataExtractor-supported file](https://github.com/drewnoakes/metadata-extractor-dotnet?tab=readme-ov-file#features) using the [settings command](/commands/settings):
+
+```bash
+photo-cli settings -k SupportedExtensions -v jpg,jpeg,heic,png,tiff
+```
+
+See [Supported formats](/configuration/supported-formats) for the full list and configuration details.
+
+## Processing companion files
+
+Companion files sharing the same name as your main photo files are also processed alongside the photo. The default companion extension is `mov`, commonly produced by [iPhone Live Photos](https://support.apple.com/en-us/104966) as a short video clip stored next to the photo.
+
+You can extend the companion extension list with the [settings command](/commands/settings):
+
+```bash
+photo-cli settings -k CompanionExtensions -v mov,xmp,aae
+```
+
+See [Companion files](/configuration/companion-files) for details.
+
+## MCP server for AI assistants
+
+photo-cli can act as a [Model Context Protocol](https://modelcontextprotocol.io/) stdio server, exposing your archived photo database to AI assistants like Claude or Visual Studio Code so they can query your photos conversationally — by date, location, album, or proximity to a GPS coordinate.
+
+```bash
+photo-cli mcp --input /path/to/archive-folder
+```
+
+The server exposes tools such as `search_photos`, `find_near_location`, `list_photos_by_date_range`, `list_albums`, and `get_statistics`. See [photo-cli mcp](/commands/mcp) for the full list of tools and setup instructions for Claude Code, Claude Desktop, and VS Code.
 
 ## Supported platforms
 

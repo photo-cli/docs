@@ -3,7 +3,9 @@ title: "photo-cli: Organize Photos by Date and GPS Location"
 description: "photo-cli reads EXIF date and GPS data from your photos and copies them into structured folders with meaningful names. Runs on macOS, Windows, and Linux."
 ---
 
-photo-cli reads the EXIF metadata embedded in your photos — the taken date and GPS coordinates — and copies them into a clean, organized folder hierarchy with meaningful file names. You run it once from your terminal, and your photos are sorted. No accounts, no subscriptions, no vendor lock-in.
+photo-cli is a cross-platform command-line tool that extracts when and where your photos were taken — using EXIF metadata and GPS [reverse geocoding](/reverse-geocoding/overview) — then [archives](/commands/archive) or [copies](/commands/copy) them into a clean, organized folder hierarchy with meaningful file names. Your originals are never modified. No accounts, no subscriptions, no vendor lock-in.
+
+[![Nuget release](https://img.shields.io/nuget/v/photo-cli?label=stable&color=blue)](https://www.nuget.org/packages/photo-cli/) [![Nuget download count](https://img.shields.io/nuget/dt/photo-cli)](https://www.nuget.org/packages/photo-cli/) [![Docker Image Version](https://img.shields.io/docker/v/photocli/photocli?label=docker&logo=docker&logoColor=white)](https://hub.docker.com/r/photocli/photocli) [![Homebrew](https://img.shields.io/nuget/v/photo-cli?label=homebrew&color=yellow)](https://github.com/photo-cli/homebrew-photo-cli) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/photo-cli/photo-cli/blob/main/LICENSE)
 
 <CardGroup cols={2}>
   <Card title="Installation" icon="download" href="/installation">
@@ -29,6 +31,86 @@ photo-cli extracts two pieces of information from each photo:
 
 It uses these to copy your photos into a new folder with structured names like `2024.03.15_14.22.01-France-Paris.jpg`, leaving your originals untouched.
 
+## Before and after
+
+A folder of 21 unsorted files becomes a clean, dated hierarchy after running a single command:
+
+<Tabs>
+<Tab title="Before">
+```text
+├── DSC_5727.jpg
+├── GOPR6742.jpg
+├── Italy album
+│   ├── DJI_01732.jpg
+│   ├── DJI_01733.jpg
+│   ├── DSC00001.JPG
+│   ├── DSC03467.jpg
+│   ├── DSC_1769.JPG
+│   ├── DSC_1770.JPG
+│   ├── DSC_1770_(same).jpg
+│   ├── DSC_1771.JPG
+│   ├── GOPR7496.jpg
+│   ├── GOPR7497.jpg
+│   ├── IMG_0747.JPG
+│   ├── IMG_1979.HEIC
+│   ├── IMG_1979.mov
+│   ├── IMG_2371.jpg
+│   └── IMG_O1979.aae
+└── Spain Journey
+    ├── DSC_1807.jpg
+    ├── DSC_1808.jpg
+    └── IMG_5397.jpg
+```
+</Tab>
+<Tab title="After photo-cli copy">
+```text
+.
+├── 2005.08.13_09.47.23-Kenya-Barut ward.jpg
+├── 2005.12.14-2025.06.03-Italy album
+│   ├── 2005.12.14_14.39.47-Italia-Firenze.jpg
+│   ├── 2008.10.22_16.28.39-Italia-Arezzo.jpg
+│   ├── 2008.10.22_16.44.01-Italia-Arezzo.jpg
+│   ├── 2008.10.22_17.00.07-Italia-Arezzo-1.jpg
+│   ├── 2008.10.22_17.00.07-Italia-Arezzo-2.jpg
+│   ├── 2025.06.03_13.53.36-Italia-Venezia.heic
+│   └── 2025.06.03_13.53.36-Italia-Venezia.mov
+├── 2012.06.22_19.52.31-United Kingdom.jpg
+├── 2015.04.10-2015.04.10-Spain Journey
+│   ├── 2015.04.10_20.12.23-España-Madrid-1.jpg
+│   └── 2015.04.10_20.12.23-España-Madrid-2.jpg
+├── photo-cli-report.csv
+└── sha1.lst
+```
+</Tab>
+<Tab title="After photo-cli archive">
+```text
+├── 2005
+│   └── 08
+│       └── 13
+│           └── 2005.08.13_09.47.23-5842c73cfdc5f347551bb6016e00c71bb1393169.jpg
+├── 2008
+│   └── 10
+│       └── 22
+│           ├── 2008.10.22_16.28.39-5d66eec547469a1817bda4abe35c801359b2bb55.jpg
+│           ├── 2008.10.22_16.44.01-d470205a1d331a9d3765b3762b7c954bb8efc6ea.jpg
+│           └── 2008.10.22_17.00.07-a0ab699f5f99fce8ff49163e87c7590c2c9a66eb.jpg
+├── 2012
+│   └── 06
+│       └── 22
+│           └── 2012.06.22_19.52.31-bb649a18b3e7bb3df3701587a13f833749091817.jpg
+├── 2015
+│   └── 04
+│       └── 10
+│           └── 2015.04.10_20.12.23-9f4e6d352ec172e1059571250655e376769080fe.jpg
+├── no-photo-taken-date
+│   └── cf756397cc3ca81b2650c8801fd64e172504015a.jpg
+└── photo-cli.sqlite3
+```
+</Tab>
+</Tabs>
+
+See the [Introduction](/introduction#features-explained-with-examples) for a full walkthrough of each transformation.
+
 ## Core commands
 
 <CardGroup cols={2}>
@@ -51,6 +133,16 @@ It uses these to copy your photos into a new folder with structured names like `
     Run an MCP server to let AI assistants query your photo archive.
   </Card>
 </CardGroup>
+
+## Map your photos
+
+Export your photo metadata to CSV and import it into Google Maps or Google Earth to interactively browse where each shot was taken.
+
+<Frame>
+  <img src="/images/screenshots/google/google-maps.png" alt="Photo locations imported into Google My Maps" />
+</Frame>
+
+See [Navigate your photo locations on Google Maps and Earth](/introduction#5-navigate-your-photo-locations-on-google-maps-and-google-earth) for instructions.
 
 ## Get started
 
