@@ -56,7 +56,7 @@ photo-cli settings --reset
 | `FolderAppendSeparator` | `-` | Separator inserted between an appended date or address and the original folder name |
 | `GoogleMapsApiKey` | _(empty)_ | API key for the Google Maps reverse geocode provider |
 | `LocationIqApiKey` | _(empty)_ | API key for the LocationIq reverse geocode provider |
-| `LogLevel` | `Warning` | Logging verbosity level; accepted values are `Warning`, `Information`, and `Debug` |
+| `LogLevel.<Namespace>` | Various | Per-namespace log level. Use the `Namespace=LogLevel` format (e.g., `LogLevel.Default=Error`). Accepted levels: `Trace`, `Debug`, `Information`, `Warning`, `Error`, `Critical`. Default namespaces: `LogLevel.Default=Error`, `LogLevel.Microsoft=Warning`, `LogLevel.PhotoCli=Warning`, `LogLevel.PhotoCli.Services.Implementations.ReverseGeocodes=Warning`, `LogLevel.Polly=Warning`, `LogLevel.System.Net.Http.HttpClient=Warning` |
 | `MonthFormat` | `MM` | Format string for the month component alone |
 | `NoAddressAndPhotoTakenDateFolderName` | `no-address-and-no-photo-taken-date` | Folder name used for photos that have neither a taken date nor GPS coordinates |
 | `NoAddressFolderName` | `no-address` | Folder name used for photos that have no GPS coordinates or address |
