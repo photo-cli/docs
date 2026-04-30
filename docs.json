@@ -8,6 +8,10 @@
     "light": "#fa999a",
     "dark": "#7c241c"
   },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
   "navbar": {
     "primary": {
       "type": "github",
@@ -30,13 +34,24 @@
           {
             "group": "Commands",
             "pages": [
-              "commands/copy",
               "commands/archive",
+              "commands/mcp",
               "commands/list",
+              "commands/copy",
               "commands/info",
               "commands/address",
-              "commands/settings",
-              "commands/mcp"
+              "commands/settings"
+            ]
+          },
+          {
+            "group": "Examples",
+            "pages": [
+              "examples/overview",
+              "examples/sequential-numbering",
+              "examples/group-by-date",
+              "examples/folder-date-range",
+              "examples/address-date-naming",
+              "examples/group-by-location"
             ]
           },
           {
@@ -62,22 +77,6 @@
               "reference/arguments",
               "reference/exit-codes",
               "reference/changelog"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Examples",
-        "groups": [
-          {
-            "group": "Usage Examples",
-            "pages": [
-              "examples/overview",
-              "examples/sequential-numbering",
-              "examples/group-by-date",
-              "examples/folder-date-range",
-              "examples/address-date-naming",
-              "examples/group-by-location"
             ]
           }
         ]
