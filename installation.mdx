@@ -26,12 +26,7 @@ brew install dotnet-sdk --cask
 ## Installation
 
 <Tabs>
-  <Tab title="Self-Contained Executable">
-    The easiest way to run photo-cli without installing any dependency. The executable contains the .NET runtime in a single file and is available for macOS, Windows, and Linux across arm64, x64, and x86 architectures.
-
-    Download the executable for your OS and architecture directly from the [releases page](https://github.com/photo-cli/photo-cli/releases).
-  </Tab>
-  <Tab title="Homebrew (macOS & Linux)">
+  <Tab title="Homebrew">
     Homebrew is the recommended installation method on macOS and Linux. It handles all dependencies, including the .NET runtime, and keeps photo-cli up to date automatically.
 
     <Steps>
@@ -66,7 +61,30 @@ brew install dotnet-sdk --cask
       </Step>
     </Steps>
   </Tab>
-  <Tab title=".NET Tool (all platforms)">
+  <Tab title="Container">
+    Using the published Docker [image on DockerHub](https://hub.docker.com/r/photocli/photocli), you can run photo-cli in an isolated container environment by mounting your photographs and output directory as bind mounts.
+
+    ```bash
+    docker run --rm \
+      --volume ./test-photographs:/photos/input \
+      --volume ./archive:/photos/output \
+      photocli/photocli archive \
+        --input /photos/input \
+        --output /photos/output \
+        --album-type DateRange \
+        --album-name My-Album \
+        --auto-reverse-geocode-album \
+        --expected-day-range 7300 \
+        --delete-on-source \
+        --reverse-geocode OpenStreetMapFoundation \
+        --openstreetmap-properties country city
+    ```
+
+    <Note>
+      The bind-mounted directories appear as empty directories in the container filesystem and must be given as the input and output directories to the application. The container can be safely discarded after execution.
+    </Note>
+  </Tab>
+  <Tab title=".NET Tool">
     You can install photo-cli as a .NET global tool on any platform where the .NET SDK is available.
 
     <Steps>
@@ -93,28 +111,10 @@ brew install dotnet-sdk --cask
       </Step>
     </Steps>
   </Tab>
-  <Tab title="Container (Docker, Podman)">
-    Using the published Docker [image on DockerHub](https://hub.docker.com/r/photocli/photocli), you can run photo-cli in an isolated container environment by mounting your photographs and output directory as bind mounts.
+  <Tab title="Self-Contained Executable">
+    The easiest way to run photo-cli without installing any dependency. The executable contains the .NET runtime in a single file and is available for macOS, Windows, and Linux across arm64, x64, and x86 architectures.
 
-    ```bash
-    docker run --rm \
-      --volume ./test-photographs:/photos/input \
-      --volume ./archive:/photos/output \
-      photocli/photocli archive \
-        --input /photos/input \
-        --output /photos/output \
-        --album-type DateRange \
-        --album-name My-Album \
-        --auto-reverse-geocode-album \
-        --expected-day-range 7300 \
-        --delete-on-source \
-        --reverse-geocode OpenStreetMapFoundation \
-        --openstreetmap-properties country city
-    ```
-
-    <Note>
-      The bind-mounted directories appear as empty directories in the container filesystem and must be given as the input and output directories to the application. The container can be safely discarded after execution.
-    </Note>
+    Download the executable for your OS and architecture directly from the [releases page](https://github.com/photo-cli/photo-cli/releases).
   </Tab>
 </Tabs>
 

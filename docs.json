@@ -2,15 +2,15 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "almond",
   "name": "photo-cli",
-  "favicon": "https://media.brand.dev/1014999b-5c86-4f55-af82-53bc506a7edd.svg",
+  "favicon": "images/icon/icon.svg",
   "colors": {
     "primary": "#f65656",
     "light": "#fa999a",
     "dark": "#7c241c"
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "images/logo/light.svg",
+    "dark": "images/logo/dark.svg"
   },
   "navbar": {
     "primary": {
@@ -26,9 +26,19 @@
           {
             "group": "Get Started",
             "pages": [
-              "introduction",
+              "index",
+              "quickstart",
               "installation",
-              "quickstart"
+              "features-explained"
+            ]
+          },
+          {
+            "group": "Reverse Geocoding",
+            "pages": [
+              "reverse-geocoding/overview",
+              "reverse-geocoding/providers",
+              "reverse-geocoding/api-keys",
+              "reverse-geocoding/building-address"
             ]
           },
           {
@@ -44,7 +54,7 @@
             ]
           },
           {
-            "group": "Examples",
+            "group": "Copy Examples",
             "pages": [
               "examples/overview",
               "examples/sequential-numbering",
@@ -52,15 +62,6 @@
               "examples/folder-date-range",
               "examples/address-date-naming",
               "examples/group-by-location"
-            ]
-          },
-          {
-            "group": "Reverse Geocoding",
-            "pages": [
-              "reverse-geocoding/overview",
-              "reverse-geocoding/providers",
-              "reverse-geocoding/api-keys",
-              "reverse-geocoding/building-address"
             ]
           },
           {

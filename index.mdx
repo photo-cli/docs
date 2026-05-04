@@ -1,23 +1,67 @@
 ---
-title: "photo-cli: Organize Photos by Date and GPS Location"
-description: "photo-cli reads EXIF date and GPS data from your photos and copies them into structured folders with meaningful names. Runs on macOS, Windows, and Linux."
+title: 'photo-cli: Organize Photos by Date and GPS Location'
+description: '`photo-cli` is a cross-platform [command-line tool](https://en.wikipedia.org/wiki/Command-line_interface) that extracts when and where ([reverse geocode](https://en.wikipedia.org/wiki/Reverse_geocoding)) your photographs are taken, [archive](#archive) or [copy](#copy) into a new organized folder (not modifying source folder) with various [folder](#folder-append-type---a---folder-append-) & [file naming](#naming-style---s---naming-style-) strategies with an album support to categorize, [list & view](#list) easily.'
+sidebarTitle: 'Introduction'
 ---
 
-photo-cli is a cross-platform command-line tool that extracts when and where your photos were taken — using EXIF metadata and GPS [reverse geocoding](/reverse-geocoding/overview) — then [archives](/commands/archive) or [copies](/commands/copy) them into a clean, organized folder hierarchy with meaningful file names. Your originals are never modified. No accounts, no subscriptions, no vendor lock-in.
+<div className='not-prose' style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+  <a href='https://www.nuget.org/packages/photo-cli/'>
+    <img src='https://img.shields.io/nuget/v/photo-cli?label=stable&color=blue' />
+  </a>
+  <a href='https://www.nuget.org/packages/photo-cli/'>
+    <img src='https://img.shields.io/nuget/dt/photo-cli' />
+  </a>
+  <a href='https://hub.docker.com/r/photocli/photocli'>
+    <img src='https://img.shields.io/docker/v/photocli/photocli?label=docker&logo=docker&logoColor=white' />
+  </a>
+  <a href='https://github.com/photo-cli/homebrew-photo-cli'>
+    <img src='https://img.shields.io/nuget/v/photo-cli?label=homebrew&color=yellow' />
+  </a>
+  <a href='https://sonarcloud.io/summary/new_code?id=photo-cli_photo-cli'>
+    <img src='https://sonarcloud.io/api/project_badges/measure?project=photo-cli_photo-cli&metric=coverage' />
+  </a>
+  <a href='https://github.com/photo-cli/photo-cli/actions/workflows/CI.yml'>
+    <img src='https://github.com/photo-cli/photo-cli/actions/workflows/CI.yml/badge.svg' />
+  </a>
+  <a href='https://github.com/photo-cli/photo-cli/actions/workflows/stable.yml'>
+    <img src='https://github.com/photo-cli/photo-cli/actions/workflows/stable.yml/badge.svg' />
+  </a>
+  <a href='https://photocli.com'>
+    <img src='https://img.shields.io/badge/docs-photocli.com-red' />
+  </a>
+  <a href='https://sonarcloud.io/summary/new_code?id=photo-cli_photo-cli'>
+    <img src='https://sonarcloud.io/api/project_badges/measure?project=photo-cli_photo-cli&metric=alert_status' />
+  </a>
+  <a href='https://sonarcloud.io/summary/new_code?id=photo-cli_photo-cli'>
+    <img src='https://sonarcloud.io/api/project_badges/measure?project=photo-cli_photo-cli&metric=reliability_rating' />
+  </a>
+  <a href='https://sonarcloud.io/summary/new_code?id=photo-cli_photo-cli'>
+    <img src='https://sonarcloud.io/api/project_badges/measure?project=photo-cli_photo-cli&metric=sqale_rating' />
+  </a>
+  <a href='https://sonarcloud.io/summary/new_code?id=photo-cli_photo-cli'>
+    <img src='https://sonarcloud.io/api/project_badges/measure?project=photo-cli_photo-cli&metric=security_rating' />
+  </a>
+  <a href='https://sonarcloud.io/summary/new_code?id=photo-cli_photo-cli'>
+    <img src='https://sonarcloud.io/api/project_badges/measure?project=photo-cli_photo-cli&metric=bugs' />
+  </a>
+  <a href='https://github.com/photo-cli/photo-cli/blob/main/LICENSE'>
+    <img src='https://img.shields.io/badge/license-Apache%202-blue.svg' />
+  </a>
+</div>
 
-[![Nuget release](https://img.shields.io/nuget/v/photo-cli?label=stable&color=blue)](https://www.nuget.org/packages/photo-cli/) [![Nuget download count](https://img.shields.io/nuget/dt/photo-cli)](https://www.nuget.org/packages/photo-cli/) [![Docker Image Version](https://img.shields.io/docker/v/photocli/photocli?label=docker&logo=docker&logoColor=white)](https://hub.docker.com/r/photocli/photocli) [![Homebrew](https://img.shields.io/nuget/v/photo-cli?label=homebrew&color=yellow)](https://github.com/photo-cli/homebrew-photo-cli) [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/photo-cli/photo-cli/blob/main/LICENSE)
+No accounts, no subscriptions, no vendor lock-in. All photo metadata is stored on local SQLite for archive operation and CSV for others. On [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file (can view on Microsoft Excel, Libre/OpenOffice Calc, Apple Numbers, Google Sheets), you can [navigate your photo locations on Google Maps & Earth with your custom label and pin style](#3-navigate-your-photo-locations-on-google-maps--earth).
 
 <CardGroup cols={2}>
-  <Card title="Installation" icon="download" href="/installation">
+  <Card title='Installation' icon='download' href='/installation'>
     Install photo-cli on macOS, Windows, or Linux in under a minute.
   </Card>
-  <Card title="Quick Start" icon="rocket" href="/quickstart">
+  <Card title='Quick Start' icon='rocket' href='/quickstart'>
     Run your first photo-cli command and see results immediately.
   </Card>
-  <Card title="Commands" icon="terminal" href="/commands/copy">
+  <Card title='Commands' icon='terminal' href='/commands/copy'>
     Explore all commands: copy, archive, list, info, address, settings, and mcp.
   </Card>
-  <Card title="Examples" icon="images" href="/examples/overview">
+  <Card title='Examples' icon='images' href='/examples/overview'>
     See real before-and-after examples for common organization strategies.
   </Card>
 </CardGroup>
@@ -36,77 +80,113 @@ It uses these to copy your photos into a new folder with structured names like `
 A folder of 21 unsorted files becomes a clean, dated hierarchy after running a single command:
 
 <Tabs>
-<Tab title="Before">
-```text
-├── DSC_5727.jpg
-├── GOPR6742.jpg
-├── Italy album
-│   ├── DJI_01732.jpg
-│   ├── DJI_01733.jpg
-│   ├── DSC00001.JPG
-│   ├── DSC03467.jpg
-│   ├── DSC_1769.JPG
-│   ├── DSC_1770.JPG
-│   ├── DSC_1770_(same).jpg
-│   ├── DSC_1771.JPG
-│   ├── GOPR7496.jpg
-│   ├── GOPR7497.jpg
-│   ├── IMG_0747.JPG
-│   ├── IMG_1979.HEIC
-│   ├── IMG_1979.mov
-│   ├── IMG_2371.jpg
-│   └── IMG_O1979.aae
-└── Spain Journey
-    ├── DSC_1807.jpg
-    ├── DSC_1808.jpg
-    └── IMG_5397.jpg
-```
-</Tab>
-<Tab title="After photo-cli copy">
-```text
-.
-├── 2005.08.13_09.47.23-Kenya-Barut ward.jpg
-├── 2005.12.14-2025.06.03-Italy album
-│   ├── 2005.12.14_14.39.47-Italia-Firenze.jpg
-│   ├── 2008.10.22_16.28.39-Italia-Arezzo.jpg
-│   ├── 2008.10.22_16.44.01-Italia-Arezzo.jpg
-│   ├── 2008.10.22_17.00.07-Italia-Arezzo-1.jpg
-│   ├── 2008.10.22_17.00.07-Italia-Arezzo-2.jpg
-│   ├── 2025.06.03_13.53.36-Italia-Venezia.heic
-│   └── 2025.06.03_13.53.36-Italia-Venezia.mov
-├── 2012.06.22_19.52.31-United Kingdom.jpg
-├── 2015.04.10-2015.04.10-Spain Journey
-│   ├── 2015.04.10_20.12.23-España-Madrid-1.jpg
-│   └── 2015.04.10_20.12.23-España-Madrid-2.jpg
-├── photo-cli-report.csv
-└── sha1.lst
-```
-</Tab>
-<Tab title="After photo-cli archive">
-```text
-├── 2005
-│   └── 08
-│       └── 13
-│           └── 2005.08.13_09.47.23-5842c73cfdc5f347551bb6016e00c71bb1393169.jpg
-├── 2008
-│   └── 10
-│       └── 22
-│           ├── 2008.10.22_16.28.39-5d66eec547469a1817bda4abe35c801359b2bb55.jpg
-│           ├── 2008.10.22_16.44.01-d470205a1d331a9d3765b3762b7c954bb8efc6ea.jpg
-│           └── 2008.10.22_17.00.07-a0ab699f5f99fce8ff49163e87c7590c2c9a66eb.jpg
-├── 2012
-│   └── 06
-│       └── 22
-│           └── 2012.06.22_19.52.31-bb649a18b3e7bb3df3701587a13f833749091817.jpg
-├── 2015
-│   └── 04
-│       └── 10
-│           └── 2015.04.10_20.12.23-9f4e6d352ec172e1059571250655e376769080fe.jpg
-├── no-photo-taken-date
-│   └── cf756397cc3ca81b2650c8801fd64e172504015a.jpg
-└── photo-cli.sqlite3
-```
-</Tab>
+  <Tab title='Before'>
+  ```text
+  ├── DSC_5727.jpg
+  ├── GOPR6742.jpg
+  ├── Italy album
+  │   ├── DJI_01732.jpg
+  │   ├── DJI_01733.jpg
+  │   ├── DSC00001.JPG
+  │   ├── DSC03467.jpg
+  │   ├── DSC_1769.JPG
+  │   ├── DSC_1770.JPG
+  │   ├── DSC_1770_(same).jpg
+  │   ├── DSC_1771.JPG
+  │   ├── GOPR7496.jpg
+  │   ├── GOPR7497.jpg
+  │   ├── IMG_0747.JPG
+  │   ├── IMG_1979.HEIC
+  │   ├── IMG_1979.mov
+  │   ├── IMG_1979.xmp
+  │   ├── IMG_2371.jpg
+  │   └── IMG_O1979.aae
+  └── Spain Journey
+      ├── DSC_1807.jpg
+      ├── DSC_1808.jpg
+      └── IMG_5397.jpg
+
+  2 directories, 21 files
+  ```
+  </Tab>
+  <Tab title='After photo-cli archive'>
+  ```text
+  ├── 2005
+  │   ├── 08
+  │   │   └── 13
+  │   │       └── 2005.08.13_09.47.23-5842c73cfdc5f347551bb6016e00c71bb1393169.jpg
+  │   └── 12
+  │       └── 14
+  │           └── 2005.12.14_14.39.47-03cb14d5c68beed97cbe73164de9771d537fcd96.jpg
+  ├── 2008
+  │   ├── 07
+  │   │   └── 16
+  │   │       └── 2008.07.16_11.33.20-90d835861e1aa3c829e3ab28a7f01ec3a090f664.jpg
+  │   └── 10
+  │       └── 22
+  │           ├── 2008.10.22_16.28.39-5d66eec547469a1817bda4abe35c801359b2bb55.jpg
+  │           ├── 2008.10.22_16.29.49-629b0b141634d6c0906e49af448bec8d755ba32c.jpg
+  │           ├── 2008.10.22_16.38.20-620d23336a12ab54f9f0190fe93960a4dba2df59.jpg
+  │           ├── 2008.10.22_16.43.21-3b0a3215b4f66d7ff4804dd223f192c21aee71bc.jpg
+  │           ├── 2008.10.22_16.44.01-d470205a1d331a9d3765b3762b7c954bb8efc6ea.jpg
+  │           ├── 2008.10.22_16.46.53-f670f2bb6c54898894b06b083185b05086bd4e6e.jpg
+  │           ├── 2008.10.22_16.52.15-6b89a245809031ecc47789cdeaa332545330fc39.jpg
+  │           ├── 2008.10.22_16.55.37-dd42edcde2433a7df4a3d67bf61944a20884da89.jpg
+  │           └── 2008.10.22_17.00.07-a0ab699f5f99fce8ff49163e87c7590c2c9a66eb.jpg
+  ├── 2012
+  │   └── 06
+  │       └── 22
+  │           └── 2012.06.22_19.52.31-bb649a18b3e7bb3df3701587a13f833749091817.jpg
+  ├── 2015
+  │   └── 04
+  │       └── 10
+  │           ├── 2015.04.10_20.12.23-3907fc960f2873f40c8f35643dd444e0468be131.jpg
+  │           └── 2015.04.10_20.12.23-9f4e6d352ec172e1059571250655e376769080fe.jpg
+  ├── 2025
+  │   └── 06
+  │       └── 03
+  │           ├── 2025.06.03_13.53.36-8a45af72730474e22582afbe72f53685d705a72c.heic
+  │           └── 2025.06.03_13.53.36-8a45af72730474e22582afbe72f53685d705a72c.mov
+  ├── no-photo-taken-date
+  │   └── cf756397cc3ca81b2650c8801fd64e172504015a.jpg
+  └── photo-cli.sqlite3
+
+  20 directories, 19 files
+  ```
+  </Tab>
+  <Tab title='After photo-cli copy'>
+  ```text
+  ├── 2005.08.13_09.47.23-Kenya-Barut ward.jpg
+  ├── 2005.12.14-2025.06.03-Italy album
+  │   ├── 2005.12.14_14.39.47-Italia-Firenze.jpg
+  │   ├── 2008.10.22_16.28.39-Italia-Arezzo.jpg
+  │   ├── 2008.10.22_16.29.49-Italia-Arezzo.jpg
+  │   ├── 2008.10.22_16.38.20-Italia-Arezzo.jpg
+  │   ├── 2008.10.22_16.43.21-Italia-Arezzo.jpg
+  │   ├── 2008.10.22_16.44.01-Italia-Arezzo.jpg
+  │   ├── 2008.10.22_16.46.53-Italia-Arezzo.jpg
+  │   ├── 2008.10.22_16.52.15-Italia-Arezzo.jpg
+  │   ├── 2008.10.22_16.55.37-Italia-Arezzo.jpg
+  │   ├── 2008.10.22_17.00.07-Italia-Arezzo-1.jpg
+  │   ├── 2008.10.22_17.00.07-Italia-Arezzo-2.jpg
+  │   ├── 2025.06.03_13.53.36-Italia-Venezia.heic
+  │   └── 2025.06.03_13.53.36-Italia-Venezia.mov
+  ├── 2012.06.22_19.52.31-United Kingdom.jpg
+  ├── 2015.04.10-2015.04.10-Spain Journey
+  │   ├── 2015.04.10_20.12.23-España-Madrid-1.jpg
+  │   └── 2015.04.10_20.12.23-España-Madrid-2.jpg
+  ├── Italy album
+  │   └── no-address
+  │       └── IMG_2371.jpg
+  ├── Spain Journey
+  │   └── no-address-and-no-photo-taken-date
+  │       └── IMG_5397.jpg
+  ├── photo-cli-report.csv
+  └── sha1.lst
+
+  6 directories, 21 files
+  ```
+  </Tab>
 </Tabs>
 
 See the [Introduction](/introduction#features-explained-with-examples) for a full walkthrough of each transformation.
@@ -114,22 +194,22 @@ See the [Introduction](/introduction#features-explained-with-examples) for a ful
 ## Core commands
 
 <CardGroup cols={2}>
-  <Card title="photo-cli copy" icon="copy" href="/commands/copy">
+  <Card title='photo-cli copy' icon='copy' href='/commands/copy'>
     Copy photos into a new organized folder with custom naming and folder strategies.
   </Card>
-  <Card title="photo-cli archive" icon="box-archive" href="/commands/archive">
+  <Card title='photo-cli archive' icon='box-archive' href='/commands/archive'>
     Archive photos with SHA1-based deduplication and index into a local SQLite database.
   </Card>
-  <Card title="photo-cli info" icon="circle-info" href="/commands/info">
+  <Card title='photo-cli info' icon='circle-info' href='/commands/info'>
     Export photo metadata (date, coordinates, address) to a CSV file.
   </Card>
-  <Card title="photo-cli list" icon="list" href="/commands/list">
+  <Card title='photo-cli list' icon='list' href='/commands/list'>
     Browse, filter, and open archived photos by album, date, or date range.
   </Card>
-  <Card title="photo-cli address" icon="location-dot" href="/commands/address">
+  <Card title='photo-cli address' icon='location-dot' href='/commands/address'>
     Preview the reverse geocode response for a single photo.
   </Card>
-  <Card title="photo-cli mcp" icon="robot" href="/commands/mcp">
+  <Card title='photo-cli mcp' icon='robot' href='/commands/mcp'>
     Run an MCP server to let AI assistants query your photo archive.
   </Card>
 </CardGroup>
@@ -139,7 +219,7 @@ See the [Introduction](/introduction#features-explained-with-examples) for a ful
 Export your photo metadata to CSV and import it into Google Maps or Google Earth to interactively browse where each shot was taken.
 
 <Frame>
-  <img src="/images/screenshots/google/google-maps.png" alt="Photo locations imported into Google My Maps" />
+  <img src='/images/screenshots/google/google-maps.png' alt='Photo locations imported into Google My Maps' />
 </Frame>
 
 See [Navigate your photo locations on Google Maps and Earth](/introduction#5-navigate-your-photo-locations-on-google-maps-and-google-earth) for instructions.
@@ -147,16 +227,16 @@ See [Navigate your photo locations on Google Maps and Earth](/introduction#5-nav
 ## Get started
 
 <Steps>
-  <Step title="Install photo-cli">
+  <Step title='Install photo-cli'>
     Install via Homebrew on macOS or as a .NET global tool on any platform. See [Installation](/installation).
   </Step>
-  <Step title="Run your first command">
+  <Step title='Run your first command'>
     Point photo-cli at a folder of photos and choose a naming strategy. See [Quick Start](/quickstart).
   </Step>
-  <Step title="Add location names (optional)">
+  <Step title='Add location names (optional)'>
     Configure a reverse geocode provider to include place names in your file and folder names. See [Reverse Geocoding](/reverse-geocoding/overview).
   </Step>
-  <Step title="Explore examples">
+  <Step title='Explore examples'>
     Browse real before-and-after examples for popular organization strategies. See [Examples](/examples/overview).
   </Step>
 </Steps>
