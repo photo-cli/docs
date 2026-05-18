@@ -1,20 +1,20 @@
 ---
-title: "Get Started with photo-cli: Archive Photos in Minutes"
-description: "Run your first photo-cli archive command to lay your photos out by year/month/day, hash-stamp every file, deduplicate, index everything in a local SQLite database, and expose the archive to AI assistants over MCP."
-sidebarTitle: "Quick Start"
+title: 'Get Started with photo-cli: Archive Photos in Minutes'
+description: 'Run your first photo-cli archive command to lay your photos out by year/month/day, hash-stamp every file, deduplicate, index everything in a local SQLite database, and expose the archive to AI assistants over MCP.'
+sidebarTitle: 'Quick Start'
 ---
 
-This guide walks you through installing photo-cli, running your first `archive` command, and connecting the resulting archive to an AI assistant over MCP. By the end, you will have a `[year]/[month]/[day]/` folder of hash-stamped photos, a SQLite index, one album per country/city — and an MCP server that lets Claude or VS Code query it conversationally.
+This guide walks you through installing photo-cli, running your first `archive` command, and connecting the resulting archive to an AI assistant over MCP. By the end, you will have a `[year]/[month]/[day]/` folder of hash-stamped photos, a SQLite index, one album per country/city — and an MCP server for your AI assistant to query & open photos conversationally.
 
 <Steps>
-  <Step title="Install photo-cli">
+  <Step title='Install photo-cli'>
     Follow the [Installation](/installation) guide, then verify:
 
     ```bash
     photo-cli --version
     ```
   </Step>
-  <Step title="Run your first archive command">
+  <Step title='Run your first archive command'>
     ```bash
     photo-cli archive \
       --input /path/to/source \
@@ -22,111 +22,68 @@ This guide walks you through installing photo-cli, running your first `archive` 
       --reverse-geocode OpenStreetMapFoundation \
       --openstreetmap-properties country city \
       --auto-reverse-geocode-album \
-      --expected-day-range 7300
     ```
 
-    | Argument | Effect |
-    | -------- | ------ |
-    | `--input` / `--output` | Source folder to read, archive folder to write |
-    | `--reverse-geocode` + `--openstreetmap-properties` | Resolves each coordinate to a `country-city` address |
-    | `--auto-reverse-geocode-album` | Creates one album per geocoded level (e.g., `Italia-Firenze`) |
-    | `--expected-day-range 7300` | Safety net — aborts if photos span more than ~20 years |
-
-    <Note>
-      Source files are never modified. Add `--delete-on-source` only after you have verified the archive — it removes sources after copy verification passes.
-    </Note>
-
-    <Frame caption="Executing photo-cli archive in the macOS terminal">
-      <img src="/images/screenshots/macos/execute.png" alt="photo-cli archive executing on macOS" />
+    <Frame caption='Executing photo-cli archive in the macOS terminal'>
+      <img src='/images/screenshots/macos/execute.png' alt='photo-cli archive executing on macOS' />
     </Frame>
   </Step>
-  <Step title="What happens behind the scenes">
-    The `archive` command is built for long-term, incremental storage. In a single run it:
+  <Step title='What happens behind the scenes'>
+    The command discovers photos and their companion files, reads EXIF metadata (date + GPS), and reverse-geocodes coordinates via OpenStreetMap with in-memory deduplication. It then organizes files into a year/month/day/ layout with SHA1-stamped names, deduplicating identical content and routing dateless photos to a fallback folder.
 
-    1. **Discovers** every photo and [companion file](/configuration/companion-files) (Live Photo `.mov`, sidecar `.xmp`, `.aae`) under the source folder.
-    2. **Reads EXIF** for the taken date and GPS coordinates of each photo.
-    3. **Reverse-geocodes** the coordinates with [OpenStreetMap](/reverse-geocoding/providers), deduplicating repeated locations in memory so the rate-limited API is only called once per unique coordinate.
-    4. **Guards the date range** — `--expected-day-range 7300` aborts the run if photos span more than ~20 years, catching a mis-pointed source folder before any copy.
-    5. **Lays photos out** as `[year]/[month]/[day]/` derived from the EXIF date.
-    6. **Embeds a SHA1** in every file name (`yyyy.MM.dd_HH.mm.ss-{sha1}.ext`); companion files share the SHA1 stem of their main photo.
-    7. **Deduplicates automatically** — byte-identical files hash the same and only one copy is written.
-    8. **Falls back** to a `no-photo-taken-date/` subfolder for photos missing a date.
-    9. **Verifies the copy** by re-hashing every output file against its source.
-    10. **Indexes everything** in `photo-cli.sqlite3` at the root of the archive — paths, dates, coordinates, formatted addresses, individual `Address1..Address8` levels, SHA1.
-    11. **Builds albums** — `--auto-reverse-geocode-album` creates one album per geocoded level (`Italia`, `Italia-Firenze`, `Venezia`, `United Kingdom`, …) so you can later open every photo from a country or city without remembering exact dates.
+  After copying, it verifies each file by re-hashing, indexes everything (paths, dates, coordinates, addresses, SHA1) into completely local file based database, and builds per-location albums from the geocoded address levels.
   </Step>
-  <Step title="Check the output">
+  <Step title='Check the output'>
     Open the archive folder. You will find photos laid out as `[year]/[month]/[day]/yyyy.MM.dd_HH.mm.ss-{sha1}.ext`, byte-for-byte duplicates skipped automatically, photos with no taken date in a `no-photo-taken-date/` subfolder, and a `photo-cli.sqlite3` database at the root indexing every photo, address, and album.
 
-    <Frame caption="The resulting archive in Finder">
-      <img src="/images/screenshots/macos/finder.png" alt="Archive folder open in macOS Finder" />
-    </Frame>
-
-    <Frame caption="tree output of the archive folder">
-      <img src="/images/screenshots/macos/tree-command.png" alt="tree command output of archive folder on macOS" />
+    <Frame caption='The resulting archive in Finder'>
+      <img src='/images/screenshots/macos/finder.png' alt='Archive folder open in macOS Finder' />
     </Frame>
   </Step>
-  <Step title="List or open archived photos">
+  <Step title='List or open archived photos'>
     Query the SQLite index to open photos by date or list every album that was created:
 
     ```bash
     photo-cli list --input /path/to/archive --type PhotosByDate --year 2008 --month 10
-    photo-cli list --input /path/to/archive --type Albums
     ```
 
-    On macOS matches open in Preview; on Linux/Windows paths are printed to stdout.
+    On macOS matches open in Preview; on Linux/Windows paths are printed to stdout so you can pipe them to your viewer of choice (e.g., `xargs xdg-open` on Linux).
 
-    <Frame caption="photo-cli list opening the October 2008 photos in macOS Preview">
-      <img src="/images/screenshots/macos/viewing-in-preview-app.png" alt="Photos from October 2008 opened in macOS Preview by photo-cli list" />
+    <Frame caption='photo-cli list opening the October 2008 photos in macOS Preview'>
+      <img src='/images/screenshots/macos/viewing-in-preview-app.png' alt='Photos from October 2008 opened in macOS Preview by photo-cli list' />
     </Frame>
   </Step>
-  <Step title="Connect the archive to an AI assistant over MCP">
+  <Step title='Query your photo archive by AI assistant over MCP'>
     `photo-cli mcp` starts a [Model Context Protocol](https://modelcontextprotocol.io/) stdio server that exposes the archive's SQLite database to AI assistants. Tools like Claude Code, Claude Desktop, and VS Code can then search by date, location, album, or proximity to a GPS coordinate — and even open matching photos in your default viewer. See the [mcp command reference](/commands/mcp) for the full tool list.
 
-    **Claude Code (CLI):**
+    Once connected, ask the assistant things like *'What cities and when did I went to Italy?'*, *'show me everything taken within 5 km of 43.78, 11.23'*, or *'open all photos in the Italia-Firenze album'*.
 
-    ```bash
-    claude mcp add photo-cli --scope user -- photo-cli mcp --input /path/to/archive
-    ```
+    <Frame caption='MCP integration with Claude Desktop showing a query for photos'>
+      <img src='/images/screenshots/mcp/query.png' alt='MCP integration' />
+    </Frame>
+  </Step>
+  <Step title='Open the matching photos from the assistant'>
+    When you ask the assistant to *open* photos (rather than just list them), the MCP server hands the matching files off to your OS image viewer. Today this is wired up for macOS only — matches open directly in Preview. On Linux and Windows the `open_photos_*` tools are not active yet; use the `list_photos_*` tools and pipe the returned paths to your viewer of choice.
 
-    **Claude Desktop** — add to `claude_desktop_config.json`:
-
-    ```json
-    "mcpServers": {
-      "photo-cli": {
-        "command": "/Users/{your-user}/.dotnet/tools/photo-cli",
-        "args": ["mcp", "--input", "/Users/{your-user}/{archive-folder}"]
-      }
-    }
-    ```
-
-    **VS Code** — add to `.vscode/mcp.json` or your user settings:
-
-    ```json
-    "photo-cli": {
-      "type": "stdio",
-      "command": "/Users/{your-user}/.dotnet/tools/photo-cli",
-      "args": ["mcp", "--input", "/Users/{your-user}/{archive-folder}"]
-    }
-    ```
-
-    Once connected, ask the assistant things like *"how many photos do I have from Italy in 2008?"*, *"show me everything taken within 5 km of 43.78, 11.23"*, or *"open all photos in the Italia-Firenze album"*.
+    <Frame caption='Photos opened in macOS Preview after an MCP open_photos_by_album_name call'>
+      <img src='/images/screenshots/mcp/view.png' alt='Album photos opened in macOS Preview via the MCP open_photos tool' />
+    </Frame>
   </Step>
 </Steps>
 
 ## What's next
 
 <CardGroup cols={2}>
-  <Card title="Archive command reference" icon="box-archive" href="/commands/archive">
+  <Card title='Features Explained' icon='list-check' href='/features-explained'>
+    Explore all commands: copy, archive, list, info, address, settings, and mcp.
+  </Card>
+  <Card title='Installation' icon='download' href='/installation'>
+    Install photo-cli on macOS, Windows, or Linux in under a minute.
+  </Card>
+  <Card title='Reverse Geocoding' icon='location-dot' href='/reverse-geocoding/overview'>
+    See real before-and-after examples for common organization strategies.
+  </Card>
+  <Card title='Archive command reference' icon='box-archive' href='/commands/archive'>
     Every argument the `archive` command accepts.
-  </Card>
-  <Card title="MCP server" icon="robot" href="/commands/mcp">
-    Full list of MCP tools and setup for Claude Desktop, Claude Code, and VS Code.
-  </Card>
-  <Card title="Copy command" icon="copy" href="/commands/copy">
-    A flexible alternative when you want to choose the folder structure and naming yourself.
-  </Card>
-  <Card title="Reverse geocoding" icon="location-dot" href="/reverse-geocoding/overview">
-    Pick a provider and choose which address levels appear in file names.
   </Card>
 </CardGroup>

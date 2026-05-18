@@ -62,27 +62,17 @@ brew install dotnet-sdk --cask
     </Steps>
   </Tab>
   <Tab title="Container">
-    Using the published Docker [image on DockerHub](https://hub.docker.com/r/photocli/photocli), you can run photo-cli in an isolated container environment by mounting your photographs and output directory as bind mounts.
+    Pull the published photo-cli [image from DockerHub](https://hub.docker.com/r/photocli/photocli) with Docker or Podman:
 
-    ```bash
-    docker run --rm \
-      --volume ./test-photographs:/photos/input \
-      --volume ./archive:/photos/output \
-      photocli/photocli archive \
-        --input /photos/input \
-        --output /photos/output \
-        --album-type DateRange \
-        --album-name My-Album \
-        --auto-reverse-geocode-album \
-        --expected-day-range 7300 \
-        --delete-on-source \
-        --reverse-geocode OpenStreetMapFoundation \
-        --openstreetmap-properties country city
+    ```bash Docker
+    docker pull photocli/photocli
     ```
 
-    <Note>
-      The bind-mounted directories appear as empty directories in the container filesystem and must be given as the input and output directories to the application. The container can be safely discarded after execution.
-    </Note>
+    ```bash Podman
+    podman pull docker.io/photocli/photocli
+    ```
+
+    See the [container usage example](/reference/container) for a worked `archive` command that mounts your photographs and output directory as bind mounts.
   </Tab>
   <Tab title=".NET Tool">
     You can install photo-cli as a .NET global tool on any platform where the .NET SDK is available.

@@ -1,0 +1,31 @@
+---
+sidebarTitle: "Container"
+title: "Run photo-cli in Docker or Podman With Bind-Mounted Photos"
+description: "Run photo-cli inside a Docker or Podman container by mounting your photographs and output directory as bind mounts, with a worked archive command example."
+---
+
+Using the published Docker [image on DockerHub](https://hub.docker.com/r/photocli/photocli), you can run photo-cli in an isolated container environment by mounting your photographs and output directory as bind mounts. The same image works with Podman — substitute `podman` for `docker` in any of the commands below.
+
+## Archive command example
+
+```bash
+docker run --rm \
+  --volume ./test-photographs:/photos/input \
+  --volume ./archive:/photos/output \
+  photocli/photocli archive \
+    --input /photos/input \
+    --output /photos/output \
+    --album-type DateRange \
+    --album-name My-Album \
+    --auto-reverse-geocode-album \
+    --expected-day-range 7300 \
+    --delete-on-source \
+    --reverse-geocode OpenStreetMapFoundation \
+    --openstreetmap-properties country city
+```
+
+<Note>
+  The bind-mounted directories appear as empty directories in the container filesystem and must be given as the input and output directories to the application. The container can be safely discarded after execution.
+</Note>
+
+See the [installation page](/installation) for how to pull the image, and the [archive command reference](/commands/archive) for the full list of supported flags.

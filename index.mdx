@@ -1,6 +1,6 @@
 ---
 title: 'photo-cli: Organize Photos by Date and GPS Location'
-description: '`photo-cli` is a cross-platform [command-line tool](https://en.wikipedia.org/wiki/Command-line_interface) that extracts when and where ([reverse geocode](https://en.wikipedia.org/wiki/Reverse_geocoding)) your photographs are taken, [archive](#archive) or [copy](#copy) into a new organized folder (not modifying source folder) with various [folder](#folder-append-type---a---folder-append-) & [file naming](#naming-style---s---naming-style-) strategies with an album support to categorize, [list & view](#list) easily.'
+description: '`photo-cli` is a cross-platform command-line tool that extracts when and where (reverse geocode) your photographs are taken, [archive](/commands/archive) or [copy](/commands/copy) into a new organized folder (not modifying source folder) with various [folder](http://localhost:3000/reference/arguments#folder-organization-copy-only) & [file naming](reference/arguments#file-naming-copy-only) strategies with an album support to categorize, [list & view](/commands/list) easily, with a built-in secure & isolated [MCP server](/commands/mcp) (stdio) for AI assistants.'
 sidebarTitle: 'Introduction'
 ---
 
@@ -26,9 +26,6 @@ sidebarTitle: 'Introduction'
   <a href='https://github.com/photo-cli/photo-cli/actions/workflows/stable.yml'>
     <img src='https://github.com/photo-cli/photo-cli/actions/workflows/stable.yml/badge.svg' />
   </a>
-  <a href='https://photocli.com'>
-    <img src='https://img.shields.io/badge/docs-photocli.com-red' />
-  </a>
   <a href='https://sonarcloud.io/summary/new_code?id=photo-cli_photo-cli'>
     <img src='https://sonarcloud.io/api/project_badges/measure?project=photo-cli_photo-cli&metric=alert_status' />
   </a>
@@ -49,24 +46,9 @@ sidebarTitle: 'Introduction'
   </a>
 </div>
 
-No accounts, no subscriptions, no vendor lock-in. All photo metadata is stored on local SQLite for archive operation and CSV for others. On [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file (can view on Microsoft Excel, Libre/OpenOffice Calc, Apple Numbers, Google Sheets), you can [navigate your photo locations on Google Maps & Earth with your custom label and pin style](#3-navigate-your-photo-locations-on-google-maps--earth).
+No accounts, no subscriptions, no vendor lock-in. All photo metadata is stored on local SQLite for archive operation and CSV for others.
 
-<CardGroup cols={2}>
-  <Card title='Installation' icon='download' href='/installation'>
-    Install photo-cli on macOS, Windows, or Linux in under a minute.
-  </Card>
-  <Card title='Quick Start' icon='rocket' href='/quickstart'>
-    Run your first photo-cli command and see results immediately.
-  </Card>
-  <Card title='Commands' icon='terminal' href='/commands/copy'>
-    Explore all commands: copy, archive, list, info, address, settings, and mcp.
-  </Card>
-  <Card title='Examples' icon='images' href='/examples/overview'>
-    See real before-and-after examples for common organization strategies.
-  </Card>
-</CardGroup>
-
-## What photo-cli does
+## What `photo-cli` does
 
 photo-cli extracts two pieces of information from each photo:
 
@@ -75,9 +57,9 @@ photo-cli extracts two pieces of information from each photo:
 
 It uses these to copy your photos into a new folder with structured names like `2024.03.15_14.22.01-France-Paris.jpg`, leaving your originals untouched.
 
-## Before and after
+## Sample Before & After `photo-cli`
 
-A folder of 21 unsorted files becomes a clean, dated hierarchy after running a single command:
+A folder of 21 unsorted files becomes a clean, dated hierarchy after running a single command of `archive` or `copy`.
 
 <Tabs>
   <Tab title='Before'>
@@ -154,7 +136,7 @@ A folder of 21 unsorted files becomes a clean, dated hierarchy after running a s
   20 directories, 19 files
   ```
   </Tab>
-  <Tab title='After photo-cli copy'>
+  <Tab title='After photo-cli copy (one of the many options)'>
   ```text
   ├── 2005.08.13_09.47.23-Kenya-Barut ward.jpg
   ├── 2005.12.14-2025.06.03-Italy album
@@ -189,54 +171,19 @@ A folder of 21 unsorted files becomes a clean, dated hierarchy after running a s
   </Tab>
 </Tabs>
 
-See the [Introduction](/introduction#features-explained-with-examples) for a full walkthrough of each transformation.
-
-## Core commands
+## What's next
 
 <CardGroup cols={2}>
-  <Card title='photo-cli copy' icon='copy' href='/commands/copy'>
-    Copy photos into a new organized folder with custom naming and folder strategies.
+  <Card title='Quick Start' icon='rocket' href='/quickstart'>
+      Run your first photo-cli command and see results immediately.
   </Card>
-  <Card title='photo-cli archive' icon='box-archive' href='/commands/archive'>
-    Archive photos with SHA1-based deduplication and index into a local SQLite database.
+  <Card title='Features Explained' icon='list-check' href='/features-explained'>
+    Explore all commands: copy, archive, list, info, address, settings, and mcp.
   </Card>
-  <Card title='photo-cli info' icon='circle-info' href='/commands/info'>
-    Export photo metadata (date, coordinates, address) to a CSV file.
+  <Card title='Installation' icon='download' href='/installation'>
+    Install photo-cli on macOS, Windows, or Linux in under a minute.
   </Card>
-  <Card title='photo-cli list' icon='list' href='/commands/list'>
-    Browse, filter, and open archived photos by album, date, or date range.
-  </Card>
-  <Card title='photo-cli address' icon='location-dot' href='/commands/address'>
-    Preview the reverse geocode response for a single photo.
-  </Card>
-  <Card title='photo-cli mcp' icon='robot' href='/commands/mcp'>
-    Run an MCP server to let AI assistants query your photo archive.
+  <Card title='Reverse Geocoding' icon='location-dot' href='/reverse-geocoding/overview'>
+    See real before-and-after examples for common organization strategies.
   </Card>
 </CardGroup>
-
-## Map your photos
-
-Export your photo metadata to CSV and import it into Google Maps or Google Earth to interactively browse where each shot was taken.
-
-<Frame>
-  <img src='/images/screenshots/google/google-maps.png' alt='Photo locations imported into Google My Maps' />
-</Frame>
-
-See [Navigate your photo locations on Google Maps and Earth](/introduction#5-navigate-your-photo-locations-on-google-maps-and-google-earth) for instructions.
-
-## Get started
-
-<Steps>
-  <Step title='Install photo-cli'>
-    Install via Homebrew on macOS or as a .NET global tool on any platform. See [Installation](/installation).
-  </Step>
-  <Step title='Run your first command'>
-    Point photo-cli at a folder of photos and choose a naming strategy. See [Quick Start](/quickstart).
-  </Step>
-  <Step title='Add location names (optional)'>
-    Configure a reverse geocode provider to include place names in your file and folder names. See [Reverse Geocoding](/reverse-geocoding/overview).
-  </Step>
-  <Step title='Explore examples'>
-    Browse real before-and-after examples for popular organization strategies. See [Examples](/examples/overview).
-  </Step>
-</Steps>

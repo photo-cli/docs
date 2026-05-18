@@ -1,12 +1,17 @@
 ---
-title: "Features Explained: What photo-cli Does and How"
-description: "A walkthrough of the five things photo-cli is built to do — archive, copy, list/open, export to CSV, and map your photos — each shown end to end with a real command, before/after folders, and what happens behind the scenes."
-sidebarTitle: "Features Explained"
+title: 'Features Explained: What photo-cli Does and How'
+description: 'A walkthrough of the five things photo-cli is built to do — archive, copy, list/open, export to CSV, and map your photos — each shown end to end with a real command, before/after folders, and what happens behind the scenes.'
+sidebarTitle: 'Features Explained'
 ---
 
-`photo-cli` is a cross-platform command-line tool (Linux, macOS, Windows) that reads each photo's EXIF metadata to figure out **when** and **where** it was taken, optionally [reverse-geocodes](/reverse-geocoding/overview) the coordinates into a human-readable address, and then either [archives](#1-archive-into-an-indexed-folder-backed-by-sqlite) or [copies](#2-copy-into-a-new-organized-folder) the files into a new, organized folder. Source files are never modified. Metadata is stored in a local SQLite database for archives and in CSV for everything else — and that CSV can be loaded into [Google Maps and Google Earth](#5-navigate-your-photo-locations-on-google-maps--earth) to navigate your photos on a real map.
+## On this page
 
-There are five things photo-cli is built to do. Each is shown below with a real command, the folder before and after, and a short explanation of what happened.
+1. [Archive into an indexed folder backed by SQLite](#1-archive-into-an-indexed-folder-backed-by-sqlite)
+2. [Copy into a new organized folder](#2-copy-into-a-new-organized-folder)
+3. [List or open photos by their metadata](#3-list-or-open-photos-by-their-metadata)
+4. [Query your photo archive with AI assistants over MCP](#4-query-your-photo-archive-with-ai-assistants-over-mcp)
+5. [Export every photo's metadata to a CSV report](#5-export-every-photo-metadata-to-a-csv-report)
+6. [Navigate your photo locations on Google Maps & Earth](#6-navigate-your-photo-locations-on-google-maps-earth)
 
 ## The test photo set
 
@@ -72,7 +77,7 @@ photo-cli archive -i /path/to/source -o /path/to/archive \
 
 **Before** — the [test photo set](#the-test-photo-set) above.
 
-**After** — `archive-folder`:
+**After**
 
 ```text
 ├── 2005
@@ -136,7 +141,7 @@ photo-cli archive -i /path/to/source -o /path/to/archive \
 
 ### Console output
 
-<Accordion title="Full progress log and statistics table">
+<Accordion title='Full progress log and statistics table'>
 ```text
 [17:07:27] Searching photo main files: started
 [17:07:27] Searching photo main files: finished. 18 photo(s) found.
@@ -149,7 +154,7 @@ photo-cli archive -i /path/to/source -o /path/to/archive \
 [17:07:28] This OpenStreetMapFoundation provider is using rate limit of 1 second(s) between each request
 [17:07:28] Reverse Geocoding: started
 [17:07:31] Requested address types: City on index #2, not found on OpenStreetMap's response. Available types found:
-{"country_code":"gb","country":"United Kingdom","postcode":"SL4 2DR","suburb":"Sunninghill and Ascot","road":"Windsor Road"}
+{'country_code':'gb','country':'United Kingdom','postcode':'SL4 2DR','suburb':'Sunninghill and Ascot','road':'Windsor Road'}
 . Path:</test-photographs/GOPR6742.jpg>
 [17:07:47] Reverse Geocoding: finished.
 [17:07:47] Directory grouping: started
@@ -216,48 +221,48 @@ photo-cli archive -i /path/to/source -o /path/to/archive \
 The same `archive` command runs on macOS, Windows, Linux, and inside a container. Each tab shows the terminal executing the command, the resulting folder in the native file manager, and a `tree` listing of the archive.
 
 <Tabs>
-  <Tab title="macOS">
-    <Frame caption="Executing photo-cli archive in the macOS terminal">
-      <img src="/images/screenshots/macos/execute.png" alt="photo-cli archive executing on macOS" />
+  <Tab title='macOS'>
+    <Frame caption='Executing photo-cli archive in the macOS terminal'>
+      <img src='/images/screenshots/macos/execute.png' alt='photo-cli archive executing on macOS' />
     </Frame>
-    <Frame caption="The resulting archive in Finder">
-      <img src="/images/screenshots/macos/finder.png" alt="Archive folder open in macOS Finder" />
+    <Frame caption='The resulting archive in Finder'>
+      <img src='/images/screenshots/macos/finder.png' alt='Archive folder open in macOS Finder' />
     </Frame>
-    <Frame caption="tree output of the archive folder">
-      <img src="/images/screenshots/macos/tree-command.png" alt="tree command output of archive folder on macOS" />
-    </Frame>
-  </Tab>
-  <Tab title="Windows">
-    <Frame caption="Executing photo-cli archive in PowerShell">
-      <img src="/images/screenshots/windows/execute.png" alt="photo-cli archive executing on Windows" />
-    </Frame>
-    <Frame caption="The resulting archive in File Explorer">
-      <img src="/images/screenshots/windows/file-explorer.png" alt="Archive folder open in Windows File Explorer" />
-    </Frame>
-    <Frame caption="tree output of the archive folder">
-      <img src="/images/screenshots/windows/tree-command.png" alt="tree command output of archive folder on Windows" />
+    <Frame caption='tree output of the archive folder'>
+      <img src='/images/screenshots/macos/tree-command.png' alt='tree command output of archive folder on macOS' />
     </Frame>
   </Tab>
-  <Tab title="Linux">
-    <Frame caption="Executing photo-cli archive in a Linux terminal">
-      <img src="/images/screenshots/linux/execute.png" alt="photo-cli archive executing on Linux" />
+  <Tab title='Windows'>
+    <Frame caption='Executing photo-cli archive in PowerShell'>
+      <img src='/images/screenshots/windows/execute.png' alt='photo-cli archive executing on Windows' />
     </Frame>
-    <Frame caption="The resulting archive in the Files app">
-      <img src="/images/screenshots/linux/files.png" alt="Archive folder open in Linux Files manager" />
+    <Frame caption='The resulting archive in File Explorer'>
+      <img src='/images/screenshots/windows/file-explorer.png' alt='Archive folder open in Windows File Explorer' />
     </Frame>
-    <Frame caption="tree output of the archive folder">
-      <img src="/images/screenshots/linux/tree-command.png" alt="tree command output of archive folder on Linux" />
+    <Frame caption='tree output of the archive folder'>
+      <img src='/images/screenshots/windows/tree-command.png' alt='tree command output of archive folder on Windows' />
     </Frame>
   </Tab>
-  <Tab title="Container">
-    <Frame caption="Executing photo-cli archive via Docker / Podman">
-      <img src="/images/screenshots/container/execute.png" alt="photo-cli archive executing inside a container" />
+  <Tab title='Linux'>
+    <Frame caption='Executing photo-cli archive in a Linux terminal'>
+      <img src='/images/screenshots/linux/execute.png' alt='photo-cli archive executing on Linux' />
     </Frame>
-    <Frame caption="The mounted archive volume on the host">
-      <img src="/images/screenshots/container/file-system.png" alt="Archive folder on the container host file system" />
+    <Frame caption='The resulting archive in the Files app'>
+      <img src='/images/screenshots/linux/files.png' alt='Archive folder open in Linux Files manager' />
     </Frame>
-    <Frame caption="tree output of the archive folder">
-      <img src="/images/screenshots/container/tree-command.png" alt="tree command output of archive folder from container" />
+    <Frame caption='tree output of the archive folder'>
+      <img src='/images/screenshots/linux/tree-command.png' alt='tree command output of archive folder on Linux' />
+    </Frame>
+  </Tab>
+  <Tab title='Container'>
+    <Frame caption='Executing photo-cli archive via Docker / Podman'>
+      <img src='/images/screenshots/container/execute.png' alt='photo-cli archive executing inside a container' />
+    </Frame>
+    <Frame caption='The mounted archive volume on the host'>
+      <img src='/images/screenshots/container/file-system.png' alt='Archive folder on the container host file system' />
+    </Frame>
+    <Frame caption='tree output of the archive folder'>
+      <img src='/images/screenshots/container/tree-command.png' alt='tree command output of archive folder from container' />
     </Frame>
   </Tab>
 </Tabs>
@@ -344,7 +349,7 @@ photo-cli copy -f 2 -s 8 -n 2 -a 4 -p 1 -e 2 \
 
 ### Console output
 
-<Accordion title="Full progress log and statistics table">
+<Accordion title='Full progress log and statistics table'>
 ```text
 [17:07:28] Searching photo main files: started
 [17:07:28] Searching photo main files: finished. 18 photo(s) found.
@@ -358,7 +363,7 @@ photo-cli copy -f 2 -s 8 -n 2 -a 4 -p 1 -e 2 \
 second(s) between each request
 [17:07:28] Reverse Geocoding: started
 [17:07:29] Requested address types: City on index #2, not found on OpenStreetMap's response. Available types found:
-{"country_code":"gb","country":"United Kingdom","postcode":"SL4 2DR","suburb":"Sunninghill and Ascot","road":"Windsor Road"}
+{'country_code':'gb','country':'United Kingdom','postcode':'SL4 2DR','suburb':'Sunninghill and Ascot','road':'Windsor Road'}
 . Path:</Users/ac/src/photo-cli/docs/test-photographs/GOPR6742.jpg>
 [17:07:44] Reverse Geocoding: finished.
 [17:07:44] Directory grouping: started
@@ -433,8 +438,8 @@ photo-cli list -i /path/to/archive -t 3 -y 2008 -m 10
 
 On macOS this opens the matching photos directly in Preview:
 
-<Frame caption="photo-cli list opening the October 2008 photos in macOS Preview">
-  <img src="/images/screenshots/macos/viewing-in-preview-app.png" alt="Photos from October 2008 opened in macOS Preview by photo-cli list" />
+<Frame caption='photo-cli list opening the October 2008 photos in macOS Preview'>
+  <img src='/images/screenshots/macos/viewing-in-preview-app.png' alt='Photos from October 2008 opened in macOS Preview by photo-cli list' />
 </Frame>
 
 On Linux and Windows the command prints the matching file paths to stdout — pipe them into the viewer of your choice:
@@ -482,9 +487,45 @@ The output is rendered as a table:
 └────┴──────────────────┴────────────────┴─────────────────────┘
 ```
 
-You can then open every photo from an album by its name or id — `--type PhotosByAlbumName --album-name "Italia-Firenze"`, for example.
+You can then open every photo from an album by its name or id — `--type PhotosByAlbumName --album-name 'Italia-Firenze'`, for example.
 
-## 4. Export every photo's metadata to a CSV report
+## 4. Query your photo archive with AI assistants over MCP
+
+The `mcp` command starts a [Model Context Protocol](https://modelcontextprotocol.io/) stdio server that exposes your archive's SQLite database to AI assistants. Once connected, tools like Claude Code, Claude Desktop, and VS Code can search by date, location, album, or proximity to a GPS coordinate — and on macOS, open matching photos directly in Preview. See the [mcp command reference](/commands/mcp) for the full tool list and per-client setup.
+
+### Run the command
+
+```bash
+photo-cli mcp --input /path/to/archive
+```
+
+This launches a stdio MCP server pointing at the archive's `photo-cli.sqlite3`. You usually don't run it by hand — your AI client launches it from its MCP config.
+
+### Ask the assistant in plain language
+
+Once connected, ask questions like *"What cities and when did I go to Italy?"*, *"Show me everything taken within 5 km of 43.78, 11.23"*, or *"Open all photos in the Italia-Firenze album"*. The assistant picks the right MCP tool, fills in the parameters, and photo-cli answers from the SQLite index.
+
+<Frame caption='MCP integration with Claude Desktop showing a query for photos'>
+  <img src='/images/screenshots/mcp/query.png' alt='MCP integration querying the photo archive via Claude Desktop' />
+</Frame>
+
+### How tools map to the SQLite index
+
+Each exposed MCP tool is a typed query against the archive database — `list_photos_by_date_range`, `find_near_location`, `list_albums`, `open_photos_by_album_name`, and so on. The MCP Inspector view below shows the available tools and their input schemas, which is exactly what the assistant sees when deciding how to answer your question:
+
+<Frame caption='photo-cli MCP tools and their input schemas, viewed in the MCP Inspector'>
+  <img src='/images/screenshots/mcp/tools-inspect.png' alt='photo-cli MCP tools listed in the MCP Inspector showing input schemas for list, search, find, and open operations' />
+</Frame>
+
+### Open the matching photos from the assistant
+
+When you ask the assistant to *open* photos rather than just list them, the MCP server hands the matching files off to your OS image viewer. This is wired up for macOS today — matches open directly in Preview. On Linux and Windows the `open_photos_*` tools are not active yet; use the `list_photos_*` tools and pipe the returned paths to your viewer of choice.
+
+<Frame caption='Photos opened in macOS Preview after an MCP open_photos_by_album_name call'>
+  <img src='/images/screenshots/mcp/view.png' alt='Album photos opened in macOS Preview via the MCP open_photos tool' />
+</Frame>
+
+## 5. Export every photo metadata to a CSV report
 
 The `info` command does no copying at all. It scans a folder, extracts the EXIF data, optionally reverse-geocodes, and writes a single CSV report you can open in Excel, Numbers, LibreOffice, or Google Sheets. See the [info command reference](/commands/info).
 
@@ -524,7 +565,7 @@ The full CSV also includes year/month/day/hour/minute/seconds columns and `Addre
 
 ### Console output
 
-<Accordion title="Full progress log and statistics table">
+<Accordion title='Full progress log and statistics table'>
 ```text
 [17:07:33] Searching photo main files: started
 [17:07:33] Searching photo main files: finished. 18 photo(s) found.
@@ -532,7 +573,7 @@ The full CSV also includes year/month/day/hour/minute/seconds columns and `Addre
 [17:07:33] No coordinate found on `Gps` directory. Path:</Users/ac/src/photo-cli/docs/test-photographs/Italy album/IMG_2371.jpg>
 [17:07:33] Reverse Geocoding: started
 [17:07:33] Requested address types: City on index #2, not found on OpenStreetMap's response. Available types found:
-{"country_code":"gb","country":"United Kingdom","postcode":"SL4 2DR","suburb":"Sunninghill and Ascot","road":"Windsor Road"}
+{'country_code':'gb','country':'United Kingdom','postcode':'SL4 2DR','suburb':'Sunninghill and Ascot','road':'Windsor Road'}
 . Path:</Users/ac/src/photo-cli/docs/test-photographs/GOPR6742.jpg>
 [17:07:49] Reverse Geocoding: finished.
 [17:07:49] Writing csv report: started
@@ -574,7 +615,7 @@ The full CSV also includes year/month/day/hour/minute/seconds columns and `Addre
 ```
 </Accordion>
 
-## 5. Navigate your photo locations on Google Maps & Earth
+## 6. Navigate your photo locations on Google Maps-Earth
 
 Both the `copy` and `info` commands produce a CSV with a row per photo and lat/long columns. That CSV can be imported directly into Google's mapping tools to navigate your photos on a real map.
 
@@ -582,39 +623,45 @@ Both the `copy` and `info` commands produce a CSV with a row per photo and lat/l
 
 [Open Google My Maps](https://www.google.com/maps/d) and click **Create a new map**, then import the CSV onto a layer. You get a pin per photo, customizable by label and style.
 
-<Frame caption="Photo locations imported into Google My Maps">
-  <img src="/images/screenshots/google/google-maps.png" alt="photo-cli CSV imported into Google My Maps with a pin per photo" />
+<Frame caption='Photo locations imported into Google My Maps'>
+  <img src='/images/screenshots/google/google-maps.png' alt='photo-cli CSV imported into Google My Maps with a pin per photo' />
 </Frame>
 
 ### Google Earth Desktop
 
 Install [Google Earth Desktop](https://www.google.com/earth/versions/#earth-pro) and use the **File → Import** menu to load the CSV. Save it as KML/KMZ to share or to use it on the web version.
 
-<Frame caption="Photo locations imported into Google Earth Desktop">
-  <img src="/images/screenshots/google/google-earth-pro-desktop.png" alt="photo-cli CSV imported into Google Earth Pro Desktop" />
+<Frame caption='Photo locations imported into Google Earth Desktop'>
+  <img src='/images/screenshots/google/google-earth-pro-desktop.png' alt='photo-cli CSV imported into Google Earth Pro Desktop' />
 </Frame>
 
 ### Google Earth Web
 
 [Earth Web](https://earth.google.com/web/) doesn't import CSV directly — first export a KML/KMZ from Earth Desktop, then create a project and add the KML file to it.
 
-<Frame caption="Photo locations loaded into a Google Earth Web project">
-  <img src="/images/screenshots/google/google-earth-web.png" alt="photo-cli photo locations loaded into Google Earth Web via a KML project" />
+<Frame caption='Photo locations loaded into a Google Earth Web project'>
+  <img src='/images/screenshots/google/google-earth-web.png' alt='photo-cli photo locations loaded into Google Earth Web via a KML project' />
 </Frame>
 
-## What's next
+## Core commands
 
 <CardGroup cols={2}>
-  <Card title="Quick start" icon="rocket" href="/quickstart">
-    Run your first `copy` command in under five minutes.
+  <Card title='photo-cli archive' icon='box-archive' href='/commands/archive'>
+    Archive photos with SHA1-based deduplication and index into a local SQLite database.
   </Card>
-  <Card title="Examples gallery" icon="images" href="/examples/overview">
-    Five different `copy` strategies shown end to end with the same test photo set.
+  <Card title='photo-cli copy' icon='copy' href='/commands/copy'>
+    Copy photos into a new organized folder with custom naming and folder strategies.
   </Card>
-  <Card title="Reverse geocoding" icon="location-dot" href="/reverse-geocoding/overview">
-    Pick a provider, configure API keys, and choose which address levels appear in your file names.
+  <Card title='photo-cli info' icon='circle-info' href='/commands/info'>
+    Export photo metadata (date, coordinates, address) to a CSV file.
   </Card>
-  <Card title="All arguments" icon="list" href="/reference/arguments">
-    Every argument every command accepts, with short-form aliases.
+  <Card title='photo-cli list' icon='list' href='/commands/list'>
+    Browse, filter, and open archived photos by album, date, or date range.
+  </Card>
+  <Card title='photo-cli address' icon='location-dot' href='/commands/address'>
+    Preview the reverse geocode response for a single photo.
+  </Card>
+  <Card title='photo-cli mcp' icon='robot' href='/commands/mcp'>
+    Run an MCP server to let AI assistants query your photo archive.
   </Card>
 </CardGroup>
