@@ -69,6 +69,10 @@ The `list` command works only on folders created by `photo-cli archive`. The fol
   Output photo paths as plain text (one per line) instead of opening them in the default OS viewer. Useful for piping to other tools. No extra value required — pass the flag alone.
 </ParamField>
 
+<ParamField query="--custom-database-path, -j" type="string">
+  Custom file system path directly to the SQLite database file, bypassing the default database location within the archive folder. When provided, the database is read from this exact path instead of `[archive-folder]/photo-cli.sqlite3`.
+</ParamField>
+
 ## List types explained
 
 ### Summary (default)

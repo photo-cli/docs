@@ -23,6 +23,10 @@ photo-cli mcp [options]
   Path to the archive folder containing the `photo-cli.sqlite3` database. Defaults to the current working directory.
 </ParamField>
 
+<ParamField query="--custom-database-path, -j" type="string">
+  Custom file system path directly to the SQLite database file, bypassing the default database location within the archive folder. When provided, the database is read from this exact path instead of `[archive-folder]/photo-cli.sqlite3`.
+</ParamField>
+
 ## MCP tools exposed
 
 When a client connects, photo-cli registers the following tools:

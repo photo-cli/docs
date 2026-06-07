@@ -155,6 +155,10 @@ Because duplicates are detected by file hash rather than file name, you can safe
   Bypass the free-tier rate limit when using LocationIq with a paid license.
 </ParamField>
 
+<ParamField query="--custom-database-path, -j" type="string">
+  Custom file system path directly to the SQLite database file, bypassing the default database location within the archive folder. When provided, the database is written to this exact path instead of `[output-folder]/photo-cli.sqlite3`. The parent directory is created automatically if it does not exist.
+</ParamField>
+
 ## Example
 
 The following example archives photos with a user-defined album, auto-creates reverse geocode albums, and deletes source files on success.
