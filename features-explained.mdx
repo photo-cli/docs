@@ -491,7 +491,7 @@ You can then open every photo from an album by its name or id — `--type Photos
 
 ## 4. Query your photo archive with AI assistants over MCP
 
-The `mcp` command starts a [Model Context Protocol](https://modelcontextprotocol.io/) stdio server that exposes your archive's SQLite database to AI assistants. Once connected, tools like Claude Code, Claude Desktop, and VS Code can search by date, location, album, or proximity to a GPS coordinate — and on macOS, open matching photos directly in Preview. See the [mcp command reference](/commands/mcp) for the full tool list and per-client setup.
+The `mcp` command starts a [Model Context Protocol](https://modelcontextprotocol.io/) stdio server that exposes your archive's SQLite database to AI assistants. Once connected, tools like Claude Code, Claude Desktop, and VS Code can search by date, location, album, or proximity to a GPS coordinate — show matching photos inline in the chat as downscaled images, and, on macOS, open the full-resolution originals directly in Preview. See the [mcp command reference](/commands/mcp) for the full tool list and per-client setup.
 
 ### Run the command
 
@@ -511,7 +511,7 @@ Once connected, ask questions like *"What cities and when did I go to Italy?"*, 
 
 ### How tools map to the SQLite index
 
-Each exposed MCP tool is a typed query against the archive database — `list_photos_by_date_range`, `find_near_location`, `list_albums`, `open_photos_by_album_name`, and so on. The MCP Inspector view below shows the available tools and their input schemas, which is exactly what the assistant sees when deciding how to answer your question:
+Each exposed MCP tool is a typed query against the archive database — `list_photos_by_date_range`, `find_near_location`, `list_albums`, `open_photos_by_album_name`, `view_photo`, and so on. The MCP Inspector view below shows the available tools and their input schemas, which is exactly what the assistant sees when deciding how to answer your question:
 
 <Frame caption='photo-cli MCP tools and their input schemas, viewed in the MCP Inspector'>
   <img src='/images/screenshots/mcp/tools-inspect.png' alt='photo-cli MCP tools listed in the MCP Inspector showing input schemas for list, search, find, and open operations' />
@@ -519,11 +519,15 @@ Each exposed MCP tool is a typed query against the archive database — `list_ph
 
 ### Open the matching photos from the assistant
 
-When you ask the assistant to *open* photos rather than just list them, the MCP server hands the matching files off to your OS image viewer. This is wired up for macOS today — matches open directly in Preview. On Linux and Windows the `open_photos_*` tools are not active yet; use the `list_photos_*` tools and pipe the returned paths to your viewer of choice.
+When you ask the assistant to *open* photos rather than just list them, the MCP server hands the matching files off to your OS image viewer. This is wired up for macOS today — matches open directly in Preview. On Linux and Windows the `open_photos_*` tools are not active yet; use the `list_photos_*` tools and pipe the returned paths to your viewer of choice, or use the `view_photos_*` tools to see them inline.
 
 <Frame caption='Photos opened in macOS Preview after an MCP open_photos_by_album_name call'>
   <img src='/images/screenshots/mcp/view.png' alt='Album photos opened in macOS Preview via the MCP open_photos tool' />
 </Frame>
+
+### See the photos inline in the chat
+
+Ask the assistant to *show* or *view* photos and it reaches for the `view_*` tools instead. These load the matching files, downscale them (max 1280px long edge by default, JPEG quality 80), and return them as inline image blocks that Claude Desktop and claude.ai render right in the conversation — no Preview, and it works on any platform. Multi-photo `view_*` tools are capped (`maxCount`, default 6) so a broad match doesn't dump dozens of images into the model's context. Use `open_*` when you want the full-resolution original open locally, `view_*` when you just want to see it in the chat.
 
 ## 5. Export every photo metadata to a CSV report
 

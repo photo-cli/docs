@@ -46,6 +46,13 @@ When a client connects, photo-cli registers the following tools:
 | `open_photos_by_album_name` | Open photos belonging to an album by its name in the default viewer (macOS Preview). |
 | `open_photos_by_exact_date` | Open photos matching an exact date in the default viewer (macOS Preview). |
 | `open_photos_by_date_range` | Open photos within a date range in the default viewer (macOS Preview). |
+| `view_photo` | Show a single photo inline in the chat — full metadata plus a downscaled JPEG image. |
+| `view_photos_by_exact_date` | Show photos matching an exact date inline in the chat (downscaled). Capped at `maxCount` (default 6). |
+| `view_photos_by_date_range` | Show photos within a date range inline in the chat. Both start and end dates are inclusive. |
+| `view_photos_by_album_id` | Show photos belonging to an album by its numeric ID inline in the chat. |
+| `view_photos_by_album_name` | Show photos belonging to an album by its name inline in the chat. |
+
+The `view_*` tools return downscaled JPEG images (long edge `maxDimension`, default 1280, max 2048) that render inline in the chat on any platform. Multi-photo tools show at most `maxCount` photos (default 6, max 20), sorted by date taken. Use `open_*` when you want the full-resolution original open in macOS Preview.
 
 ## Setup
 

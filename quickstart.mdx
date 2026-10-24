@@ -56,7 +56,7 @@ This guide walks you through installing photo-cli, running your first `archive` 
   <Step title='Query your photo archive by AI assistant over MCP'>
     `photo-cli mcp` starts a [Model Context Protocol](https://modelcontextprotocol.io/) stdio server that exposes the archive's SQLite database to AI assistants. Tools like Claude Code, Claude Desktop, and VS Code can then search by date, location, album, or proximity to a GPS coordinate — and even open matching photos in your default viewer. See the [mcp command reference](/commands/mcp) for the full tool list.
 
-    Once connected, ask the assistant things like *'What cities and when did I went to Italy?'*, *'show me everything taken within 5 km of 43.78, 11.23'*, or *'open all photos in the Italia-Firenze album'*.
+    Once connected, ask the assistant things like *'What cities and when did I went to Italy?'*, *'show me everything taken within 5 km of 43.78, 11.23'*, *'open all photos in the Italia-Firenze album'*, or *'show me the photos from the Italia-Firenze album'*.
 
     <Frame caption='MCP integration with Claude Desktop showing a query for photos'>
       <img src='/images/screenshots/mcp/query.png' alt='MCP integration' />
@@ -68,6 +68,9 @@ This guide walks you through installing photo-cli, running your first `archive` 
     <Frame caption='Photos opened in macOS Preview after an MCP open_photos_by_album_name call'>
       <img src='/images/screenshots/mcp/view.png' alt='Album photos opened in macOS Preview via the MCP open_photos tool' />
     </Frame>
+  </Step>
+  <Step title='See the photos inline in the chat'>
+    Ask the assistant to *show* photos and the `view_*` tools return downscaled images that render right in the conversation — no viewer needed, and it works on any platform.
   </Step>
 </Steps>
 
