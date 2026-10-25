@@ -46,6 +46,7 @@
             "pages": [
               "commands/archive",
               "commands/mcp",
+              "commands/skill",
               "commands/list",
               "commands/copy",
               "commands/info",

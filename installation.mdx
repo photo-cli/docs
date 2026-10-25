@@ -158,3 +158,9 @@ dotnet tool uninstall -g photo-cli
 The `mcp` command is built into photo-cli and requires no additional installation. It starts an [MCP](https://modelcontextprotocol.io/) stdio server on top of an existing archive folder (one previously created with `photo-cli archive`).
 
 See the [MCP command page](/commands/mcp) for setup instructions for Claude Code, Claude Desktop, VS Code, and MCP Inspector.
+
+## Agent Skill Setup
+
+The `skill` command is built into photo-cli and requires no additional installation. It writes the bundled `photocli` agent skill into `.claude/skills/photocli` of the current folder, or into `~/.claude/skills/photocli` with `--global`.
+
+See the [skill command page](/commands/skill) for usage details.

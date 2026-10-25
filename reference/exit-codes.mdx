@@ -20,6 +20,8 @@ photo-cli returns a specific numeric exit code when it finishes. A code of `0` m
 | `13` | `CopyOptionsValidationFailed` | Invalid options passed to the `copy` command |
 | `14` | `SettingsOptionsValidationFailed` | Invalid options passed to the `settings` command |
 | `15` | `ArchiveOptionsValidationFailed` | Invalid options passed to the `archive` command |
+| `16` | `McpOptionsValidationFailed` | Invalid options passed to the `mcp` command |
+| `17` | `SkillOptionsValidationFailed` | Invalid options passed to the `skill` command |
 | `20` | `InputFolderNotExists` | The path given with `--input` does not exist |
 | `21` | `NoPhotoFoundOnDirectory` | No supported photo files were found in the input folder |
 | `22` | `OutputFolderIsNotEmpty` | The `--output` folder already exists and is not empty |
@@ -28,6 +30,7 @@ photo-cli returns a specific numeric exit code when it finishes. A code of `0` m
 | `25` | `OutputPathDontHaveCreateDirectoryPermission` | photo-cli cannot create directories at the output path |
 | `26` | `InputFileNotExists` | The file given with `--input` does not exist (used by the `address` command) |
 | `27` | `FileVerifyErrors` | File integrity verification failed after copying |
+| `28` | `UserHomeDirectoryNotFound` | The user home folder could not be resolved for `skill --global`; set the `CLAUDE_CONFIG_DIR` environment variable |
 | `30` | `PhotosWithNoDatePreventedProcess` | `--no-taken-date` was set to `PreventProcess` and at least one photo has no EXIF date |
 | `31` | `PhotosWithNoCoordinatePreventedProcess` | `--no-coordinate` was set to `PreventProcess` and at least one photo has no GPS coordinates |
 | `32` | `PhotosWithNoCoordinateAndNoDatePreventedProcess` | Both date and coordinate are missing and `PreventProcess` is in effect |

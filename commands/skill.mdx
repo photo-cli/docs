@@ -1,0 +1,53 @@
+---
+sidebarTitle: "skill"
+title: "Skill Command Reference"
+description: "Install the photocli agent skill so AI coding agents like Claude Code can build and run photo-cli commands for you."
+---
+
+`photo-cli skill` installs the bundled `photocli` agent skill so AI coding agents (Claude Code and other agents that read `.claude/skills`) can build `photo-cli` commands for you from plain-language requests.
+
+## Synopsis
+
+```bash
+photo-cli skill [options]
+```
+
+## Arguments
+
+<ParamField query="--global, -g" type="boolean">
+  Install into the user's Claude folder (`~/.claude/skills/photocli`) instead of the current folder. No additional value needed. The `CLAUDE_CONFIG_DIR` environment variable overrides the `~/.claude` location, as in Claude Code.
+</ParamField>
+
+## What gets installed
+
+The command writes `SKILL.md` and `references/options.md`, which are embedded in photo-cli, so no extra download is needed.
+
+| Invocation | Install location |
+| --- | --- |
+| `photo-cli skill` | `./.claude/skills/photocli` (current folder) |
+| `photo-cli skill --global` | `~/.claude/skills/photocli` (every project) |
+
+Running the command again overwrites the existing files with the version bundled in your installed photo-cli.
+
+<Tip>
+  Re-run `photo-cli skill` after upgrading photo-cli to keep the skill in sync with the available options.
+</Tip>
+
+## Using the skill
+
+Once installed, ask in plain language, for example: *"sort the photos in ~/Pictures/Trip into year/month/day folders named by date"*. The skill:
+
+- maps the request to the right command, and asks step by step for any argument that is missing or ambiguous, offering only option combinations the CLI accepts
+- always shows the final command and what it will do, and waits for your confirmation before running it (suggesting `--dry-run` first for `copy` and `archive`)
+- when asked to run it, summarizes the exit code and the printed statistics (photos found and copied, missing dates or coordinates, reverse geocode requests, albums)
+
+To let assistants query an existing archive, see the [mcp command](/commands/mcp).
+
+## Exit codes
+
+| Code | Name | When it occurs |
+| --- | --- | --- |
+| `17` | `SkillOptionsValidationFailed` | Invalid options passed to the `skill` command |
+| `28` | `UserHomeDirectoryNotFound` | The user home folder could not be resolved for `--global`; set `CLAUDE_CONFIG_DIR` |
+
+See [Exit codes](/reference/exit-codes) for the full list.
